@@ -6015,8 +6015,9 @@
     // ── Helper: get filtered ideas ──
     function getFilteredIdeas() {
       let ideas = getPlatformIdeas(currentPlatformFilter);
-      // Ocultar do banco ideias já gravadas ou publicadas
+      // Ocultar do banco ideias já gravadas/publicadas, templates e placeholders "Pessoal"
       ideas = ideas.filter(i => !['gravado','em_edicao','fazer_correcoes','aprovado','programado','publicado','analisado'].includes(i.status));
+      ideas = ideas.filter(i => i.source !== 'Template' && i.title !== 'Pessoal');
       if (activeSourceFilter) ideas = ideas.filter(i => i.source === activeSourceFilter);
       if (activeDestFilter) {
         if (activeDestFilter === '__none__') ideas = ideas.filter(i => !i.destination);
@@ -7865,7 +7866,7 @@
           addedAt: new Date().toISOString().slice(0, 10)
         };
         ideasData.push(idea);
-        saveExtraIdeas();
+        // saveExtraIdeas called once at end of autoGenerateWeek
         pushIdeaToNotion(idea);
         const idx = ideasData.length - 1;
         usedIdxs.add(idx);
@@ -7874,7 +7875,7 @@
 
       // Cria uma ideia "Pessoal" para TikTok
       function makePessoal() {
-        // Reutiliza ideias "Pessoal" não usadas antes de criar novas
+        // Reutiliza qualquer ideia "Pessoal" existente no banco (incluindo as já no kanban)
         const existing = ideasData
           .map((idea, idx) => ({ idea, idx }))
           .find(({ idea, idx }) => !usedIdxs.has(idx) && getIdeaPlatform(idea) === 'tk' && idea.title === 'Pessoal');
@@ -7893,7 +7894,7 @@
           addedAt: new Date().toISOString().slice(0, 10)
         };
         ideasData.push(idea);
-        saveExtraIdeas();
+        // saveExtraIdeas called once at end of autoGenerateWeek
         pushIdeaToNotion(idea);
         const idx = ideasData.length - 1;
         usedIdxs.add(idx);
@@ -7946,6 +7947,7 @@
         });
       });
 
+      saveExtraIdeas(); // uma vez só, depois de gerar a semana inteira
       renderKanban();
     }
 
@@ -8740,10 +8742,11 @@
           notionIdeas.push(ni);
         });
 
-        // Replace ideasData entirely: Notion is the single source of truth
-        // All local/hardcoded ideas are discarded — only Notion data is kept
-        ideasData.length = 0;
-        notionIdeas.forEach(i => ideasData.push(i));
+        // Só substitui se vieram dados do Notion (segurança contra sync parcial)
+        if (notionIdeas.length > 0) {
+          ideasData.length = 0;
+          notionIdeas.forEach(i => ideasData.push(i));
+        }
 
         saveExtraIdeas();
         savePageMap();
