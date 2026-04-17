@@ -1,0 +1,11 @@
+[build]
+  publish = "public"
+  functions = "netlify/functions"
+
+[functions]
+  node_bundler = "esbuild"
+
+[[redirects]]
+  from = "/api/notion/*"
+  to = "/.netlify/functions/notion-proxy/:splat"
+  status = 200
