@@ -471,11 +471,13 @@
     }
 
     /* Altura uniforme segunda linha do grid home */
-    .zone-checklist,
     .banco-ideias,
     .semana-card {
       max-height: 420px;
       overflow-y: auto;
+    }
+    .zone-checklist {
+      max-height: none;
     }
 
     .big-num {
@@ -2186,8 +2188,8 @@
             background:linear-gradient(135deg,#6B21A8,#D63B2F);
             color:white;font-size:13px;font-weight:700;cursor:pointer;
             display:flex;align-items:center;gap:6px;transition:opacity .15s;
-          " title="Gerar semana automaticamente com base no ranking de potencial">
-            ✨ Gerar Semana
+          " title="Criar slots esperados para a semana (v6 — Ops preenche manualmente)">
+            📋 Criar Slots
           </button>
           <button id="btnResetWeek" style="
             padding:9px 18px;border-radius:10px;border:1.5px solid #E8E0D6;
@@ -2211,6 +2213,15 @@
             <div class="week-dropdown" id="weekDropdown"></div>
           </div>
         </div>
+      </div>
+
+      <!-- v6: platform filter bar for kanban day columns -->
+      <div id="kanbanPlatFilter" style="display:flex;gap:8px;padding:6px 0 4px;flex-wrap:wrap;">
+        <button class="org-filter-btn all-btn active" data-kpf="null" onclick="setKanbanPlatFilter(null,this)" title="Todas as plataformas">All</button>
+        <button class="org-filter-btn yt-btn" data-kpf="yt" onclick="setKanbanPlatFilter('yt',this)" title="YouTube">YT</button>
+        <button class="org-filter-btn ig-btn" data-kpf="ig" onclick="setKanbanPlatFilter('ig',this)" title="Instagram">IG</button>
+        <button class="org-filter-btn tk-btn" data-kpf="tk" onclick="setKanbanPlatFilter('tk',this)" title="TikTok">TK</button>
+        <button class="org-filter-btn ad-btn" data-kpf="ad" onclick="setKanbanPlatFilter('ad',this)" title="Anúncios">AD</button>
       </div>
 
       <div class="kanban-board" id="kanbanBoard"></div>
@@ -3701,12 +3712,24 @@
     function setupScriptTabs() {
       document.querySelectorAll('.script-tab').forEach(tab => {
         tab.addEventListener('click', () => {
+          saveCurrentScriptVersion(); // ── v6: persist before switching version ──
           document.querySelectorAll('.script-tab').forEach(t => t.classList.remove('active'));
           tab.classList.add('active');
           currentScriptVersion = tab.getAttribute('data-version');
           updateScriptPreview();
         });
       });
+
+      // ── v6: auto-save on blur and after typing pause ──
+      const scriptEditor = document.getElementById('scriptEditor');
+      if (scriptEditor && !scriptEditor._v6Wired) {
+        scriptEditor._v6Wired = true;
+        scriptEditor.addEventListener('blur', saveCurrentScriptVersion);
+        scriptEditor.addEventListener('input', () => {
+          clearTimeout(scriptEditor._saveTimer);
+          scriptEditor._saveTimer = setTimeout(saveCurrentScriptVersion, 1500);
+        });
+      }
     }
 
     function updateScriptPreview() {
@@ -3778,6 +3801,7 @@
       }
 
       if (currentStep === 5) {
+        saveCurrentScriptVersion(); // ── v6: persist script before leaving step 5 ──
         if (selectedPlatform === 'YT') {
           currentStep = 6;
           renderTitleSuggestions();
@@ -3876,12 +3900,14 @@
     });
 
     document.getElementById('copyScript').addEventListener('click', () => {
+      saveCurrentScriptVersion(); // ── v6: persist before copying ──
       const script = document.getElementById('scriptEditor').textContent;
       navigator.clipboard.writeText(script);
       alert('Script copiado!');
     });
 
     document.getElementById('exportScript').addEventListener('click', () => {
+      saveCurrentScriptVersion(); // ── v6: persist before exporting ──
       const script = document.getElementById('scriptEditor').textContent;
       const element = document.createElement('a');
       element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(script));
@@ -3932,7 +3958,16 @@
       });
     }
     let organizeFilter = null;    // null|'yt'|'ig'|'tk'|'ad'
+    let kanbanDayPlatFilter = null; // ── v6: null|'yt'|'ig'|'tk'|'ad' — filter for day columns
     let checkedKanbanItems = new Set(); // keys: 'YYYY-MM-DD::ideaIdx'
+
+    // ── v6: set platform filter for kanban day columns ──
+    function setKanbanPlatFilter(key, btn) {
+      kanbanDayPlatFilter = key;
+      document.querySelectorAll('#kanbanPlatFilter button').forEach(b => b.classList.remove('active'));
+      if (btn) btn.classList.add('active');
+      renderKanban();
+    }
 
     // Week navigation state
     const PLAN_YEAR = 2026;
@@ -3991,6 +4026,24 @@
     }
     const platformColors = { yt:'#D63B2F', ig:'#E1306C', tk:'#6B21A8', ad:'#16A34A' };
     const platformLabels = { yt:'YT', ig:'IG', tk:'TK', ad:'AD' };
+
+    // ── v6: "pronto pra gravar" checklist ──
+    function calcReadyToRecord(idea) {
+      if (!idea) return { ready: false, checks: {} };
+      const plat = getIdeaPlatform(idea);
+      const checks = {
+        pauta:      !!(idea.title && idea.title.trim()),
+        packaging:  !!(idea.title && idea.title.trim()), // title refined (same field for now)
+        script:     !!(idea.scripts && idea.scripts.A && idea.scripts.A.trim()),
+        destino:    !!(idea.destination),
+        seo:        plat !== 'yt' || !!(
+                      (idea.tags && idea.tags.length > 0) &&
+                      (idea.desc && idea.desc.trim())
+                    ),
+      };
+      const ready = Object.values(checks).every(Boolean);
+      return { ready, checks };
+    }
 
     // Category emoji mapping
     const tagEmojis = {
@@ -6313,8 +6366,8 @@
             if (!confirm('Já existem conteúdos planejados nessa semana. Deseja adicionar mais (sem remover os existentes)?')) return;
           }
           autoGenerateWeek();
-          btnGen.textContent = '✅ Semana Gerada!';
-          setTimeout(() => { btnGen.innerHTML = '✨ Gerar Semana'; }, 2500);
+          btnGen.textContent = '✅ Slots criados!';
+          setTimeout(() => { btnGen.innerHTML = '📋 Criar Slots'; }, 2500);
         });
       }
 
@@ -6345,136 +6398,46 @@
       });
     }
 
-    // ── Geração automática da semana ──
+    // ── v6: Geração de slots esperados por dia (substitui auto-geração de 10 peças genéricas) ──
+    // Cada dia recebe slots placeholder por plataforma. Ops preenche manualmente ou via API.
     function autoGenerateWeek() {
       const week = weeksOfYear[selectedWeekIdx];
       if (!week) return;
 
-      const EXCLUDED = new Set(['gravado','em_edicao','fazer_correcoes','aprovado','programado','publicado','analisado']);
-      const DEST_LABELS = { santiago:'Santiago', atacama:'Atacama', buenos_aires:'Buenos Aires', cusco:'Cusco', patagonia:'Patagônia', valparaiso:'Valparaíso' };
-
-      // Ideas já usadas nesta semana (para não repetir)
-      const usedIdxs = new Set();
-      week.days.forEach(day => {
-        (weekKanban[day.dateStr] || []).forEach(item => usedIdxs.add(item.ideaIdx));
-      });
-
-      function pickTop(n, filterFn) {
-        return ideasData
-          .map((idea, idx) => ({ idea, idx }))
-          .filter(({ idea, idx }) => !usedIdxs.has(idx) && !EXCLUDED.has(idea.status) && filterFn(idea))
-          .sort((a, b) => (calcIdeaScore(b.idea) ?? -1) - (calcIdeaScore(a.idea) ?? -1))
-          .slice(0, n);
-      }
-
-      // Cria uma ideia a partir dos templates (fallback quando banco não tem suficiente)
-      function makeFromTemplate(platform, dest) {
-        const pool = dest
-          ? templateIdeas.filter(t => t.title.includes('[destino]'))
-          : templateIdeas;
-        const tpl = pool[Math.floor(Math.random() * pool.length)] || templateIdeas[0];
-        const destLabel = DEST_LABELS[dest] || 'Chile';
-        const idea = {
-          _dashId: genDashId(),
-          platform,
-          title: tpl.title.replace(/\[destino\]/gi, destLabel),
-          tags: [tpl.category || 'Template'],
-          source: 'Template',
-          status: 'novo',
-          impact: null,
-          destination: dest || null,
-          desc: '',
-          addedBy: currentUser,
-          addedAt: new Date().toISOString().slice(0, 10)
-        };
-        ideasData.push(idea);
-        // saveExtraIdeas called once at end of autoGenerateWeek
-        pushIdeaToNotion(idea);
-        const idx = ideasData.length - 1;
-        usedIdxs.add(idx);
-        return { idea, idx };
-      }
-
-      // Cria uma ideia "Pessoal XX" numerada para TikTok — nunca repete o número
-      let _pessoalCounter = null;
-      function makePessoal() {
-        if (_pessoalCounter === null) {
-          // Encontra o maior número já usado em qualquer "Pessoal NN" no banco
-          const nums = ideasData
-            .map(i => { const m = i.title && i.title.match(/^Pessoal\s+(\d+)$/i); return m ? parseInt(m[1], 10) : 0; })
-            .filter(n => n > 0);
-          _pessoalCounter = nums.length > 0 ? Math.max(...nums) : 0;
-        }
-        _pessoalCounter++;
-        const num = String(_pessoalCounter).padStart(2, '0');
-        const idea = {
-          _dashId: genDashId(),
-          platform: 'tk',
-          title: `Pessoal ${num}`,
-          tags: ['Pessoal'],
-          source: 'Manual',
-          status: 'novo',
-          impact: null,
-          destination: null,
-          desc: '',
-          addedBy: currentUser,
-          addedAt: new Date().toISOString().slice(0, 10)
-        };
-        ideasData.push(idea);
-        // saveExtraIdeas called once at end of autoGenerateWeek
-        pushIdeaToNotion(idea);
-        const idx = ideasData.length - 1;
-        usedIdxs.add(idx);
-        return { idea, idx };
-      }
+      // Template de slots por dia: 1 YT + 3 IG + 3 TK + 3 AD = 10 slots
+      const SLOT_TEMPLATE = [
+        { platform: 'yt', count: 1 },
+        { platform: 'ig', count: 3 },
+        { platform: 'tk', count: 3 },
+        { platform: 'ad', count: 3 },
+      ];
 
       week.days.forEach(day => {
-        const dow = new Date(day.dateStr + 'T12:00:00').getDay();
-        const sched = WEEK_SCHEDULE[dow];
-        const picks = [];
-
-        // ── YouTube (1): Santiago — fallback template ──
-        const ytPicks = pickTop(1, i => getIdeaPlatform(i) === 'yt' && i.destination === 'santiago');
-        if (ytPicks.length > 0) ytPicks.forEach(p => picks.push(p));
-        else picks.push(makeFromTemplate('yt', 'santiago'));
-
-        // ── Reels (3): destino do dia — fallback template ──
-        const igPool = ideasData
-          .map((idea, idx) => ({ idea, idx }))
-          .filter(({ idea, idx }) => {
-            if (usedIdxs.has(idx) || EXCLUDED.has(idea.status)) return false;
-            if (getIdeaPlatform(idea) !== 'ig') return false;
-            if (sched.dest && idea.destination !== sched.dest) return false;
-            return true;
-          })
-          .sort((a, b) => {
-            const aTag = sched.seasonTag ? (a.idea.tags||[]).includes(sched.seasonTag) ? 1 : 0 : 0;
-            const bTag = sched.seasonTag ? (b.idea.tags||[]).includes(sched.seasonTag) ? 1 : 0 : 0;
-            if (bTag !== aTag) return bTag - aTag;
-            return (calcIdeaScore(b.idea) ?? -1) - (calcIdeaScore(a.idea) ?? -1);
-          })
-          .slice(0, 3);
-        igPool.forEach(p => { usedIdxs.add(p.idx); picks.push(p); });
-        for (let i = igPool.length; i < 3; i++) picks.push(makeFromTemplate('ig', sched.dest || 'santiago'));
-
-        // ── TikToks (3): sempre "Pessoal" ──
-        for (let i = 0; i < 3; i++) picks.push(makePessoal());
-
-        // ── Ads (3): destino do dia — fallback template ──
-        const adPicks = pickTop(3, i => getIdeaPlatform(i) === 'ad' && (!sched.dest || i.destination === sched.dest));
-        adPicks.forEach(p => picks.push(p));
-        for (let i = adPicks.length; i < 3; i++) picks.push(makeFromTemplate('ad', sched.dest || 'santiago'));
-
-        // Adicionar ao kanban — garante 10 por dia
         if (!weekKanban[day.dateStr]) weekKanban[day.dateStr] = [];
-        picks.forEach(({ idea, idx }) => {
-          if (!weekKanban[day.dateStr].some(it => it.ideaIdx === idx)) {
-            weekKanban[day.dateStr].push({ ideaIdx: idx, platforms: [], idea });
+        SLOT_TEMPLATE.forEach(({ platform, count }) => {
+          for (let i = 0; i < count; i++) {
+            const slotIdea = {
+              _dashId: genDashId(),
+              _isSlot: true,          // ── v6 flag: visual placeholder ──
+              platform,
+              title: `[slot ${platform.toUpperCase()}]`,
+              tags: [],
+              source: 'Slot',
+              status: 'novo',
+              impact: null,
+              destination: null,
+              desc: '',
+              addedBy: 'Sistema',
+              addedAt: new Date().toISOString().slice(0, 10)
+            };
+            ideasData.push(slotIdea);
+            const idx = ideasData.length - 1;
+            weekKanban[day.dateStr].push({ ideaIdx: idx, platforms: [], idea: slotIdea });
           }
         });
       });
 
-      saveExtraIdeas(); // uma vez só, depois de gerar a semana inteira
+      saveExtraIdeas();
       renderKanban();
     }
 
@@ -6659,7 +6622,11 @@
         });
 
         if (weekKanban[day.dateStr]) {
-          weekKanban[day.dateStr].forEach(item => {
+          // ── v6: apply platform filter to day columns ──
+          const dayItems = kanbanDayPlatFilter
+            ? weekKanban[day.dateStr].filter(item => getIdeaPlatform(item.idea) === kanbanDayPlatFilter)
+            : weekKanban[day.dateStr];
+          dayItems.forEach(item => {
             cardsContainer.appendChild(createDayCard(item, day.dateStr));
           });
         }
@@ -6729,11 +6696,34 @@
       const destInfo = item.idea.destination ? DESTINATIONS.find(d => d.key === item.idea.destination) : null;
       const destFlag = destInfo ? `<span title="${destInfo.name}" style="font-size:18px;line-height:1;margin-left:2px;filter:drop-shadow(0 1px 2px rgba(0,0,0,0.15));">${destInfo.flag}</span>` : '';
 
+      // ── v6: placeholder slot ──
+      if (item.idea._isSlot) {
+        card.className = `kanban-card plat-${plat} kanban-slot`;
+        card.style.cssText += 'opacity:0.55;border-style:dashed;';
+        card.innerHTML = `
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px;">
+            <div class="kanban-plat-circle">${platLabel}</div>
+            <div class="kcard-top-actions" style="margin-left:auto;">
+              <button class="kcard-btn remove-btn" onclick="removeFromDay(event,${item.ideaIdx},'${dayDate}')" title="Remover slot">✕</button>
+            </div>
+          </div>
+          <div style="color:rgba(255,255,255,0.7);font-size:11px;font-weight:600;font-style:italic;">aguardando pauta</div>
+        `;
+        return card;
+      }
+
+      // ── v6: pronto-pra-gravar badge ──
+      const rtr = calcReadyToRecord(item.idea);
+      const readyBadge = rtr.ready && !isDone
+        ? `<span title="Pronto pra gravar ✓" style="display:inline-flex;align-items:center;gap:3px;background:#16A34A;color:white;font-size:9px;font-weight:800;padding:2px 7px;border-radius:10px;letter-spacing:.04em;margin-left:4px;">● PRONTO</span>`
+        : '';
+
       card.innerHTML = `
         <div class="kcard-top-row">
-          <div style="display:flex;align-items:center;gap:4px;">
+          <div style="display:flex;align-items:center;gap:4px;flex-wrap:wrap;">
             <div class="kanban-plat-circle">${platLabel}</div>
             ${destFlag}
+            ${readyBadge}
           </div>
           <div class="kcard-top-actions">
             <button class="kcard-btn nextweek-btn" onclick="moveToNextWeek(event,${item.ideaIdx},'${dayDate}')" title="Mover para próxima semana">→</button>

@@ -1,4 +1,4 @@
-# Máquina de Conteúdo V5 — We Love Chile
+# Máquina de Conteúdos v6 — We Love Chile
 
 ## O que é este projeto
 Dashboard de planejamento de conteúdo para redes sociais da We Love Chile. App single-file HTML sem framework, sem build step — abre direto no browser.
@@ -11,7 +11,8 @@ maquina-netlify/
 │   └── index.html          ← O APP INTEIRO (HTML + CSS + JS em um só arquivo)
 ├── netlify/
 │   └── functions/
-│       └── notion-proxy.mjs ← Proxy serverless para a API do Notion (evita CORS)
+│       ├── notion-proxy.mjs ← Proxy serverless para a API do Notion (evita CORS)
+│       └── ideas.mjs        ← v6: endpoint POST /api/ideas para Ops empurrar ideias
 └── netlify.toml             ← Config Netlify: publish=public, functions=netlify/functions
 ```
 
@@ -67,15 +68,46 @@ Ideias com status `gravado` em diante são **excluídas do banco de ideias** par
 - `pushIdeaToNotion(idea)` — chamado ao criar/editar ideia. Tem fila de retry em localStorage.
 - `saveWeekKanban()` — salva `weekKanban` em localStorage/IDB e dispara `_syncRecordingDatesToNotion()` com debounce de 1500ms.
 
-## Geração automática da semana (`autoGenerateWeek`)
+## Geração de slots semanais (`autoGenerateWeek`) — v6
 
-Gera **10 conteúdos por dia**, sempre:
-- 1× YouTube (Santiago) — fallback: template
-- 3× Reels (destino do dia) — fallback: template com destino
-- 3× TikTok — sempre cria ideias "Pessoal" (reutiliza existentes antes de criar novas)
-- 3× Ads (destino do dia) — fallback: template com destino
+Substituída a auto-geração de 10 peças genéricas por **slots placeholder**:
+- 1× YT + 3× IG + 3× TK + 3× AD = 10 slots por dia
+- Slots têm flag `_isSlot: true` e aparecem no kanban como cards tracejados "aguardando pauta"
+- Ops preenche manualmente ou via endpoint `/api/ideas`
+- Botão renomeado de "Gerar Semana" para "Criar Slots"
 
-Destinos por dia da semana definidos em `WEEK_SCHEDULE[]`.
+Destinos por dia da semana ainda definidos em `WEEK_SCHEDULE[]` (usado para filtros futuros).
+
+## API Ops — POST /api/ideas (v6)
+
+Endpoint serverless para agentes Ops criarem/atualizarem ideias na Máquina.
+
+**URL:** `POST https://maquina-de-conteudos.netlify.app/api/ideas`
+
+**Auth:** header `X-WeAgent-Token: <valor da env WEAGENT_TOKEN no Netlify>`
+
+**Payload JSON:**
+```json
+{
+  "title":         "string (obrigatório)",
+  "platform":      "yt | ig | tk | ad  (obrigatório)",
+  "destination":   "santiago | atacama | cusco | ...",
+  "scripts":       { "A": "texto", "B": "texto", "C": "texto" },
+  "recordingDate": "YYYY-MM-DD",
+  "status":        "novo (default) | gravado | ...",
+  "desc":          "texto",
+  "tags":          ["Categoria"]
+}
+```
+
+**Response 200:**
+```json
+{ "ok": true, "idea": { ...campos completos }, "dashId": "wlc_...", "action": "created" }
+```
+
+**Erros:** 401 (sem token / token errado), 400 (campo obrigatório faltando), 405 (método errado).
+
+**Config:** adicionar `WEAGENT_TOKEN` nas env vars do Netlify antes do deploy. O endpoint também faz push automático ao Notion.
 
 ## Persistência local
 
@@ -91,3 +123,28 @@ Chaves relevantes: `wlc_ideas`, `wlc_weekKanban`, `wlc_notion_token`, `wlc_notio
 - Botão "○ Gravar" no card → muda `idea.status = 'gravado'` + push para Notion
 - Botão "Produzir" num card → vai direto para etapa 5 do wizard (pula etapas 1 e 4)
 - "Data da gravação" no Notion é atualizada automaticamente quando ideia é colocada num dia do planejamento
+
+## Novas features v6
+
+### 1. Scripts persistidos (`idea.scripts`)
+- `idea.scripts = { A: '', B: '', C: '' }` — campo adicionado ao schema
+- Auto-save via `saveCurrentScriptVersion()`: blur + 1.5s debounce após input + ao trocar aba + ao copiar/exportar/avançar
+- Ao abrir o wizard com ideia pré-selecionada, carrega o script salvo (prioridade sobre template)
+
+### 2. Status "pronto-pra-gravar"
+- Função `calcReadyToRecord(idea)` calcula os 5 checks:
+  - pauta (título preenchido)
+  - packaging (título preenchido — mesmo campo por ora)
+  - script (scripts.A não vazio)
+  - destino (campo destination preenchido)
+  - SEO (apenas para platform === 'yt' — tags + description preenchidos)
+- Badge verde "● PRONTO" aparece no card do kanban quando todos os checks passam
+
+### 3. Filtro por plataforma no kanban
+- Barra de filtro acima do kanban (All / YT / IG / TK / AD)
+- Filtra os cards nas colunas de dias (não afeta a coluna Organizar — que tem seu próprio filtro)
+- Estado em `kanbanDayPlatFilter`
+
+### 4. Slots placeholder
+- Slots têm `_isSlot: true` e são renderizados como cards tracejados semitransparentes
+- Não abrem drawer ao clicar, têm apenas botão de remover
