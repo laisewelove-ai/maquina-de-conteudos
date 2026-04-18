@@ -422,10 +422,11 @@
       border-radius: var(--radius);
       padding: 16px;
       display: flex;
-      gap: 12px;
+      flex-direction: column;
+      gap: 10px;
       min-height: 0;
-      align-items: stretch;
-      max-height: 200px;
+      height: 100%;
+      max-height: none;
       overflow-y: auto;
     }
 
@@ -567,26 +568,14 @@
     .today-sub { font-size: 12px; color: #444; font-weight: 600; }
 
     /* Weekly mini bar chart */
-    .week-bars { display: flex; gap: 5px; align-items: flex-end; height: 40px; }
+    .week-bars { display: flex; gap: 4px; align-items: flex-end; height: 40px; }
     .week-bar-col { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px; }
-    .week-bar { width: 100%; border-radius: 3px 3px 0 0; min-height: 3px; background: rgba(0,0,0,0.15); transition: height .3s; }
+    .week-bar { flex: 1; width: 100%; border-radius: 3px; min-height: 4px; background: rgba(0,0,0,0.15); position: relative; }
     .week-bar.has-data { background: var(--black); }
     .week-bar.today-bar { opacity: 0.5; }
-    .week-bar-label { font-size: 10px; color: #444; font-weight: 700; }
+    .week-bar-fill { background: var(--red); border-radius: 3px; width: 100%; position: absolute; bottom: 0; }
+    .week-bar-label { font-size: 9px; text-align: center; margin-top: 3px; color: rgba(0,0,0,0.5); font-weight: 700; }
     .week-bar-label.today-lbl { color: var(--black); font-weight: 800; }
-
-    .next-update-box {
-      background: rgba(255,255,255,0.4);
-      border-radius: 8px;
-      border: 1.5px solid rgba(0,0,0,0.2);
-      padding: 12px 14px;
-      display: flex;
-      flex-direction: column;
-      gap: 3px;
-    }
-    .nu-label { font-size: 11px; font-weight: 700; color: var(--black); text-transform: uppercase; letter-spacing: .06em; }
-    .nu-date { font-size: 15px; font-weight: 800; color: #000; font-family: 'Lufga', sans-serif; }
-    .nu-sub { font-size: 11px; color: #444; }
 
     /* ─── ZONE CHECKLIST (left column row 2) ─── */
 
@@ -644,7 +633,7 @@
       align-items: center;
       gap: 8px;
       padding: 8px 12px;
-      background: var(--yellow);
+      background: #F2EDE3;
       border-radius: 8px;
       border: 2px solid #000;
       transition: box-shadow .15s;
@@ -730,14 +719,15 @@
       padding: 0;
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: 8px;
+      flex: 1;
     }
 
     .idea-textarea-sim {
       background: #252B3D;
       border: 1.5px dashed #3A4255;
       border-radius: 8px;
-      min-height: 72px;
+      min-height: 80px;
       padding: 10px;
       font-size: 13px;
       color: #fff;
@@ -748,6 +738,7 @@
       box-sizing: border-box;
       font-family: 'Lufga', sans-serif;
       outline: none;
+      flex: 1;
     }
 
     .idea-textarea-sim:focus { border-color: var(--teal); }
@@ -1734,13 +1725,6 @@
             <div class="week-bars" id="homeWeekBars"></div>
           </div>
 
-          <!-- Bloco 4: Próxima atualização (sem divider embaixo) -->
-          <div class="next-update-box">
-            <div class="nu-label">🔄 Próx. atualização</div>
-            <div class="nu-date">Segunda, 20/04</div>
-            <div class="nu-sub">banco de ideias</div>
-          </div>
-
         </div>
 
         <!-- ── ZONA 2: CHECKLIST ── -->
@@ -1818,8 +1802,6 @@
               </div>
             </div>
 
-            <div class="last-label">Últimas adicionadas</div>
-            <div id="homeLastAdded"></div>
           </div>
 
         </div><!-- /zone-right -->
@@ -3249,7 +3231,7 @@
         if (!weeklyQueue[currentWeekIdx]) weeklyQueue[currentWeekIdx] = [];
         weeklyQueue[currentWeekIdx].push(idea);
         recentlyAdded.unshift({ title: idea.title, plat: quickIdeaPlatform || 'ig', dest: 'semana' });
-        clearQuickForm(); renderHomeLastAdded();
+        clearQuickForm(); // renderHomeLastAdded();
       });
 
       document.getElementById('destBanco').addEventListener('click', () => {
@@ -3259,7 +3241,7 @@
         ideasData.push(idea);
         saveExtraIdeas(); pushIdeaToNotion(idea);
         recentlyAdded.unshift({ title: idea.title, plat: quickIdeaPlatform || 'ig', dest: 'banco' });
-        clearQuickForm(); renderHomeLastAdded();
+        clearQuickForm(); // renderHomeLastAdded();
       });
     }
 
