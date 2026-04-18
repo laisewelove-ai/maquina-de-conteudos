@@ -5654,7 +5654,7 @@
       let ideas = getPlatformIdeas(currentPlatformFilter);
       // Ocultar do banco ideias já gravadas/publicadas, templates e placeholders "Pessoal"
       ideas = ideas.filter(i => !['gravado','em_edicao','fazer_correcoes','aprovado','programado','publicado','analisado'].includes(i.status));
-      ideas = ideas.filter(i => i.source !== 'Template' && i.title !== 'Pessoal');
+      ideas = ideas.filter(i => i.source !== 'Template' && !/^Pessoal(\s+\d+)?$/i.test(i.title));
       if (activeSourceFilter) ideas = ideas.filter(i => i.source === activeSourceFilter);
       if (activeDestFilter) {
         if (activeDestFilter === '__none__') ideas = ideas.filter(i => !i.destination);
@@ -7510,17 +7510,22 @@
         return { idea, idx };
       }
 
-      // Cria uma ideia "Pessoal" para TikTok
+      // Cria uma ideia "Pessoal XX" numerada para TikTok — nunca repete o número
+      let _pessoalCounter = null;
       function makePessoal() {
-        // Reutiliza qualquer ideia "Pessoal" existente no banco (incluindo as já no kanban)
-        const existing = ideasData
-          .map((idea, idx) => ({ idea, idx }))
-          .find(({ idea, idx }) => !usedIdxs.has(idx) && getIdeaPlatform(idea) === 'tk' && idea.title === 'Pessoal');
-        if (existing) { usedIdxs.add(existing.idx); return existing; }
+        if (_pessoalCounter === null) {
+          // Encontra o maior número já usado em qualquer "Pessoal NN" no banco
+          const nums = ideasData
+            .map(i => { const m = i.title && i.title.match(/^Pessoal\s+(\d+)$/i); return m ? parseInt(m[1], 10) : 0; })
+            .filter(n => n > 0);
+          _pessoalCounter = nums.length > 0 ? Math.max(...nums) : 0;
+        }
+        _pessoalCounter++;
+        const num = String(_pessoalCounter).padStart(2, '0');
         const idea = {
           _dashId: genDashId(),
           platform: 'tk',
-          title: 'Pessoal',
+          title: `Pessoal ${num}`,
           tags: ['Pessoal'],
           source: 'Manual',
           status: 'novo',
