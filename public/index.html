@@ -53,15 +53,38 @@
       background: var(--bg);
       color: var(--black);
       line-height: 1.5;
-      display: flex;
       height: 100vh;
       overflow: hidden;
     }
 
-    /* ─── SIDEBAR (repurposed topbar) ─── */
+    /* ─── APP LAYOUT ─── */
+    .app-wrap {
+      display: flex;
+      flex-direction: row;
+      height: 100vh;
+      overflow: hidden;
+    }
+    .sidebar {
+      width: 180px;
+      min-width: 180px;
+      background: var(--bg);
+      border-right: 1px solid #DDD6C9;
+      display: flex;
+      flex-direction: column;
+      padding: 16px 12px;
+      gap: 6px;
+      overflow-y: auto;
+    }
+    .main-area {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      min-width: 0;
+    }
+
+    /* ─── TOPBAR (horizontal strip inside main-area) ─── */
     .topbar {
-      position: fixed;
-      top: 0; left: 0; right: 0;
       height: 52px;
       background: var(--bg);
       border-bottom: 2px solid #000;
@@ -70,7 +93,6 @@
       align-items: center;
       padding: 0 16px;
       gap: 10px;
-      z-index: 1000;
       flex-shrink: 0;
       overflow: visible;
     }
@@ -239,25 +261,33 @@
     }
 
     /* Notion pill and save btn in sidebar */
-    #notionSyncPill, .wlc-save-btn {
-      width: 100%;
-      justify-content: flex-start;
-      font-size: 11px;
-      font-weight: 700;
-      padding: 6px 12px;
-      border-radius: 8px;
-      border: 1.5px solid #DDD6C9;
-      background: white;
-      color: var(--gray);
+    .notion-pill {
+      font-size: 10px;
+      padding: 4px 8px;
+      border-radius: 12px;
       cursor: pointer;
-      transition: all .15s;
+      background: transparent;
+      border: 1px solid #ccc;
+      color: #888;
+      white-space: nowrap;
       display: flex;
       align-items: center;
-      gap: 5px;
+      gap: 4px;
       font-family: 'Lufga', sans-serif;
+      transition: all .15s;
     }
-
-    #notionSyncPill:hover, .wlc-save-btn:hover { border-color: #000; color: #000; }
+    .wlc-save-btn {
+      font-size: 12px;
+      padding: 4px 8px;
+      border-radius: 8px;
+      background: transparent;
+      border: 1px solid #ccc;
+      color: #888;
+      cursor: pointer;
+      font-family: 'Lufga', sans-serif;
+      transition: all .15s;
+    }
+    .wlc-save-btn:hover, .notion-pill:hover { background: #f0ece4; }
 
     .wlc-save-btn.saved {
       background: rgba(34,197,94,0.1);
@@ -278,7 +308,7 @@
     /* ─── MAIN CONTAINER ─── */
     .main-container {
       margin-left: 0;
-      margin-top: 52px;
+      margin-top: 0;
       flex: 1;
       min-height: 0;
       overflow: hidden;
@@ -355,6 +385,7 @@
       grid-template-rows: 1fr auto;
       gap: 8px;
       min-height: 0;
+      align-items: stretch;
     }
 
     .banco-ideias {
@@ -394,6 +425,16 @@
       gap: 12px;
       min-height: 0;
       align-items: stretch;
+      max-height: 200px;
+      overflow-y: auto;
+    }
+
+    /* Altura uniforme segunda linha do grid home */
+    .zone-checklist,
+    .banco-ideias,
+    .semana-card {
+      max-height: 420px;
+      overflow-y: auto;
     }
 
     .big-num {
@@ -1604,6 +1645,29 @@
   <!--%%WLC_USER_DATA_START%%-->
   <script id="wlc-user-data" type="application/json">{"ideas":[],"page":"home","platform":"instagram"}</script>
   <!--%%WLC_USER_DATA_END%%-->
+  <div class="app-wrap">
+  <!-- ═══ SIDEBAR ═══ -->
+  <div class="sidebar">
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">
+      <div class="sidebar-logo-grid"><span></span><span></span><span></span><span></span></div>
+      <div>
+        <div class="sidebar-wordmark">Máquina</div>
+        <div class="sidebar-version">V5 · WLC</div>
+      </div>
+    </div>
+    <div class="t-nav active" data-page="home">Painel</div>
+    <div class="t-nav" data-page="ideas">Ideias</div>
+    <div class="t-nav" data-page="week">Semana</div>
+    <div class="t-nav" data-page="wizard">Produzir</div>
+    <div class="t-nav" data-page="metrics">Métricas</div>
+    <div class="t-nav" data-page="analyzer">Analisador</div>
+    <div style="flex:1"></div>
+    <div id="notionSyncPill" class="notion-pill" title="Sincronizar com Notion" onclick="openNotionModal()">◯ Notion</div>
+    <button id="wlcSaveBtn" class="wlc-save-btn" onclick="wlcSaveFile()" title="Salvar">💾</button>
+  </div>
+
+  <!-- ═══ MAIN AREA ═══ -->
+  <div class="main-area">
   <!-- ═══ TOP BAR ═══ -->
   <div class="topbar">
     <!-- Pill data curta -->
@@ -1620,16 +1684,6 @@
     <span class="t-flag">🌟</span>
     <!-- Spacer -->
     <div class="t-sp"></div>
-    <!-- Nav oculto mas funcional (JS depende disso) -->
-    <div class="t-nav active" data-page="home" style="display:none">Painel</div>
-    <div class="t-nav" data-page="ideas" style="display:none">Ideias</div>
-    <div class="t-nav" data-page="week" style="display:none">Semana</div>
-    <div class="t-nav" data-page="wizard" style="display:none">Produzir</div>
-    <div class="t-nav" data-page="metrics" style="display:none">Métricas</div>
-    <div class="t-nav" data-page="analyzer" style="display:none">Analisador</div>
-    <!-- Notion e Salvar -->
-    <div id="notionSyncPill" class="notion-pill" title="Sincronizar com Notion" onclick="openNotionModal()">◯ Notion</div>
-    <button id="wlcSaveBtn" class="wlc-save-btn" onclick="wlcSaveFile()" title="Salvar">💾</button>
     <!-- Botão + Ideia -->
     <button class="t-add-btn" onclick="showPage('ideas')">+ Ideia</button>
     <!-- Avatar -->
@@ -2371,6 +2425,9 @@
       <button class="btn btn-primary" id="successClose" style="width: 100%;">Voltar ao Painel</button>
     </div>
   </div>
+
+  </div><!-- /main-area -->
+  </div><!-- /app-wrap -->
 
   <script>
     // Data structures
