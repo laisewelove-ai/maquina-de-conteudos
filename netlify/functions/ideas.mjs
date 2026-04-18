@@ -153,19 +153,73 @@ export default async (req) => {
     };
   }
 
-  // ── Push to Notion ──
+  // ── Push to Notion (upsert by title) ──
   let notionPageId = null;
   let action = 'created';
+  let finalDashId = dashId; // may be overridden if page already exists
 
   try {
+<<<<<<< HEAD
     const createRes = await notionRequest('POST', 'pages', {
       parent: { database_id: NOTION_DB_IDEAS },
       properties: notionProps,
     });
+=======
+    const notionToken = process.env.NOTION_TOKEN || NOTION_TOKEN;
 
-    if (createRes.ok) {
-      const page = await createRes.json();
-      notionPageId = page.id;
+    // 1. Query database for existing page with same title
+    const queryRes = await notionRequest('POST', `databases/${NOTION_DB_IDEAS}/query`, {
+      filter: {
+        property: 'Nome',
+        title: { equals: title.trim() },
+      },
+      page_size: 1,
+    }, notionToken);
+>>>>>>> 90029c4 (fix: endpoint /api/ideas — URL proxy Notion correta + upsert por título)
+
+    let existingPage = null;
+    if (queryRes.ok) {
+      const queryData = await queryRes.json();
+      if (queryData.results && queryData.results.length > 0) {
+        existingPage = queryData.results[0];
+      }
+    }
+
+    if (existingPage) {
+      // 2a. UPDATE — preserve existing Dashboard ID, merge scripts
+      const existingPageId = existingPage.id;
+      const existingDashIdProp = existingPage.properties?.['Dashboard ID']?.rich_text?.[0]?.plain_text;
+      if (existingDashIdProp) {
+        finalDashId = existingDashIdProp; // preserve original dashId
+        // Remove Dashboard ID from update props so we don't overwrite it
+        delete notionProps['Dashboard ID'];
+      }
+
+      // If no new scripts provided, preserve existing scripts from Notion description
+      if (!scripts || (!scripts.A && !scripts.B && !scripts.C)) {
+        delete notionProps['Descrição'];
+      }
+
+      const updateRes = await notionRequest('PATCH', `pages/${existingPageId}`, {
+        properties: notionProps,
+      }, notionToken);
+
+      if (updateRes.ok) {
+        notionPageId = existingPageId;
+        action = 'updated';
+      }
+    } else {
+      // 2b. CREATE — new page
+      const createRes = await notionRequest('POST', 'pages', {
+        parent: { database_id: NOTION_DB_IDEAS },
+        properties: notionProps,
+      }, notionToken);
+
+      if (createRes.ok) {
+        const page = await createRes.json();
+        notionPageId = page.id;
+        action = 'created';
+      }
     }
   } catch(e) {
     // Notion push failed — not critical, return the idea object anyway
@@ -174,7 +228,7 @@ export default async (req) => {
 
   // ── Build response idea object ──
   const idea = {
-    _dashId: dashId,
+    _dashId: finalDashId,
     platform: platSlug,
     title: title.trim(),
     tags: Array.isArray(tags) ? tags : [],
@@ -194,7 +248,7 @@ export default async (req) => {
     _notionPageId: notionPageId,
   };
 
-  return new Response(JSON.stringify({ ok: true, idea, dashId, action }), {
+  return new Response(JSON.stringify({ ok: true, idea, dashId: finalDashId, action }), {
     status: 200,
     headers: corsHeaders,
   });

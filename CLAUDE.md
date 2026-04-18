@@ -85,7 +85,7 @@ Destinos por dia da semana ainda definidos em `WEEK_SCHEDULE[]` (usado para filt
 
 Endpoint serverless para agentes Ops criarem/atualizarem ideias na Máquina.
 
-**URL:** `POST https://maquina-de-conteudos.netlify.app/api/ideas`
+**URL:** `POST https://maquinadeconteudos47.netlify.app/api/ideas`
 
 **Auth:** header `X-WeAgent-Token: <valor da env WEAGENT_TOKEN no Netlify>`
 
@@ -105,12 +105,19 @@ Endpoint serverless para agentes Ops criarem/atualizarem ideias na Máquina.
 
 **Response 200:**
 ```json
-{ "ok": true, "idea": { ...campos completos }, "dashId": "wlc_...", "action": "created" }
+{ "ok": true, "idea": { ...campos completos }, "dashId": "wlc_...", "action": "created"|"updated" }
 ```
+
+**Comportamento upsert:** o endpoint busca no Notion por uma página com `Nome = title` antes de criar.
+- Se **não existir**: cria nova página → `action: "created"`.
+- Se **já existir**: atualiza via `PATCH /pages/<id>` → `action: "updated"`.
+  - `Dashboard ID` original é preservado (não sobrescrito).
+  - Se `scripts` não vier no payload, o campo `Descrição` existente no Notion é mantido (scripts antigos preservados).
+  - Se `scripts` vier no payload, substitui o campo `Descrição` com o novo conteúdo.
 
 **Erros:** 401 (sem token / token errado), 400 (campo obrigatório faltando), 405 (método errado).
 
-**Config:** adicionar `WEAGENT_TOKEN` nas env vars do Netlify antes do deploy. O endpoint também faz push automático ao Notion.
+**Config:** adicionar `WEAGENT_TOKEN` nas env vars do Netlify antes do deploy. O endpoint também faz push automático ao Notion via proxy relativo (`process.env.URL + /api/notion`).
 
 ## Persistência local
 
