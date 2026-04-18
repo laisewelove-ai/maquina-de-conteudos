@@ -1,0 +1,484 @@
+/*
+  Máquina de Conteúdos — Identidade Visual v5
+  Gerado por Pix em 2026-04-18
+  Baseado na referência pixel-level: Referência identidade visual — Laise — [18.04.2026].png
+  Design system: neo-brutalist, paleta bege/amarelo/vermelho/roxo/teal
+*/
+
+/* ──────────────────────────────────────────
+   CSS CUSTOM PROPERTIES (Design Tokens)
+   ────────────────────────────────────────── */
+:root {
+  /* Cores */
+  --color-bg:           #F2EDE4;
+  --color-sidebar:      #1A1A1A;
+  --color-sidebar-text: #FFFFFF;
+  --color-header-bg:    #EDBA18;
+  --color-header-text:  #1A1A1A;
+
+  --color-card-gravar:  #D93025;
+  --color-card-ativas:  #6B2FA0;
+  --color-card-agend:   #1AADA0;
+  --color-card-dark:    #1C1C1C;
+  --color-card-light:   #FFFFFF;
+
+  --color-accent-yellow: #EDBA18;
+  --color-accent-red:    #D93025;
+  --color-accent-green:  #2ABF6B;
+
+  --color-text-primary: #1A1A1A;
+  --color-text-muted:   #6B6B6B;
+  --color-text-light:   #FFFFFF;
+
+  --color-border:       #1A1A1A;
+
+  /* Tipografia */
+  --font-primary:       'Lufga', 'Poppins', 'Inter', sans-serif;
+  --font-display-weight: 900;
+  --font-label-spacing: 0.12em;
+  --font-label-weight:  700;
+
+  /* Bordas neo-brutalist */
+  --border-width:  2px;
+  --border:        2px solid #1A1A1A;
+  --radius-none:   0px;
+  --radius-sm:     4px;
+  --radius-md:     8px;
+  --radius-pill:   50px;
+
+  /* Sombras duras (neo-brutalist) */
+  --shadow-card:   4px 4px 0px #1A1A1A;
+  --shadow-btn:    3px 3px 0px #1A1A1A;
+  --shadow-hover:  6px 6px 0px #1A1A1A;
+
+  /* Espaçamentos */
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 40px;
+}
+
+/* ──────────────────────────────────────────
+   RESET & BASE — substitui o fundo escuro anterior
+   ────────────────────────────────────────── */
+html {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Página principal (index.html) e planejadores */
+body {
+  background: var(--color-bg) !important;
+  color: var(--color-text-primary) !important;
+  font-family: var(--font-primary) !important;
+}
+
+/* Remove o pseudo-elemento de gradiente escuro */
+body::before {
+  display: none !important;
+}
+
+/* Remove sparkles animados (estilo anterior, fundo escuro) */
+.sparkle {
+  display: none !important;
+}
+
+/* ──────────────────────────────────────────
+   SCROLLBAR — tom bege/amarelo
+   ────────────────────────────────────────── */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: rgba(26, 26, 26, 0.08);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: 0;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #333;
+}
+
+/* ──────────────────────────────────────────
+   HEADER — fundo amarelo ouro
+   ────────────────────────────────────────── */
+header {
+  background: var(--color-header-bg) !important;
+  color: var(--color-header-text) !important;
+  border-bottom: var(--border) !important;
+}
+
+/* Sobrescreve gradiente de texto do título no header */
+header h1,
+header .title,
+.header h1 {
+  background: none !important;
+  -webkit-background-clip: unset !important;
+  -webkit-text-fill-color: var(--color-header-text) !important;
+  background-clip: unset !important;
+  color: var(--color-header-text) !important;
+  font-weight: var(--font-display-weight) !important;
+  letter-spacing: -0.02em;
+}
+
+/* Badge/pill do subtitle no header */
+header [style*="linear-gradient"],
+.header [style*="linear-gradient"] {
+  background: var(--color-card-gravar) !important;
+  color: var(--color-text-light) !important;
+  border-radius: var(--radius-sm) !important;
+  border: var(--border) !important;
+  box-shadow: var(--shadow-btn) !important;
+}
+
+/* Logo badge */
+.logo-badge {
+  background: var(--color-card-dark) !important;
+  border: var(--border) !important;
+  color: var(--color-text-light) !important;
+  border-radius: var(--radius-sm) !important;
+  box-shadow: var(--shadow-btn) !important;
+}
+
+/* ──────────────────────────────────────────
+   SIDEBAR / NAV LATERAL
+   ────────────────────────────────────────── */
+nav,
+aside,
+.sidebar,
+[class*="sidebar"],
+[class*="nav-"] {
+  background: var(--color-sidebar) !important;
+  color: var(--color-sidebar-text) !important;
+  border-right: var(--border) !important;
+}
+
+/* ──────────────────────────────────────────
+   CARDS — neo-brutalist: borda sólida + sombra dura
+   ────────────────────────────────────────── */
+
+/* Cards genéricos com background escuro anterior */
+[style*="rgba(255,255,255,0.06)"],
+[style*="rgba(255,255,255,0.08)"],
+[style*="rgba(255,255,255,0.1)"],
+[style*="rgba(255,255,255,0.04)"],
+[style*="rgba(255,255,255,0.05)"] {
+  background: var(--color-card-light) !important;
+  border: var(--border) !important;
+  box-shadow: var(--shadow-card) !important;
+  border-radius: var(--radius-sm) !important;
+  color: var(--color-text-primary) !important;
+}
+
+/* Cards com fundo escuro explícito — manter escuro (estilo checklist dark) */
+[style*="background: rgba(0,0,0"],
+[style*="background:rgba(0,0,0"] {
+  background: var(--color-card-dark) !important;
+  color: var(--color-text-light) !important;
+  border: var(--border) !important;
+  box-shadow: var(--shadow-card) !important;
+}
+
+/* Container de cards (grid sections) */
+section {
+  background: transparent !important;
+}
+
+/* ──────────────────────────────────────────
+   TÍTULO PRINCIPAL DOS PLANEJADORES
+   ────────────────────────────────────────── */
+.title {
+  color: var(--color-text-primary) !important;
+  -webkit-text-fill-color: var(--color-text-primary) !important;
+  background: none !important;
+  -webkit-background-clip: unset !important;
+  background-clip: unset !important;
+}
+
+/* ──────────────────────────────────────────
+   BADGES DE CATEGORIA (Half Day, Full Day…)
+   ────────────────────────────────────────── */
+/* Mantemos as cores de categoria funcionais, mas com borda */
+[style*="borderRadius: 20"],
+[style*="border-radius: 20px"],
+[style*="borderRadius: 30"] {
+  border: var(--border) !important;
+  box-shadow: var(--shadow-btn) !important;
+  font-weight: var(--font-label-weight) !important;
+}
+
+/* ──────────────────────────────────────────
+   BOTÕES — neo-brutalist chunky
+   ────────────────────────────────────────── */
+button {
+  font-family: var(--font-primary) !important;
+  border-radius: var(--radius-sm) !important;
+  border: var(--border) !important;
+  box-shadow: var(--shadow-btn) !important;
+  font-weight: 700 !important;
+  transition: transform 0.1s ease, box-shadow 0.1s ease !important;
+  cursor: pointer !important;
+}
+
+button:hover {
+  transform: translate(1px, 1px) !important;
+  box-shadow: 2px 2px 0px var(--color-border) !important;
+}
+
+button:active {
+  transform: translate(2px, 2px) !important;
+  box-shadow: 1px 1px 0px var(--color-border) !important;
+}
+
+/* Botão CTA principal (gradiente laranja→vermelho anterior → vermelho sólido) */
+button[style*="linear-gradient(135deg, #D97706"],
+button[style*="linear-gradient(135deg, #EC4899"],
+a[style*="linear-gradient(135deg, #10B981"] {
+  background: var(--color-card-gravar) !important;
+  color: var(--color-text-light) !important;
+  border-radius: var(--radius-sm) !important;
+  border: var(--border) !important;
+  box-shadow: var(--shadow-btn) !important;
+  text-decoration: none !important;
+}
+
+/* Botão "Selecionado" (verde) */
+button[style*="#10B981"] {
+  background: var(--color-accent-green) !important;
+  color: var(--color-text-primary) !important;
+  border: var(--border) !important;
+  box-shadow: var(--shadow-btn) !important;
+}
+
+/* Botão de filtro "Todos" ativo */
+button[style*="linear-gradient(135deg, #D97706, #DC2626)"] {
+  background: var(--color-text-primary) !important;
+  color: var(--color-text-light) !important;
+}
+
+/* Botões de dia (D1, D2…) no itinerário */
+button[style*="rgba(255,255,255,0.1)"] {
+  background: var(--color-bg) !important;
+  color: var(--color-text-primary) !important;
+  border: var(--border) !important;
+  box-shadow: var(--shadow-btn) !important;
+}
+
+/* Botão remover (X) no itinerário */
+button[style*="rgba(220,38,38,0.2)"] {
+  background: var(--color-card-gravar) !important;
+  color: var(--color-text-light) !important;
+  border: var(--border) !important;
+  box-shadow: var(--shadow-btn) !important;
+}
+
+/* ──────────────────────────────────────────
+   LINKS / CTA WHATSAPP
+   ────────────────────────────────────────── */
+a[href*="wa.me"],
+a[style*="linear-gradient"] {
+  background: var(--color-accent-green) !important;
+  color: var(--color-text-primary) !important;
+  border: var(--border) !important;
+  box-shadow: var(--shadow-btn) !important;
+  border-radius: var(--radius-sm) !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  text-decoration: none !important;
+  font-weight: 700 !important;
+}
+
+a[href*="wa.me"]:hover {
+  transform: translate(1px, 1px);
+  box-shadow: 2px 2px 0px var(--color-border) !important;
+}
+
+/* ──────────────────────────────────────────
+   TAGS / CHIPS de destino e categorias
+   ────────────────────────────────────────── */
+/* Tags de texto dos cards (antes: fundo rgba branco semitransparente) */
+span[style*="rgba(255,255,255,0.1)"] {
+  background: var(--color-bg) !important;
+  color: var(--color-text-primary) !important;
+  border: 1px solid var(--color-border) !important;
+  border-radius: var(--radius-sm) !important;
+}
+
+/* Counter badge */
+.counter-badge {
+  background: var(--color-card-light) !important;
+  border: var(--border) !important;
+  color: var(--color-text-primary) !important;
+  box-shadow: var(--shadow-card) !important;
+  border-radius: var(--radius-sm) !important;
+}
+
+/* ──────────────────────────────────────────
+   SEÇÕES COM GRADIENTE ESCURO — viram bege
+   ────────────────────────────────────────── */
+[style*="linear-gradient(180deg, rgba(135,62,28"],
+[style*="linear-gradient(180deg, rgba(45,21,0"],
+[style*="linear-gradient(180deg, rgba(26,10,0"] {
+  background: var(--color-bg) !important;
+  border-top: var(--border) !important;
+}
+
+/* ──────────────────────────────────────────
+   ITINERÁRIO / DAY COLUMNS
+   ────────────────────────────────────────── */
+/* Header do dia (com gradiente antigo) */
+[style*="linear-gradient(135deg, #D97706, #DC2626)"] {
+  background: var(--color-card-gravar) !important;
+  border-bottom: var(--border) !important;
+}
+
+/* Header do dia sem passeios */
+[style*="rgba(255,255,255,0.08)"] {
+  background: rgba(26, 26, 26, 0.08) !important;
+  color: var(--color-text-primary) !important;
+}
+
+/* ──────────────────────────────────────────
+   TEXTO — sobrescreve cores claras do tema dark
+   ────────────────────────────────────────── */
+/* Textos em amarelo/âmbar que não fazem sentido no tema claro */
+[style*="color: #FDE68A"],
+[style*="color:#FDE68A"],
+[style*="color: #FCD34D"],
+[style*="color:#FCD34D"] {
+  color: var(--color-text-muted) !important;
+}
+
+/* Textos verdes (valores promoção) — manter legíveis */
+[style*="color: #6EE7B7"],
+[style*="color:#6EE7B7"],
+[style*="color: #A7F3D0"],
+[style*="color:#A7F3D0"] {
+  color: var(--color-card-agend) !important;
+  font-weight: 700 !important;
+}
+
+/* Textos vermelhos (preço original, riscado) — manter */
+[style*="color: #F87171"],
+[style*="color:#F87171"],
+[style*="color: #FCA5A5"],
+[style*="color:#FCA5A5"] {
+  color: var(--color-card-gravar) !important;
+}
+
+/* Texto monospace de debug/label */
+[style*="font-family: ui-monospace"],
+[style*="fontFamily: \"ui-monospace"] {
+  color: var(--color-text-muted) !important;
+}
+
+/* ──────────────────────────────────────────
+   FOOTER
+   ────────────────────────────────────────── */
+footer {
+  background: var(--color-sidebar) !important;
+  color: var(--color-text-light) !important;
+  border-top: var(--border) !important;
+}
+
+footer * {
+  color: rgba(255, 255, 255, 0.7) !important;
+}
+
+footer [style*="font-weight: 700"],
+footer strong {
+  color: var(--color-text-light) !important;
+}
+
+/* ──────────────────────────────────────────
+   PROGRESS BAR (meta do mês)
+   ────────────────────────────────────────── */
+[style*="background: #"] {
+  /* será sobrescrito abaixo por seletor mais específico se necessário */
+}
+
+/* ──────────────────────────────────────────
+   CHECKMARK SELECIONADO nos cards de tour
+   ────────────────────────────────────────── */
+[style*="background: #10B981"][style*="borderRadius: \"50%\""],
+[style*="background: #10B981"][style*="border-radius: 50%"] {
+  background: var(--color-accent-green) !important;
+  border: var(--border) !important;
+  border-radius: var(--radius-none) !important;
+}
+
+/* ──────────────────────────────────────────
+   MODO CLARO — ajustes finais de contraste
+   ────────────────────────────────────────── */
+
+/* Texto "Day free" / "Dia livre" nos dias vazios */
+[style*="rgba(255,255,255,0.3)"] {
+  color: var(--color-text-muted) !important;
+}
+
+/* Badge de contagem nos dias */
+[style*="rgba(255,255,255,0.2)"] {
+  background: rgba(26, 26, 26, 0.12) !important;
+  color: var(--color-text-primary) !important;
+}
+
+/* ──────────────────────────────────────────
+   SUBTITLE BADGE (Santiago, Atacama, Vinhos)
+   ────────────────────────────────────────── */
+.subtitle-badge {
+  background: var(--color-card-gravar) !important;
+  border: var(--border) !important;
+  box-shadow: var(--shadow-btn) !important;
+  border-radius: var(--radius-sm) !important;
+  color: var(--color-text-light) !important;
+}
+
+/* ──────────────────────────────────────────
+   HOW IT WORKS (passos 1-2-3)
+   ────────────────────────────────────────── */
+[style*="rgba(255,255,255,0.06)"][style*="border: 1px solid rgba(255,255,255,0.1)"] {
+  background: var(--color-card-light) !important;
+  border: var(--border) !important;
+  box-shadow: var(--shadow-card) !important;
+}
+
+/* ──────────────────────────────────────────
+   ECONOMY BOX (sua economia total)
+   ────────────────────────────────────────── */
+[style*="rgba(16,185,129,0.15)"] {
+  background: rgba(26, 173, 160, 0.12) !important;
+  border: 2px solid var(--color-card-agend) !important;
+  border-radius: var(--radius-sm) !important;
+}
+
+/* ──────────────────────────────────────────
+   TAGLINE / ITALIC TEXT
+   ────────────────────────────────────────── */
+.tagline {
+  color: var(--color-text-muted) !important;
+}
+
+.tagline-highlight {
+  color: var(--color-text-primary) !important;
+}
+
+/* ──────────────────────────────────────────
+   CARD IMAGE OVERLAY (gradiente sobre foto)
+   ────────────────────────────────────────── */
+/* Mantém o gradiente de sobreposição nas imagens dos tours — essencial para legibilidade */
+[style*="linear-gradient(transparent, rgba(0,0,0,0.7))"] {
+  background: linear-gradient(transparent, rgba(0, 0, 0, 0.7)) !important;
+}
+
+/* ──────────────────────────────────────────
+   LAYOUT CONTAINERS
+   ────────────────────────────────────────── */
+.container,
+.container-inner,
+#root {
+  position: relative;
+  z-index: 1;
+}
