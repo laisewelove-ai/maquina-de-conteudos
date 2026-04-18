@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Planejador de Combos — Deserto do Atacama | We Love Chile</title>
+    <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+    <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(180deg, #1a0a00 0%, #2d1500 30%, #1a0a00 100%);
+            color: #fff;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background:
+                radial-gradient(ellipse 600px 400px at 20% 30%, rgba(217, 119, 6, 0.10) 0%, transparent 70%),
+                radial-gradient(ellipse 500px 500px at 80% 20%, rgba(220, 38, 38, 0.08) 0%, transparent 70%),
+                radial-gradient(ellipse 400px 300px at 50% 70%, rgba(217, 119, 6, 0.06) 0%, transparent 70%),
+                radial-gradient(ellipse 300px 300px at 90% 80%, rgba(180, 83, 9, 0.06) 0%, transparent 70%);
+            pointer-events: none;
+            z-index: 0;
+            animation: shimmer 10s ease-in-out infinite alternate;
+        }
+
+        @keyframes shimmer {
+            0% { opacity: 0.6; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.02); }
+            100% { opacity: 0.7; transform: scale(0.98); }
+        }
+
+        #root {
+            position: relative;
+            z-index: 1;
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(255,255,255,0.05);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(217,119,6,0.4);
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(217,119,6,0.7);
+        }
+
+        button { font-family: 'Poppins', sans-serif; }
+
+        .card-img-fallback {
+            background: linear-gradient(135deg, #2d1500, #451f00);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: rgba(255,255,255,0.2);
+            font-size: 40px;
+        }
+    </style>
+</head>
+<body>
+<div id="root"></div>
+
+<script type="text/babel">
+const { useState, useMemo, useCallback } = React;
+
+/* ════════════════════════════════════════════════════════════════
+   DADOS DOS PASSEIOS — Planejador de Combos Deserto do Atacama
+   Campanha Comunidade WeLovers 2026
+   ════════════════════════════════════════════════════════════════ */
+const CATEGORIES = [
+  { id: "halfday",  label: "Half Day",  color: "#D97706" },
+  { id: "fullday",  label: "Full Day",  color: "#0891B2" },
+  { id: "extreme",  label: "Extreme",   color: "#DC2626" },
+  { id: "noturno",  label: "Noturno",   color: "#4F46E5" },
+  { id: "offroad",  label: "Off Road",  color: "#059669" },
+];
+
+const CAT_ICONS = {
+  halfday: "☀️",
+  fullday: "🧭",
+  extreme: "⚡",
+  noturno: "🌙",
+  offroad: "🏍️",
+};
+
+const TOURS = [
+  // ── HALF DAY ──
+  {
+    id: 1,
+    name: "Valle de la Luna",
+    cat: "halfday",
+    img: "https://www.wanderlustchloe.com/wp-content/uploads/2016/04/Lunar-Valley-Atacama-Chile-1.jpg", // TODO trocar por foto própria
+    desc: "Paisagens cinematográficas na Reserva Nacional dos Flamingos. A Cordilheira de Sal, as Três Marias e a Duna Mayor te fazem sentir em outro planeta — literalmente.",
+    duration: "Half Day",
+    tags: ["Clássico", "Pôr do Sol", "Fotogênico"],
+    priceCLP: 38000, priceBRL: 245.16,
+    promoCLP: 30000, promoBRL: 193.55,
+    discount: 21,
+    parcela3xBRL: 214.93, parcela3xCLP: 33315,
+  },
+  {
+    id: 2,
+    name: "Laguna Cejar",
+    cat: "halfday",
+    img: "https://zerandoochile.com.br/wp-content/uploads/2024/04/Laguna-Cejar-BR-Atacama-03.jpg", // TODO trocar por foto própria
+    desc: "Alta concentração de sal, banho na Laguna Piedra e a foto flutuando que todo mundo quer tirar. Ojos del Salar de bônus.",
+    duration: "Half Day",
+    tags: ["Banho", "Salar", "Flamingos"],
+    priceCLP: 38000, priceBRL: 245.16,
+    promoCLP: 31000, promoBRL: 200.00,
+    discount: 18,
+    parcela3xBRL: 222.10, parcela3xCLP: 34425,
+  },
+  {
+    id: 3,
+    name: "Vallecito",
+    cat: "halfday",
+    img: "https://wil-assets.spicyweb.net.au/main/GLOBAL/SOUTH-AMERICA/SOUTH-AMERICA-EXPERIENCES/ATACAMA/VALLECITO/_1000x1000_crop_center-center_none/Dunes-Vallecito-Atacama-Desert_Tierra.jpg", // TODO trocar por foto própria
+    desc: "O Magic Bus abandonado na Cordilheira de Sal virou ícone. Sobe as formações de sal, chega no topo e entende por que esse vale é viciante.",
+    duration: "Half Day",
+    tags: ["Magic Bus", "Cordilheira de Sal", "Fotogênico"],
+    priceCLP: 38000, priceBRL: 245.16,
+    promoCLP: 30000, promoBRL: 193.55,
+    discount: 21,
+    parcela3xBRL: 214.93, parcela3xCLP: 33315,
+  },
+  {
+    id: 4,
+    name: "Lagunas Escondidas",
+    cat: "halfday",
+    img: "https://www.desertodoatacama.com/wp-content/uploads/2021/08/lagunas-escondidas-baltinache-deserto-do-atacama-chile-10.jpg", // TODO trocar por foto própria
+    desc: "Turquesa intenso contra branco de sal puro. As Lagunas Escondidas de Baltinache são o tipo de coisa que você vê e não acredita que é real.",
+    duration: "Half Day",
+    tags: ["Lagunas", "Banho", "Salar"],
+    priceCLP: 45000, priceBRL: 290.32,
+    promoCLP: 40000, promoBRL: 258.06,
+    discount: 11,
+    parcela3xBRL: 286.58, parcela3xCLP: 44420,
+  },
+  {
+    id: 5,
+    name: "Geysers del Tatio",
+    cat: "halfday",
+    img: "https://www.explorachile.com.br/arquivos/2021/12/geyser-1.jpg", // TODO trocar por foto própria
+    desc: "Campo geotérmico mais alto do mundo, mais de 80 geysers explodindo vapor a 86°C ao amanhecer. Saída às 4h, vale cada minuto de sono perdido.",
+    duration: "Half Day",
+    tags: ["Geysers", "Amanhecer", "Altitude"],
+    priceCLP: 45000, priceBRL: 290.32,
+    promoCLP: 38000, promoBRL: 245.16,
+    discount: 16,
+    parcela3xBRL: 272.25, parcela3xCLP: 42199,
+  },
+  {
+    id: 6,
+    name: "Termas de Puritama — Geral",
+    cat: "halfday",
+    img: "https://desertodoatacama.com/wp-content/uploads/2021/08/termas-de-puritama-atacama-aguas-termais-3.jpg", // TODO trocar por foto própria
+    desc: "Sete piscinas de água quente em cânions alaranjados no meio do deserto. O barulho do rio, o azul do céu, o verde raro ao redor — descanso de verdade.",
+    duration: "Half Day",
+    tags: ["Termas", "Relaxamento", "Natureza"],
+    priceCLP: 42000, priceBRL: 270.97,
+    promoCLP: 34000, promoBRL: 219.35,
+    discount: 19,
+    parcela3xBRL: 243.59, parcela3xCLP: 37757,
+  },
+  {
+    id: 8,
+    name: "Valle do Arco Íris",
+    cat: "halfday",
+    img: "https://dreamy.tours/wp-content/uploads/valle-del-arco-iris-san-pedro-de-atacama-editado.jpg", // TODO trocar por foto própria
+    desc: "Colinas multicoloridas perto da Cordilheira de Domeyko com petroglifos e formações rochosas que parecem diamantes gigantes. Geologia e história indígena na mesma caminhada.",
+    duration: "Half Day",
+    tags: ["Geologia", "Cultura", "Fotogênico"],
+    priceCLP: 40000, priceBRL: 258.06,
+    promoCLP: 33000, promoBRL: 212.90,
+    discount: 18,
+    parcela3xBRL: 236.43, parcela3xCLP: 36646,
+  },
+  {
+    id: 9,
+    name: "Termas de Guatin",
+    cat: "halfday",
+    img: "https://i0.wp.com/tripsalopobre.com/wp-content/uploads/2020/12/termas-de-puritama-atacama.jpg?resize=800%2C600&ssl=1", // TODO trocar por foto própria
+    desc: "Trekking de 40 minutos pelo cânion de Puritama até poços rústicos de água termal no Rio Puritama. Para quem quer aventura antes do mergulho quente.",
+    duration: "Half Day",
+    tags: ["Trekking", "Termal", "Aventura"],
+    priceCLP: 38000, priceBRL: 245.16,
+    promoCLP: 30000, promoBRL: 193.55,
+    discount: 21,
+    parcela3xBRL: 214.93, parcela3xCLP: 33315,
+  },
+
+  // ── FULL DAY ──
+  {
+    id: 10,
+    name: "Piedras Rojas e Lagunas Altiplânicas",
+    cat: "fullday",
+    img: "https://likechile.com/wp-content/uploads/2022/12/Piedras-Rojas-5.jpg", // TODO trocar por foto própria
+    desc: "Acima dos 4.000 metros, o contraste das Piedras Rojas com o Salar de Águas Calientes e as Lagunas Miscanti e Miñiques cria cenários que não têm paralelo. Dia inteiro de imersão no deserto mais extremo.",
+    duration: "Full Day",
+    tags: ["Altitude", "Salares", "Paisagem"],
+    priceCLP: 68000, priceBRL: 438.71,
+    promoCLP: 59000, promoBRL: 380.65,
+    discount: 13,
+    parcela3xBRL: 422.70, parcela3xCLP: 65519,
+  },
+  {
+    id: 11,
+    name: "Rota dos Salares",
+    cat: "fullday",
+    img: "https://fuigosteitrips.com.br/wp-content/uploads/2021/03/salar-tara-atacama-chile-1-scaled-1.jpg", // TODO trocar por foto própria
+    desc: "Café da manhã ao ar livre entre dois vulcões na fronteira Chile-Bolívia, depois salares, flamingos e formações rochosas a 4.800 metros. Imersão completa na flora e fauna do deserto.",
+    duration: "Full Day",
+    tags: ["Salares", "Flamingos", "Vulcões"],
+    priceCLP: 63000, priceBRL: 406.45,
+    promoCLP: 54000, promoBRL: 348.39,
+    discount: 14,
+    parcela3xBRL: 386.88, parcela3xCLP: 59967,
+  },
+
+  // ── EXTREME ──
+  {
+    id: 12,
+    name: "Vulcão Lascar",
+    cat: "extreme",
+    img: "https://c8.alamy.com/comp/2J5C492/lascar-volcano-atacama-desert-chile-2J5C492.jpg", // TODO trocar por foto própria
+    desc: "Vulcão ativo a quase 5.600 metros, última erupção em 2006. A subida exige preparo físico sério — a recompensa é olhar direto para a cratera gigante e ver o deserto lá embaixo.",
+    duration: "Full Day",
+    tags: ["Vulcão Ativo", "Altitude", "Extremo"],
+    priceCLP: 150000, priceBRL: 967.74,
+    promoCLP: 138000, promoBRL: 890.32,
+    discount: 8,
+    parcela3xBRL: 988.70, parcela3xCLP: 153248,
+  },
+  {
+    id: 13,
+    name: "Cerro Toco",
+    cat: "extreme",
+    img: "https://pixnio.com/free-images/2024/03/04/2024-03-04-18-25-57-1920x1440.jpg", // TODO trocar por foto própria
+    desc: "O vulcão mais próximo de San Pedro, inativo e mais acessível que o Lascar. Uma das vistas mais bonitas do deserto sem precisar encarar o risco de um vulcão ativo.",
+    duration: "Full Day",
+    tags: ["Escalada", "Altitude", "Panorâmico"],
+    priceCLP: 90000, priceBRL: 580.65,
+    promoCLP: 83000, promoBRL: 535.48,
+    discount: 8,
+    parcela3xBRL: 594.65, parcela3xCLP: 92171,
+  },
+
+  // ── NOTURNO ──
+  {
+    id: 14,
+    name: "Astronômico Tradicional",
+    cat: "noturno",
+    img: "https://www.thediscoveriesof.com/wp-content/uploads/2023/08/Stargazing-Milky-Way-Atacama-Desert-Chile-7.jpg.webp", // TODO trocar por foto própria
+    desc: "Via Láctea, planetas e constelações com telescópio e um astrônomo que transforma o céu do Atacama numa aula prática. Foto individual e em grupo incluídas.",
+    duration: "Noturno",
+    tags: ["Astronomia", "Telescópio", "Estrelas"],
+    priceCLP: 35000, priceBRL: 225.81,
+    promoCLP: 30000, promoBRL: 193.55,
+    discount: 14,
+    parcela3xBRL: 214.93, parcela3xCLP: 33315,
+  },
+  {
+    id: 15,
+    name: "Astronômico Experience",
+    cat: "noturno",
+    img: "https://www.umviajante.com.br/wp-content/uploads/2022/11/ceu-noite-atacama-estrelas-via-lactea.jpg", // TODO trocar por foto própria
+    desc: "Fogueira, poncho andino, coquetel com comida típica local e o céu mais estrelado do mundo. Uma noite em torno da astronomia dos povos antigos — ciência e ritual juntos.",
+    duration: "Noturno",
+    tags: ["Astronomia", "Experiência", "Cultura Andina"],
+    priceCLP: 43000, priceBRL: 277.42,
+    promoCLP: 35000, promoBRL: 225.81,
+    discount: 19,
+    parcela3xBRL: 250.76, parcela3xCLP: 38867,
+  },
+
+  // ── OFF ROAD ──
+  {
+    id: 16,
+    name: "Caravana Ancestral",
+    cat: "offroad",
+    img: "https://www.viajaruralchile.cl/storage/gallery/place/4Yc8gCdxRWzjBt9iyrRr0hK6FPtwBw12h3KIKGaB.jpg", // TODO trocar por foto própria
+    desc: "Caminhar com lhamas domesticadas pela propriedade Licanantay, aprender sobre a cultura andina e tomar um coquetel artesanal preparado pelos próprios donos do lugar. Não tem igual.",
+    duration: "Half Day",
+    tags: ["Lhamas", "Cultura Licanantay", "Ancestral"],
+    priceCLP: 85000, priceBRL: 548.39,
+    promoCLP: 76000, promoBRL: 490.32,
+    discount: 11,
+    parcela3xBRL: 544.50, parcela3xCLP: 84398,
+  },
+  {
+    id: 17,
+    name: "SandBoard",
+    cat: "offroad",
+    img: "https://jetsetjansen.com/wp-content/uploads/2024/05/sandboarding-chile.jpg", // TODO trocar por foto própria
+    desc: "Dunas gigantes, vulcões ao redor e a sensação de descer no sandboard com esse visual. Mesmo quem nunca fez se vicia. Prancha e botas incluídas.",
+    duration: "Half Day",
+    tags: ["Sandboard", "Dunas", "Adrenalina"],
+    priceCLP: 65000, priceBRL: 419.35,
+    promoCLP: 59000, promoBRL: 380.65,
+    discount: 9,
+    parcela3xBRL: 422.70, parcela3xCLP: 65519,
+  },
+];
+
+/* ════════════════════════════════════════════════════════════════
+   HELPERS
+   ════════════════════════════════════════════════════════════════ */
+const fmtBRL = (v) => "R$ " + v.toFixed(2).replace(".", ",");
+const fmtCLP = (v) => "$" + Math.round(v).toLocaleString("es-CL");
+
+const getCatColor = (catId) => {
+  const map = { halfday: "#D97706", fullday: "#0891B2", extreme: "#DC2626", noturno: "#4F46E5", offroad: "#059669" };
+  return map[catId] || "#6B21A8";
+};
+
+/* ════════════════════════════════════════════════════════════════
+   COMPONENTE PRINCIPAL
+   ════════════════════════════════════════════════════════════════ */
+function PlanejadorCombosAtacama() {
+  const [selected, setSelected] = React.useState(new Set());
+  const [dayMap, setDayMap] = React.useState({});
+  const [activeCat, setActiveCat] = React.useState("all");
+
+  const toggleTour = React.useCallback((id) => {
+    setSelected((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) {
+        next.delete(id);
+        setDayMap((dm) => { const copy = { ...dm }; delete copy[id]; return copy; });
+      } else {
+        next.add(id);
+        setDayMap((dm) => {
+          const counts = {};
+          for (let d = 1; d <= 7; d++) counts[d] = 0;
+          Object.values(dm).forEach((d) => { counts[d] = (counts[d] || 0) + 1; });
+          let minDay = 1, minCount = Infinity;
+          for (let d = 1; d <= 7; d++) { if (counts[d] < minCount) { minCount = counts[d]; minDay = d; } }
+          return { ...dm, [id]: minDay };
+        });
+      }
+      return next;
+    });
+  }, []);
+
+  const moveTour = React.useCallback((tourId, newDay) => {
+    setDayMap((dm) => ({ ...dm, [tourId]: newDay }));
+  }, []);
+
+  const selectedTours = React.useMemo(() => TOURS.filter((t) => selected.has(t.id)), [selected]);
+  const totalCount = selectedTours.length;
+
+  const financials = React.useMemo(() => {
+    let totalOriginalBRL = 0, totalPromoBRL = 0, totalOriginalCLP = 0, totalPromoCLP = 0;
+    selectedTours.forEach((t) => {
+      totalOriginalBRL += t.priceBRL;
+      totalPromoBRL += t.promoBRL;
+      totalOriginalCLP += t.priceCLP;
+      totalPromoCLP += t.promoCLP;
+    });
+    return { totalOriginalBRL, totalPromoBRL, economiaBRL: totalOriginalBRL - totalPromoBRL, totalOriginalCLP, totalPromoCLP, economiaCLP: totalOriginalCLP - totalPromoCLP };
+  }, [selectedTours]);
+
+  const dayColumns = React.useMemo(() => {
+    const cols = {};
+    for (let d = 1; d <= 7; d++) cols[d] = [];
+    selectedTours.forEach((t) => { const day = dayMap[t.id] || 1; if (cols[day]) cols[day].push(t); });
+    return cols;
+  }, [selectedTours, dayMap]);
+
+  const filteredTours = activeCat === "all" ? TOURS : TOURS.filter((t) => t.cat === activeCat);
+  const itineraryVisible = totalCount > 0;
+  const dayNames = ["", "Dia 1", "Dia 2", "Dia 3", "Dia 4", "Dia 5", "Dia 6", "Dia 7"];
+
+  return (
+    <div style={{ fontFamily: "'Poppins', 'Segoe UI', system-ui, sans-serif", background: "linear-gradient(180deg, #1a0a00 0%, #2d1500 30%, #1a0a00 100%)", minHeight: "100vh", color: "#fff" }}>
+
+      {/* HEADER */}
+      <header style={{ textAlign: "center", padding: "40px 20px 30px", position: "relative", overflow: "hidden" }}>
+        <div style={{ position: "absolute", top: 20, left: "10%", fontSize: 28, opacity: 0.5 }}>✦</div>
+        <div style={{ position: "absolute", top: 40, right: "12%", fontSize: 22, opacity: 0.4 }}>✧</div>
+        <div style={{ position: "absolute", top: 80, left: "25%", fontSize: 16, opacity: 0.3 }}>★</div>
+        <div style={{ position: "absolute", bottom: 20, right: "20%", fontSize: 20, opacity: 0.4 }}>✦</div>
+
+        <div style={{ display: "inline-flex", alignItems: "center", gap: 10, marginBottom: 20, background: "rgba(255,255,255,0.1)", borderRadius: 50, padding: "8px 24px", backdropFilter: "blur(10px)" }}>
+          <span style={{ fontSize: 20 }}>❤️</span>
+          <span style={{ fontSize: 22, fontWeight: 800, letterSpacing: 1 }}>We Love Chile</span>
+          <span style={{ fontSize: 20 }}>❤️</span>
+        </div>
+
+        <h1 style={{ fontSize: "clamp(28px, 5vw, 48px)", fontWeight: 900, margin: "10px 0 4px", background: "linear-gradient(135deg, #FCD34D 0%, #F59E0B 30%, #D97706 60%, #B45309 100%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", lineHeight: 1.2 }}>
+          Planejador de Combos
+        </h1>
+        <div style={{ display: "inline-block", marginTop: 8, background: "linear-gradient(135deg, #D97706, #DC2626)", borderRadius: 30, padding: "8px 28px" }}>
+          <span style={{ fontSize: "clamp(14px, 2.5vw, 20px)", fontWeight: 700, letterSpacing: 1.5, textTransform: "uppercase" }}>
+            Deserto do Atacama
+          </span>
+        </div>
+        <p style={{ marginTop: 16, fontSize: 15, color: "#FDE68A", maxWidth: 600, margin: "16px auto 0", lineHeight: 1.5 }}>
+          Monte seu roteiro no deserto mais seco do mundo e veja quanto você economiza nos combos.
+        </p>
+
+        {totalCount > 0 && (
+          <div style={{ marginTop: 20, display: "inline-flex", alignItems: "center", gap: 8, background: "rgba(217,119,6,0.25)", border: "1px solid rgba(217,119,6,0.5)", borderRadius: 30, padding: "10px 24px" }}>
+            <span>✨</span>
+            <span style={{ fontWeight: 700, fontSize: 16 }}>
+              {totalCount} passeio{totalCount !== 1 ? "s" : ""} selecionado{totalCount !== 1 ? "s" : ""}
+            </span>
+          </div>
+        )}
+      </header>
+
+      {/* HOW IT WORKS */}
+      <section style={{ maxWidth: 900, margin: "0 auto 30px", padding: "0 20px" }}>
+        <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "center", gap: 16 }}>
+          {[
+            { num: "1", text: "Escolha seus passeios", icon: "👆" },
+            { num: "2", text: "Monte seu roteiro", icon: "📋" },
+            { num: "3", text: "Veja a economia", icon: "💰" },
+          ].map((step) => (
+            <div key={step.num} style={{ background: "rgba(255,255,255,0.06)", borderRadius: 16, padding: "16px 24px", display: "flex", alignItems: "center", gap: 12, border: "1px solid rgba(255,255,255,0.1)", minWidth: 200 }}>
+              <span style={{ fontSize: 28 }}>{step.icon}</span>
+              <div>
+                <div style={{ fontSize: 11, color: "#FCD34D", fontWeight: 700, textTransform: "uppercase", letterSpacing: 1 }}>Passo {step.num}</div>
+                <div style={{ fontSize: 15, fontWeight: 600 }}>{step.text}</div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* CATEGORY FILTER */}
+      <section style={{ maxWidth: 1200, margin: "0 auto", padding: "0 20px 20px" }}>
+        <div style={{ display: "flex", flexWrap: "wrap", gap: 8, justifyContent: "center" }}>
+          <button onClick={() => setActiveCat("all")} style={{ background: activeCat === "all" ? "linear-gradient(135deg, #D97706, #DC2626)" : "rgba(255,255,255,0.08)", border: activeCat === "all" ? "none" : "1px solid rgba(255,255,255,0.15)", color: "#fff", borderRadius: 30, padding: "8px 20px", fontSize: 14, fontWeight: 600, cursor: "pointer" }}>
+            Todos ({TOURS.length})
+          </button>
+          {CATEGORIES.map((cat) => {
+            const count = TOURS.filter((t) => t.cat === cat.id).length;
+            return (
+              <button key={cat.id} onClick={() => setActiveCat(cat.id)} style={{ background: activeCat === cat.id ? cat.color : "rgba(255,255,255,0.08)", border: activeCat === cat.id ? "none" : "1px solid rgba(255,255,255,0.15)", color: "#fff", borderRadius: 30, padding: "8px 18px", fontSize: 13, fontWeight: 600, cursor: "pointer", display: "inline-flex", alignItems: "center", gap: 6 }}>
+                <span>{CAT_ICONS[cat.id]}</span>
+                {cat.label} ({count})
+              </button>
+            );
+          })}
+        </div>
+      </section>
+
+      {/* TOUR CARDS GRID */}
+      <section style={{ maxWidth: 1300, margin: "0 auto", padding: "0 20px 40px" }}>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: 20 }}>
+          {filteredTours.map((tour) => {
+            const isSelected = selected.has(tour.id);
+            const catColor = getCatColor(tour.cat);
+            const catLabel = CATEGORIES.find(c => c.id === tour.cat)?.label || "";
+            return (
+              <div key={tour.id} onClick={() => toggleTour(tour.id)}
+                style={{ borderRadius: 16, overflow: "hidden", cursor: "pointer", transition: "all 0.3s",
+                  transform: isSelected ? "scale(1.02)" : "scale(1)",
+                  boxShadow: isSelected ? `0 0 0 3px ${catColor}, 0 8px 32px rgba(0,0,0,0.4)` : "0 4px 16px rgba(0,0,0,0.3)",
+                  background: "rgba(255,255,255,0.06)",
+                  border: isSelected ? "none" : "1px solid rgba(255,255,255,0.08)",
+                }}>
+                {/* Image */}
+                <div style={{ position: "relative", height: 180, overflow: "hidden", background: "#2d1500" }}>
+                  <img src={tour.img} alt={tour.name}
+                    style={{ width: "100%", height: "100%", objectFit: "cover", filter: isSelected ? "brightness(0.7)" : "brightness(0.85)", transition: "all 0.3s" }}
+                    onError={(e) => { e.target.style.display = "none"; }}
+                  />
+                  <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: 80, background: "linear-gradient(transparent, rgba(0,0,0,0.7))" }} />
+                  {/* Category badge */}
+                  <div style={{ position: "absolute", top: 12, left: 12, background: catColor, borderRadius: 20, padding: "4px 12px", fontSize: 11, fontWeight: 700, display: "inline-flex", alignItems: "center", gap: 4, textTransform: "uppercase" }}>
+                    <span>{CAT_ICONS[tour.cat]}</span>
+                    {catLabel}
+                  </div>
+                  {/* Discount badge */}
+                  {tour.discount > 0 && (
+                    <div style={{ position: "absolute", top: 12, right: 12, background: tour.discount >= 20 ? "#DC2626" : "#EA580C", borderRadius: 20, padding: "4px 12px", fontSize: 13, fontWeight: 800 }}>
+                      -{tour.discount}%
+                    </div>
+                  )}
+                  {/* Selected checkmark */}
+                  {isSelected && (
+                    <div style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)", background: "#10B981", borderRadius: "50%", width: 52, height: 52, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 24, boxShadow: "0 4px 12px rgba(0,0,0,0.4)" }}>
+                      ✓
+                    </div>
+                  )}
+                  {/* Duration badge */}
+                  <div style={{ position: "absolute", bottom: 10, right: 12, background: "rgba(0,0,0,0.6)", borderRadius: 12, padding: "3px 10px", fontSize: 11, fontWeight: 600 }}>
+                    ⏱ {tour.duration}
+                  </div>
+                </div>
+                {/* Content */}
+                <div style={{ padding: "14px 16px 16px" }}>
+                  <h3 style={{ fontSize: 16, fontWeight: 700, margin: "0 0 6px", lineHeight: 1.3 }}>{tour.name}</h3>
+                  <p style={{ fontSize: 12.5, color: "#FDE68A", margin: "0 0 10px", lineHeight: 1.5 }}>{tour.desc}</p>
+                  {/* Tags */}
+                  <div style={{ display: "flex", flexWrap: "wrap", gap: 5, marginBottom: 10 }}>
+                    {tour.tags.map((tag) => (
+                      <span key={tag} style={{ background: "rgba(255,255,255,0.1)", borderRadius: 10, padding: "2px 10px", fontSize: 11, fontWeight: 500, color: "#FCD34D" }}>
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                  {/* Price block */}
+                  <div style={{ background: "rgba(0,0,0,0.25)", borderRadius: 10, padding: "8px 12px", marginBottom: 10 }}>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                      <div>
+                        <div style={{ fontSize: 10, color: "rgba(255,255,255,0.4)", textDecoration: "line-through" }}>
+                          {fmtBRL(tour.priceBRL)} / {fmtCLP(tour.priceCLP)}
+                        </div>
+                        <div style={{ fontSize: 17, fontWeight: 800, color: "#6EE7B7" }}>{fmtBRL(tour.promoBRL)}</div>
+                        <div style={{ fontSize: 11, color: "#FCD34D" }}>{fmtCLP(tour.promoCLP)} pesos</div>
+                      </div>
+                      <div style={{ textAlign: "right" }}>
+                        <div style={{ fontSize: 10, color: "rgba(255,255,255,0.4)" }}>3x sem juros</div>
+                        <div style={{ fontSize: 13, fontWeight: 700, color: "#A7F3D0" }}>{fmtBRL(tour.parcela3xBRL)}</div>
+                        <div style={{ fontSize: 10, color: "#FCD34D" }}>{fmtCLP(tour.parcela3xCLP)}</div>
+                      </div>
+                    </div>
+                  </div>
+                  {/* Select button */}
+                  <button style={{ width: "100%", padding: "10px", borderRadius: 10, border: "none", fontSize: 14, fontWeight: 700, cursor: "pointer",
+                    background: isSelected ? "#10B981" : "linear-gradient(135deg, #D97706, #DC2626)", color: "#fff",
+                    display: "flex", alignItems: "center", justifyContent: "center", gap: 6 }}>
+                    {isSelected ? "✓ Selecionado!" : "❤️ Quero ir!"}
+                  </button>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </section>
+
+      {/* ITINERARY BOARD */}
+      {itineraryVisible && (
+        <section style={{ padding: "40px 20px", background: "linear-gradient(180deg, rgba(135,62,28,0.4), rgba(45,21,0,0.6))", borderTop: "1px solid rgba(255,255,255,0.1)" }}>
+          <div style={{ maxWidth: 1300, margin: "0 auto" }}>
+            <div style={{ textAlign: "center", marginBottom: 24 }}>
+              <h2 style={{ fontSize: "clamp(22px, 4vw, 32px)", fontWeight: 800, margin: "0 0 6px", display: "flex", alignItems: "center", justifyContent: "center", gap: 10 }}>
+                📅 Seu Roteiro no Atacama
+              </h2>
+              <p style={{ color: "#FDE68A", fontSize: 14 }}>Clique nos botões para mover passeios entre os dias</p>
+            </div>
+
+            <div style={{ display: "flex", gap: 14, overflowX: "auto", paddingBottom: 16 }}>
+              {[1, 2, 3, 4, 5, 6, 7].map((day) => {
+                const tours = dayColumns[day] || [];
+                return (
+                  <div key={day} style={{ minWidth: 220, maxWidth: 260, flexShrink: 0, background: "rgba(255,255,255,0.05)", borderRadius: 14, border: "1px solid rgba(255,255,255,0.1)", overflow: "hidden" }}>
+                    <div style={{ background: tours.length > 0 ? "linear-gradient(135deg, #D97706, #DC2626)" : "rgba(255,255,255,0.08)", padding: "12px 14px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                      <span style={{ fontWeight: 800, fontSize: 15 }}>{dayNames[day]}</span>
+                      <span style={{ background: "rgba(255,255,255,0.2)", borderRadius: 10, padding: "2px 8px", fontSize: 12, fontWeight: 700 }}>{tours.length}</span>
+                    </div>
+                    <div style={{ padding: 10, minHeight: 80, display: "flex", flexDirection: "column", gap: 8 }}>
+                      {tours.length === 0 && (
+                        <div style={{ textAlign: "center", padding: 20, color: "rgba(255,255,255,0.3)", fontSize: 13, fontStyle: "italic" }}>
+                          Dia livre
+                        </div>
+                      )}
+                      {tours.map((t) => {
+                        const catColor = getCatColor(t.cat);
+                        return (
+                          <div key={t.id} style={{ background: "rgba(255,255,255,0.08)", borderRadius: 10, padding: 10, borderLeft: `3px solid ${catColor}` }}>
+                            <div style={{ fontSize: 13, fontWeight: 700, marginBottom: 4, lineHeight: 1.3 }}>{t.name}</div>
+                            <div style={{ fontSize: 11, color: "#FDE68A", marginBottom: 8 }}>⏱ {t.duration}</div>
+                            <div style={{ display: "flex", gap: 4, flexWrap: "wrap" }}>
+                              {[1, 2, 3, 4, 5, 6, 7].filter((d) => d !== day).map((d) => (
+                                <button key={d} onClick={(e) => { e.stopPropagation(); moveTour(t.id, d); }}
+                                  style={{ background: "rgba(255,255,255,0.1)", border: "1px solid rgba(255,255,255,0.15)", color: "#FDE68A", borderRadius: 6, padding: "2px 8px", fontSize: 10, cursor: "pointer", fontWeight: 600 }}>
+                                  D{d}
+                                </button>
+                              ))}
+                              <button onClick={(e) => { e.stopPropagation(); toggleTour(t.id); }}
+                                style={{ background: "rgba(220,38,38,0.2)", border: "1px solid rgba(220,38,38,0.4)", color: "#FCA5A5", borderRadius: 6, padding: "2px 6px", fontSize: 10, cursor: "pointer" }}>
+                                ✕
+                              </button>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* FINANCIAL SUMMARY */}
+      {itineraryVisible && (
+        <section style={{ padding: "40px 20px 60px", background: "linear-gradient(180deg, rgba(45,21,0,0.6), rgba(26,10,0,1))" }}>
+          <div style={{ maxWidth: 800, margin: "0 auto" }}>
+            <div style={{ textAlign: "center", marginBottom: 24 }}>
+              <h2 style={{ fontSize: "clamp(22px, 4vw, 32px)", fontWeight: 800, margin: "0 0 6px" }}>
+                💰 Planejamento Financeiro
+              </h2>
+              <p style={{ color: "#FDE68A", fontSize: 14 }}>Veja quanto você economiza com os combos Atacama</p>
+            </div>
+
+            <div style={{ background: "rgba(255,255,255,0.06)", borderRadius: 20, border: "1px solid rgba(255,255,255,0.1)", overflow: "hidden" }}>
+              <div style={{ padding: "20px 20px 10px" }}>
+                <div style={{ fontSize: 13, fontWeight: 700, color: "#FCD34D", textTransform: "uppercase", letterSpacing: 1, marginBottom: 12 }}>
+                  Seus passeios selecionados
+                </div>
+                {selectedTours.map((t) => (
+                  <div key={t.id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "10px 0", borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
+                    <div style={{ flex: 1 }}>
+                      <div style={{ fontSize: 14, fontWeight: 600 }}>{t.name}</div>
+                      <div style={{ fontSize: 11, color: "#FDE68A" }}>{CATEGORIES.find(c => c.id === t.cat)?.label}</div>
+                    </div>
+                    <div style={{ textAlign: "right" }}>
+                      <div style={{ fontSize: 12, color: "#F87171", textDecoration: "line-through" }}>{fmtBRL(t.priceBRL)}</div>
+                      <div style={{ fontSize: 15, fontWeight: 700, color: "#6EE7B7" }}>{fmtBRL(t.promoBRL)}</div>
+                      <div style={{ fontSize: 11, color: "#FCD34D" }}>{fmtCLP(t.promoCLP)}</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <div style={{ background: "rgba(255,255,255,0.04)", padding: 20, borderTop: "1px solid rgba(255,255,255,0.1)" }}>
+                <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 8 }}>
+                  <span style={{ color: "#FDE68A", fontSize: 14 }}>Total sem promoção:</span>
+                  <div style={{ textAlign: "right" }}>
+                    <div style={{ color: "#F87171", fontSize: 14, fontWeight: 600, textDecoration: "line-through" }}>{fmtBRL(financials.totalOriginalBRL)}</div>
+                    <div style={{ color: "#F87171", fontSize: 11, textDecoration: "line-through" }}>{fmtCLP(financials.totalOriginalCLP)}</div>
+                  </div>
+                </div>
+                <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 12 }}>
+                  <span style={{ color: "#FDE68A", fontSize: 14 }}>Total com promoção:</span>
+                  <div style={{ textAlign: "right" }}>
+                    <div style={{ color: "#6EE7B7", fontSize: 20, fontWeight: 800 }}>{fmtBRL(financials.totalPromoBRL)}</div>
+                    <div style={{ color: "#FCD34D", fontSize: 13 }}>{fmtCLP(financials.totalPromoCLP)}</div>
+                  </div>
+                </div>
+
+                <div style={{ background: "linear-gradient(135deg, rgba(16,185,129,0.15), rgba(16,185,129,0.05))", border: "1px solid rgba(16,185,129,0.3)", borderRadius: 14, padding: "16px 20px", textAlign: "center" }}>
+                  <div style={{ fontSize: 12, color: "#6EE7B7", fontWeight: 700, textTransform: "uppercase", letterSpacing: 1.5, marginBottom: 4 }}>
+                    Sua economia total
+                  </div>
+                  <div style={{ fontSize: 32, fontWeight: 900, color: "#6EE7B7" }}>
+                    {fmtBRL(financials.economiaBRL)}
+                  </div>
+                  <div style={{ fontSize: 14, color: "#FCD34D", marginTop: 4 }}>
+                    {fmtCLP(financials.economiaCLP)} pesos chilenos
+                  </div>
+                  {financials.totalOriginalBRL > 0 && (
+                    <div style={{ fontSize: 13, color: "#A7F3D0", marginTop: 4 }}>
+                      {((financials.economiaBRL / financials.totalOriginalBRL) * 100).toFixed(0)}% de desconto no combo!
+                    </div>
+                  )}
+                </div>
+
+                <div style={{ marginTop: 16, textAlign: "center", color: "#FDE68A", fontSize: 13 }}>
+                  💳 Parcele em até <strong style={{ color: "#FCD34D" }}>3x sem juros</strong> de <strong style={{ color: "#6EE7B7" }}>{fmtBRL(financials.totalPromoBRL / 3)}</strong>
+                </div>
+              </div>
+            </div>
+
+            <div style={{ textAlign: "center", marginTop: 30 }}>
+              <a href="https://wa.me/56232106606?text=Oi! Quero montar meu combo de passeios no Deserto do Atacama com a We Love Chile!"
+                target="_blank" rel="noopener noreferrer"
+                style={{ display: "inline-flex", alignItems: "center", gap: 10, background: "linear-gradient(135deg, #10B981, #059669)", color: "#fff", borderRadius: 30, padding: "16px 40px", fontSize: 18, fontWeight: 800, textDecoration: "none", boxShadow: "0 4px 20px rgba(16,185,129,0.4)" }}>
+                📱 Falar com a We Love Chile
+              </a>
+              <p style={{ marginTop: 14, color: "#D97706", fontSize: 12 }}>
+                San Pedro de Atacama — Caracoles 419, e5 | +56 232 106 606
+              </p>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* FOOTER */}
+      <footer style={{ textAlign: "center", padding: "30px 20px", borderTop: "1px solid rgba(255,255,255,0.06)" }}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8, marginBottom: 8 }}>
+          <span>❤️</span>
+          <span style={{ fontWeight: 700, fontSize: 15 }}>We Love Chile</span>
+        </div>
+        <p style={{ color: "rgba(255,255,255,0.3)", fontSize: 12 }}>
+          Planejador de Combos — Deserto do Atacama 2026
+        </p>
+      </footer>
+    </div>
+  );
+}
+
+ReactDOM.render(React.createElement(PlanejadorCombosAtacama), document.getElementById("root"));
+</script>
+</body>
+</html>
