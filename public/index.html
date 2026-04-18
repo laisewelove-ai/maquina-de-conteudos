@@ -380,12 +380,52 @@
     .zone-right {
       grid-column: 2 / -1;
       grid-row: 2;
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      grid-template-rows: 1fr auto;
-      gap: 8px;
       min-height: 0;
-      align-items: stretch;
+    }
+
+    .sb-card {
+      border: 2px solid #000;
+      border-radius: 10px;
+      padding: 10px 10px 8px;
+      margin-top: 6px;
+    }
+    .sb-banco { background: #6B4AD4; }
+    .sb-semana { background: #3CB8A8; }
+    .sb-card-label {
+      font-size: 9px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #F5C233;
+      margin-bottom: 2px;
+    }
+    .sb-semana .sb-card-label { color: #1A2035; }
+    .sb-card-num {
+      font-size: 32px;
+      font-weight: 900;
+      color: #F5C233;
+      line-height: 1;
+      font-family: 'Lufga', sans-serif;
+    }
+    .sb-card-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 3px;
+      margin-top: 4px;
+    }
+    .sb-tag {
+      background: #F2EDE3;
+      border: 1px solid #000;
+      border-radius: 12px;
+      padding: 1px 6px;
+      font-size: 9px;
+      font-weight: 700;
+    }
+    .sb-card-break {
+      font-size: 10px;
+      font-weight: 700;
+      color: #1A2035;
+      margin-top: 4px;
     }
 
     .banco-ideias {
@@ -1652,6 +1692,20 @@
     <div class="t-nav" data-page="wizard">Produzir</div>
     <div class="t-nav" data-page="metrics">Métricas</div>
     <div class="t-nav" data-page="analyzer">Analisador</div>
+    <div class="sb-card sb-banco">
+      <div class="sb-card-label">BANCO DE IDEIAS</div>
+      <div class="sb-card-num" id="homeBancoCount">218</div>
+      <div class="sb-card-tags" id="homeBancoTags">
+        <span class="sb-tag">Atacama</span>
+        <span class="sb-tag">Santiago</span>
+        <span class="sb-tag">Vinhos</span>
+      </div>
+    </div>
+    <div class="sb-card sb-semana">
+      <div class="sb-card-label">SEMANA</div>
+      <div class="sb-card-num" id="homeSemanaCount">23</div>
+      <div class="sb-card-break" id="homeSemanaPlatBreak">YT · IG · TK</div>
+    </div>
     <div style="flex:1"></div>
     <div id="notionSyncPill" class="notion-pill" title="Sincronizar com Notion" onclick="openNotionModal()">◯ Notion</div>
     <button id="wlcSaveBtn" class="wlc-save-btn" onclick="wlcSaveFile()" title="Salvar">💾</button>
@@ -1666,13 +1720,12 @@
     <!-- Pill TODO arco-íris -->
     <div class="t-todo-pill">TODO</div>
     <!-- Bandeiras de destinos -->
-    <span class="t-flag">🇨🇱</span>
-    <span class="t-flag">🇦🇷</span>
-    <span class="t-flag">🇵🇪</span>
-    <span class="t-flag">🏳️‍🌈</span>
-    <span class="t-flag">🏔️</span>
-    <span class="t-flag">🌊</span>
-    <span class="t-flag">🌟</span>
+    <span class="t-flag" title="We Love Chile">🇨🇱</span>
+    <span class="t-flag" title="We Love Peru">🇵🇪</span>
+    <span class="t-flag" title="We Love Argentina">🇦🇷</span>
+    <span class="t-flag" title="Patagônia">🏔️</span>
+    <span class="t-flag" title="Atacama">🌵</span>
+    <span class="t-flag" title="We Love Business">💻</span>
     <!-- Spacer -->
     <div class="t-sp"></div>
     <!-- Botão + Ideia -->
@@ -1738,26 +1791,6 @@
 
         <!-- ── ZONA DIREITA (grid 2×2) ── -->
         <div class="zone-right">
-
-          <!-- Card Banco de Ideias -->
-          <div class="banco-ideias">
-            <div class="z-section-label" style="color:var(--yellow)">BANCO DE IDEIAS</div>
-            <div style="font-size:16px;font-weight:700;color:#fff">Ativas</div>
-            <div class="big-num" id="homeBancoCount">218</div>
-            <div class="banco-tags" id="homeBancoTags">
-              <span class="dest-tag">Atacama 34</span>
-              <span class="dest-tag">Santiago 41</span>
-              <span class="dest-tag">Vinhos 28</span>
-            </div>
-          </div>
-
-          <!-- Card Semana -->
-          <div class="semana-card">
-            <div class="z-section-label" style="color:#1A2035">SEMANA · <span id="homeWeekRange">14-20</span></div>
-            <div style="font-size:16px;font-weight:700;color:#000">Agendadas</div>
-            <div class="big-num" style="color:var(--yellow)" id="homeSemanaCount">23</div>
-            <div class="semana-breakdown" id="homeSemanaPlatBreak">YT 9 · IG 11 · TK 3</div>
-          </div>
 
           <!-- ── ZONA 3: NOVA IDEIA ── -->
           <div class="zone-ideas">
@@ -3677,14 +3710,40 @@
     }
 
     function updateScriptPreview() {
+      // ── v6: load persisted script first, then fall back to template ──
+      const editor = document.getElementById('scriptEditor');
+      if (!editor) return;
+
+      // Find the idea object matching the current selectedIdea title
+      const ideaObj = selectedIdea ? ideasData.find(i => i.title === selectedIdea) : null;
+
+      // If idea has a saved script for this version, load it
+      if (ideaObj && ideaObj.scripts && ideaObj.scripts[currentScriptVersion]) {
+        editor.textContent = ideaObj.scripts[currentScriptVersion];
+        return;
+      }
+
+      // Otherwise fall back to template
       if (selectedPlatform && selectedFormat && selectedFunil) {
         const templates = scriptTemplates[selectedPlatform];
         if (templates && templates[selectedFunil] && templates[selectedFunil][selectedFormat]) {
-          const script = templates[selectedFunil][selectedFormat];
-          document.getElementById('scriptEditor').textContent = script;
+          editor.textContent = templates[selectedFunil][selectedFormat];
         }
       }
     }
+
+    // ── v6: save script version to idea object ──
+    function saveCurrentScriptVersion() {
+      const editor = document.getElementById('scriptEditor');
+      if (!editor || !selectedIdea) return;
+      const ideaObj = ideasData.find(i => i.title === selectedIdea);
+      if (!ideaObj) return;
+      if (!ideaObj.scripts) ideaObj.scripts = { A: '', B: '', C: '' };
+      ideaObj.scripts[currentScriptVersion] = editor.textContent;
+      saveExtraIdeas();
+      pushIdeaToNotion(ideaObj);
+    }
+
 
     function updateScriptSummary() {
       const summary = document.getElementById('scriptSummary');
