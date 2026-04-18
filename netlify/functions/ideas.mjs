@@ -40,7 +40,8 @@ function normalizePlatform(p) {
   return m[String(p).toLowerCase()] || 'ig';
 }
 
-const PLATFORM_NOTION = { yt: 'YouTube', ig: 'Instagram', tk: 'TikTok', ad: 'Ads' };
+// Notion select values for Plataforma field match the slugs directly
+const PLATFORM_NOTION = { yt: 'yt', ig: 'ig', tk: 'tk', ad: 'ad' };
 
 async function notionRequest(method, path, body) {
   const res = await fetch(`${NOTION_PROXY}/${path}`, {
@@ -112,7 +113,7 @@ export default async (req) => {
 
   // ── Build Notion page ──
   const notionProps = {
-    'Nome': { title: [{ text: { content: title.trim() } }] },
+    'Título': { title: [{ text: { content: title.trim() } }] },
     'Plataforma': { select: { name: platNotion } },
     'Status': { select: { name: status || 'novo' } },
     'Dashboard ID': { rich_text: [{ text: { content: dashId } }] },
@@ -121,7 +122,7 @@ export default async (req) => {
   };
 
   if (destination) {
-    notionProps['Destino'] = { rich_text: [{ text: { content: destination } }] };
+    notionProps['Destino'] = { select: { name: destination } };
   }
 
   if (desc) {
@@ -170,7 +171,7 @@ export default async (req) => {
     // 1. Query database for existing page with same title
     const queryRes = await notionRequest('POST', `databases/${NOTION_DB_IDEAS}/query`, {
       filter: {
-        property: 'Nome',
+        property: 'Título',
         title: { equals: title.trim() },
       },
       page_size: 1,
