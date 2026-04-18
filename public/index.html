@@ -2870,148 +2870,703 @@
     .notion-modal .hint { font-size: 11px; color: #C5BEB5; margin-top: 8px; line-height: 1.5; }
     .notion-modal .hint a { color: #D63B2F; text-decoration: none; }
     .notion-modal .hint a:hover { text-decoration: underline; }
+
+    /* ══════════════════════════════════════════════════
+       V6 IDENTIDADE VISUAL — paleta coral/mostarda/roxo/teal
+       Override block — preserva toda a lógica JS/dados
+    ══════════════════════════════════════════════════ */
+
+    /* — Variáveis V6 — */
+    :root {
+      --v6-creme:    #F7F3EC;
+      --v6-header:   #0F0F0F;
+      --v6-sidebar:  #1A1A2E;
+      --v6-coral:    #D63B2F;
+      --v6-mostarda: #F5C518;
+      --v6-roxo:     #6B21A8;
+      --v6-teal:     #1B6B45;
+      --v6-dark:     #1A1A2E;
+      --v6-white:    #FFFFFF;
+      --v6-text:     #1A1A2E;
+      --v6-muted:    #9B9BAA;
+    }
+
+    /* — Body — */
+    body {
+      background: var(--v6-creme) !important;
+      display: flex !important;
+      flex-direction: row !important;
+      height: 100vh !important;
+      overflow: hidden !important;
+    }
+
+    /* — Sidebar esquerda (nav vertical) — */
+    .topbar {
+      position: fixed !important;
+      top: 0 !important; left: 0 !important;
+      width: 130px !important; height: 100vh !important;
+      background: var(--v6-sidebar) !important;
+      display: flex !important;
+      flex-direction: column !important;
+      align-items: stretch !important;
+      padding: 0 !important;
+      gap: 0 !important;
+      z-index: 1000 !important;
+      overflow: hidden !important;
+    }
+    .topbar-logo {
+      width: 90px !important;
+      height: auto !important;
+      margin: 18px auto 24px !important;
+      display: block !important;
+      flex-shrink: 0 !important;
+    }
+    .t-sep {
+      width: 60% !important; height: 1px !important;
+      background: rgba(255,255,255,0.12) !important;
+      margin: 6px auto !important;
+      flex-shrink: 0 !important;
+    }
+    .t-nav {
+      color: rgba(255,255,255,0.55) !important;
+      font-size: 11px !important;
+      font-weight: 700 !important;
+      padding: 10px 14px !important;
+      border-radius: 0 !important;
+      cursor: pointer !important;
+      display: flex !important;
+      flex-direction: column !important;
+      align-items: flex-start !important;
+      gap: 2px !important;
+      transition: all .15s !important;
+      white-space: normal !important;
+      letter-spacing: .03em !important;
+      text-transform: uppercase !important;
+    }
+    .t-nav:hover {
+      color: white !important;
+      background: rgba(255,255,255,0.08) !important;
+    }
+    .t-nav.active {
+      color: var(--v6-mostarda) !important;
+      background: rgba(245,197,24,0.12) !important;
+      font-weight: 800 !important;
+      border-left: 3px solid var(--v6-mostarda) !important;
+    }
+    .t-sp { flex: 1 !important; }
+    .t-date {
+      color: rgba(255,255,255,0.4) !important;
+      font-size: 9px !important;
+      padding: 8px 14px !important;
+      white-space: normal !important;
+      line-height: 1.4 !important;
+    }
+    .t-avatar {
+      width: 32px !important; height: 32px !important;
+      border-radius: 50% !important;
+      background: var(--v6-coral) !important;
+      display: flex !important; align-items: center !important; justify-content: center !important;
+      font-size: 13px !important; font-weight: 800 !important; color: white !important;
+      margin: 10px auto 16px !important;
+      flex-shrink: 0 !important;
+    }
+
+    /* Buttons that were in topbar stay visible */
+    .wlc-save-btn {
+      font-size: 9px !important;
+      padding: 4px 8px !important;
+      margin: 4px 10px !important;
+      border-radius: 12px !important;
+      white-space: normal !important;
+      text-align: center !important;
+      justify-content: center !important;
+    }
+    .notion-pill {
+      font-size: 9px !important;
+      padding: 4px 8px !important;
+      margin: 2px 10px !important;
+      border-radius: 12px !important;
+      text-align: center !important;
+      justify-content: center !important;
+    }
+
+    /* — Main content area shifts right — */
+    .main-container {
+      margin-top: 0 !important;
+      margin-left: 130px !important;
+      flex: 1 !important;
+      min-height: 0 !important;
+      height: 100vh !important;
+      display: flex !important;
+      flex-direction: column !important;
+      overflow: hidden !important;
+    }
+
+    /* — New top header bar — */
+    .v6-header {
+      background: var(--v6-header);
+      height: 52px;
+      display: flex;
+      align-items: center;
+      padding: 0 20px;
+      gap: 10px;
+      flex-shrink: 0;
+      z-index: 100;
+    }
+    .v6-header-date {
+      font-size: 11px;
+      font-weight: 700;
+      color: rgba(255,255,255,0.5);
+      letter-spacing: .06em;
+      margin-right: 4px;
+    }
+    .v6-dest-pill {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      padding: 4px 10px;
+      border-radius: 20px;
+      background: rgba(255,255,255,0.1);
+      font-size: 11px;
+      font-weight: 700;
+      color: rgba(255,255,255,0.75);
+      cursor: pointer;
+      transition: background .15s;
+    }
+    .v6-dest-pill:hover { background: rgba(255,255,255,0.18); }
+    .v6-dest-pill .flag { font-size: 14px; }
+    .v6-header-spacer { flex: 1; }
+    .v6-btn-nova-ideia {
+      background: var(--v6-coral);
+      color: white;
+      border: none;
+      border-radius: 20px;
+      padding: 8px 18px;
+      font-size: 12px;
+      font-weight: 800;
+      cursor: pointer;
+      font-family: inherit;
+      transition: background .15s;
+      letter-spacing: .02em;
+    }
+    .v6-btn-nova-ideia:hover { background: #c0302f; }
+    .v6-header-avatar {
+      width: 30px; height: 30px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.2);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 12px; font-weight: 800; color: white;
+    }
+
+    /* — Pages adjust to new container — */
+    .page {
+      display: none;
+      height: calc(100vh - 52px);
+      overflow-y: auto;
+      box-sizing: border-box;
+    }
+    .page.active { display: block; }
+    #home.active {
+      display: flex;
+      flex-direction: column;
+      padding: 0;
+      height: calc(100vh - 52px);
+      overflow: hidden;
+    }
+
+    /* — Home V6 Layout — */
+    .home-body {
+      flex: 1;
+      min-height: 0;
+      display: grid;
+      grid-template-rows: auto 1fr;
+      grid-template-columns: 1fr;
+      overflow: hidden;
+      background: var(--v6-creme);
+    }
+
+    /* Progress banner — top */
+    .v6-progress-banner {
+      background: var(--v6-mostarda);
+      padding: 16px 28px 14px;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      position: relative;
+      flex-shrink: 0;
+    }
+    .v6-pct-big {
+      font-size: 52px;
+      font-weight: 900;
+      color: var(--v6-dark);
+      line-height: 1;
+      flex-shrink: 0;
+    }
+    .v6-pct-label {
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--v6-dark);
+      line-height: 1.2;
+    }
+    .v6-pct-sub {
+      font-size: 11px;
+      color: rgba(26,26,46,0.6);
+      margin-top: 4px;
+      font-weight: 600;
+    }
+    .v6-progress-bar-wrap {
+      flex: 1;
+      margin: 0 10px;
+    }
+    .v6-progress-bar-track {
+      height: 8px;
+      background: rgba(26,26,46,0.2);
+      border-radius: 4px;
+      overflow: hidden;
+      margin-top: 8px;
+    }
+    .v6-progress-bar-fill {
+      height: 100%;
+      background: var(--v6-dark);
+      border-radius: 4px;
+      transition: width .4s;
+    }
+    .v6-new-badge {
+      position: absolute;
+      top: 12px; right: 20px;
+      background: white;
+      color: var(--v6-dark);
+      font-size: 10px;
+      font-weight: 900;
+      padding: 3px 10px;
+      border-radius: 20px;
+      letter-spacing: .08em;
+    }
+
+    /* Bottom area — 3 columns */
+    .v6-home-bottom {
+      flex: 1;
+      min-height: 0;
+      display: grid;
+      grid-template-columns: 1fr 1fr 320px;
+      overflow: hidden;
+    }
+
+    /* Left column: stat cards (Gravar + Banco) */
+    .v6-col-left {
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      gap: 0;
+    }
+
+    /* Gravar card */
+    .v6-card-gravar {
+      background: var(--v6-coral);
+      flex: 1;
+      padding: 20px 24px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-height: 0;
+      overflow: hidden;
+    }
+    .v6-card-label {
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: .1em;
+      color: rgba(255,255,255,0.7);
+      margin-bottom: 4px;
+    }
+    .v6-card-sublabel {
+      font-size: 9px;
+      color: rgba(255,255,255,0.55);
+      font-weight: 600;
+    }
+    .v6-card-num {
+      font-size: 72px;
+      font-weight: 900;
+      color: white;
+      line-height: 1;
+    }
+    .v6-card-num-sub {
+      font-size: 22px;
+      font-weight: 400;
+      color: rgba(255,255,255,0.6);
+    }
+    .v6-card-checklist {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      overflow: hidden;
+      flex: 1;
+      margin-top: 12px;
+    }
+    .v6-ci {
+      display: flex; align-items: center; gap: 8px;
+      background: rgba(255,255,255,0.12);
+      border-radius: 8px;
+      padding: 7px 10px;
+      cursor: pointer;
+      transition: background .15s;
+    }
+    .v6-ci:hover { background: rgba(255,255,255,0.2); }
+    .v6-ci.done-item { opacity: .45; }
+    .v6-cb {
+      width: 15px; height: 15px; border-radius: 4px;
+      border: 1.5px solid rgba(255,255,255,0.5);
+      flex-shrink: 0; display: flex; align-items: center; justify-content: center;
+    }
+    .v6-cb.done { background: white; border-color: white; }
+    .v6-cb.done::after { content: '✓'; font-size: 8px; color: var(--v6-coral); font-weight: 900; }
+    .v6-ci-title { flex: 1; font-size: 12px; font-weight: 600; color: white; line-height: 1.3; }
+    .v6-ci-plat {
+      font-size: 9px; font-weight: 800; color: white;
+      background: rgba(255,255,255,0.25); border-radius: 4px;
+      padding: 2px 5px; flex-shrink: 0;
+    }
+    .v6-hoy-badge {
+      background: var(--v6-dark);
+      color: var(--v6-mostarda);
+      font-size: 10px;
+      font-weight: 900;
+      padding: 4px 10px;
+      border-radius: 16px;
+      align-self: flex-end;
+      margin-top: 6px;
+      letter-spacing: .06em;
+    }
+
+    /* Middle column: Ativas + Agendadas + Captura */
+    .v6-col-mid {
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      border-left: 1px solid rgba(0,0,0,0.06);
+      border-right: 1px solid rgba(0,0,0,0.06);
+    }
+
+    /* Stat cards row */
+    .v6-stat-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      flex-shrink: 0;
+    }
+
+    /* Ativas card */
+    .v6-card-ativas {
+      background: var(--v6-roxo);
+      padding: 18px 20px;
+      display: flex;
+      flex-direction: column;
+      border-bottom: 1px solid rgba(0,0,0,0.08);
+    }
+    /* Agendadas card */
+    .v6-card-agendadas {
+      background: var(--v6-teal);
+      padding: 18px 20px;
+      display: flex;
+      flex-direction: column;
+      border-bottom: 1px solid rgba(0,0,0,0.08);
+      border-left: 1px solid rgba(0,0,0,0.08);
+    }
+    .v6-stat-num {
+      font-size: 56px;
+      font-weight: 900;
+      color: white;
+      line-height: 1;
+      margin: 6px 0 2px;
+    }
+    .v6-stat-dest-row {
+      display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px;
+    }
+    .v6-stat-dest-tag {
+      background: rgba(255,255,255,0.2);
+      color: white;
+      font-size: 9px; font-weight: 700;
+      padding: 2px 7px; border-radius: 10px;
+    }
+    .v6-card-semana-label {
+      font-size: 9px; font-weight: 700; color: rgba(255,255,255,0.6);
+      text-transform: uppercase; letter-spacing: .08em; margin-bottom: 4px;
+    }
+    .v6-semana-sub {
+      font-size: 9px; color: rgba(255,255,255,0.6); margin-top: 6px; font-weight: 600;
+    }
+
+    /* Captura Rápida */
+    .v6-captura {
+      flex: 1;
+      background: var(--v6-dark);
+      padding: 20px 20px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      overflow: hidden;
+    }
+    .v6-captura-title {
+      font-size: 15px;
+      font-weight: 800;
+      color: white;
+    }
+    .v6-captura-sub {
+      font-size: 11px; color: rgba(255,255,255,0.5); font-weight: 500;
+    }
+    .v6-textarea {
+      background: rgba(255,255,255,0.07);
+      border: 1.5px solid rgba(255,255,255,0.12);
+      border-radius: 10px;
+      padding: 12px 14px;
+      font-size: 12px; color: rgba(255,255,255,0.75); font-weight: 500;
+      line-height: 1.5; resize: none;
+      width: 100%; box-sizing: border-box;
+      font-family: inherit; outline: none;
+      flex: 1; min-height: 60px;
+    }
+    .v6-textarea:focus {
+      border-color: rgba(255,255,255,0.3);
+      background: rgba(255,255,255,0.1);
+    }
+    .v6-textarea::placeholder { color: rgba(255,255,255,0.35); }
+    .v6-captura-btns {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .v6-captura-btn {
+      border: none; border-radius: 10px;
+      padding: 10px 16px;
+      font-size: 12px; font-weight: 800; font-family: inherit;
+      cursor: pointer; text-align: center;
+      transition: opacity .15s;
+    }
+    .v6-captura-btn:hover { opacity: .85; }
+    .v6-btn-yt { background: #3DAA6B; color: white; }
+    .v6-btn-igtk { background: #C2359A; color: white; }
+    .v6-btn-salvar { background: var(--v6-mostarda); color: var(--v6-dark); }
+
+    /* Right column: week meta + checklist */
+    .v6-col-right {
+      background: white;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      padding: 0;
+    }
+    .v6-meta-section {
+      padding: 16px 18px;
+      border-bottom: 1px solid #F0EBE3;
+    }
+    .v6-meta-title {
+      font-size: 9px; font-weight: 800; text-transform: uppercase;
+      letter-spacing: .1em; color: #C5BEB5; margin-bottom: 8px;
+    }
+    .v6-ring-wrap { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+    .v6-checklist-area {
+      flex: 1; overflow-y: auto; padding: 12px 18px;
+      display: flex; flex-direction: column; gap: 5px;
+    }
+    .v6-checklist-header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 6px; flex-wrap: wrap; gap: 6px;
+    }
+
+    /* Hide zones that are replaced */
+    .zone-meta, .zone-checklist, .zone-ideas {
+      display: none !important;
+    }
+
+    /* Override home-body old grid */
+    #home .home-body {
+      display: flex !important;
+      flex-direction: column !important;
+    }
+
     </style>
 </head>
 <body>
   <!--%%WLC_USER_DATA_START%%-->
   <script id="wlc-user-data" type="application/json">{"ideas":[],"page":"home","platform":"instagram"}</script>
   <!--%%WLC_USER_DATA_END%%-->
-  <!-- ═══ TOP BAR ═══ -->
+  <!-- ═══ SIDEBAR ESQUERDA (V6) ═══ -->
   <div class="topbar">
-    <img class="topbar-logo" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MzcuMDkgODEuOTMiPjxkZWZzPjxzdHlsZT4uY2xzLTF7ZmlsbDojZjVlYmUxO30uY2xzLTJ7ZmlsbDojMWYyZjNlO30uY2xzLTN7ZmlsbDojZGU5ZTAwO30uY2xzLTR7ZmlsbDojZmRiNDAwO30uY2xzLTV7ZmlsbDojNWMxODVhO30uY2xzLTZ7ZmlsbDojN2QyMTdiO30uY2xzLTd7ZmlsbDojYzczNjM4O30uY2xzLTh7ZmlsbDojZTgzZjQxO308L3N0eWxlPjwvZGVmcz48ZyBpZD0iQ2FtYWRhXzIiIGRhdGEtbmFtZT0iQ2FtYWRhIDIiPjxnIGlkPSJDYW1hZGFfMS0yIiBkYXRhLW5hbWU9IkNhbWFkYSAxIj48cGF0aCBjbGFzcz0iY2xzLTEiIGQ9Ik0zMDkuMjgsNTYuNjZsNi41LDguN2E2Ni41OSw2Ni41OSwwLDAsMS02LjM4LDQuMTFjLTQuNDcsMi41NS04LjEzLDMuNzEtMTAuOTUsMy40OGE4LjEzLDguMTMsMCwwLDEtMi4zNi0uNTVxLTMuODgtMS40Ny00LjU1LTcuNTdhNzUuODMsNzUuODMsMCwwLDEtLjI1LTcuOTNxLjEyLTgsMS4yMS0yMS42MVEyOTMuNzMsMjAsMjk1LjQsNC43NWwxMC44MiwxLjU5cS0xLjUyLDEzLjIyLTIuNywyNi44Mi0xLjMyLDE2LjQzLTEuMzEsMjUuMTVjMCwxLjg0LjU3LDIuNDIsMS44MSwxLjc1QTUwLjg0LDUwLjg0LDAsMCwwLDMwOS4yOCw1Ni42NloiLz48cGF0aCBjbGFzcz0iY2xzLTEiIGQ9Ik0zMTIuOTQsMjUuNDFxMy45My02LjQ1LDEwLjE3LTYuNjhjNC4xNy0uMTUsNy43MSwxLjgxLDEwLjY1LDUuOXM0LjUxLDkuMjgsNC43NSwxNS41Ny0xLDExLjYtMy41OCwxNS45My02LDYuNTYtMTAuMTcsNi43Mi03LjcxLTEuODMtMTAuNjQtNi00LjUyLTkuMzItNC43Ni0xNS42MVMzMTAuMzIsMjkuNzEsMzEyLjk0LDI1LjQxWk0zMjQuNCw1MmMuNDEsMCwuODgtLjQ2LDEuNDEtMS4zNGExMy44MSwxMy44MSwwLDAsMCwxLjQtNCwyMywyMywwLDAsMCwuNDktNS45MiwyMy40OCwyMy40OCwwLDAsMC0uOTMtNS45NSwxNC4wNywxNC4wNywwLDAsMC0xLjctMy45M2MtLjU5LS44NC0xLjEtMS4yNS0xLjUxLTEuMjNhMS4xOCwxLjE4LDAsMCwwLS43OC41Miw3LjcsNy43LDAsMCwwLS45MiwxLjQ5LDE0Ljc0LDE0Ljc0LDAsMCwwLS44OSwyLjMsMjAuMTIsMjAuMTIsMCwwLDAtLjYzLDMuMTcsMjIuNzcsMjIuNzcsMCwwLDAtLjE3LDMuOTEsMjEuODMsMjEuODMsMCwwLDAsMSw1Ljg2LDE0LjI0LDE0LjI0LDAsMCwwLDEuNzQsMy45M0MzMjMuNDgsNTEuNTYsMzI0LDUyLDMyNC40LDUyWiIvPjxwYXRoIGNsYXNzPSJjbHMtMSIgZD0iTTM2NS45LDIwLjY0bDkuNzUsNC44Ny0xNy45LDM3Ljc4LTkuNy4xMUwzMzYuNzcsMjEuMzFsMTAuNDYtMi44OSw3LjExLDI1LjM5WiIvPjxwYXRoIGNsYXNzPSJjbHMtMSIgZD0iTTI0OC4yNywzMi4zMnExMC43NSwyMy4yNSw2LDMzLjI1YTExLjU2LDExLjU2LDAsMCwxLTQsNC44MiwxMy4yNSwxMy4yNSwwLDAsMS02LDIuMjlsLS4yNSwwQTE3LjE0LDE3LjE0LDAsMCwxLDIzMCw2OC41YTIzLjY3LDIzLjY3LDAsMCwxLTMuODgtNC41Yy0uMjUuNzEtLjUsMS4zNi0uNzYsMnEtMy43LDkuNTMtMTAuOTMsMTAuNTJsLS4yNSwwYTExLjM3LDExLjM3LDAsMCwxLTEwLjYtNC4xNnEtNS43OS03LTUuMTItMjMuNjNhMTIwLjU1LDEyMC41NSwwLDAsMSw2LjItMzIuNDNsMTAuODYsMy42MXEtNS42NywxNy4yOS01LjY5LDMxLjc3YTMxLjMsMzEuMywwLDAsMCwuNTMsNy43NiwyNi41LDI2LjUsMCwwLDAsMS4yMSw0LjI1LDMuMzcsMy4zNywwLDAsMCwxLDEuNTJsLjE3LDBhMi44NCwyLjg0LDAsMCwwLC40NS0uNDQsOS4xNyw5LjE3LDAsMCwwLC45NC0xLjU2LDE3LjM4LDE3LjM4LDAsMCwwLDEuMTktMi45NCw0Mi43OSw0Mi43OSwwLDAsMCwxLjE1LTQuOTNjLjQxLTIuMTMuNzUtNC41MiwxLTcuMTVxLjYzLTYuMzUuNjQtMTMuNjJsMTAuMTYtMS4yOXEyLjEzLDguODcsMi4zOSwxMC4xOSwyLjk0LDEzLjA4LDYuODQsMTYuNDdhNi4wNiw2LjA2LDAsMCwwLDUuMTcsMS40NmMuNzItLjA5LDEuMTctLjMyLDEuMzUtLjY4YTMuNTYsMy41NiwwLDAsMCwuMzQtMS4wNiwxMy4zNiwxMy4zNiwwLDAsMCwwLTIuNTQsMjUuMjQsMjUuMjQsMCwwLDAtLjY3LTQuMjcsNjQuNzksNjQuNzksMCwwLDAtMi02LjU2cS0xLjQ2LTQuMTItMy42OS05LjA5YTE3MC4xNSwxNzAuMTUsMCwwLDAtMTAuMDktMTguNzdsOS43My02QTE5Ni4xMSwxOTYuMTEsMCwwLDEsMjQ4LjI3LDMyLjMyWiIvPjxwYXRoIGNsYXNzPSJjbHMtMSIgZD0iTTI4NC4zLDQzLjc2Yy4xNi4zOC4zMy44Ni41MiwxLjQ2YTI0Ljg5LDI0Ljg5LDAsMCwxLC42LDIuNjcsMTIuOCwxMi44LDAsMCwxLTEuMzcsNy45MXEtMy4xNyw1LjY2LTExLjU4LDYuNzItNS43NS43My05LjgzLTQuMTZhMjMsMjMsMCwwLDEtNC4yNi04LjkzQTMxLDMxLDAsMCwxLDI1Nyw0MS41MmE1Ny4xNyw1Ny4xNywwLDAsMSwuMTYtOC40MywxOSwxOSwwLDAsMSwyLjE4LTcuMzgsMTAuMTUsMTAuMTUsMCwwLDEsNC42OS00LjY2LDkuNzcsOS43NywwLDAsMSw4Ljg0LjMxLDExLjc2LDExLjc2LDAsMCwxLDMuNDcsMi45NCwxNC43NywxNC43NywwLDAsMSwyLjM3LDQuMWMuNTUsMS40NSwxLDIuNiwxLjIxLDMuNDRzLjQ0LDEuNjIuNTksMi4zNEE0Ljg2LDQuODYsMCwwLDEsMjc5LDM4Ljg1bC0xMC4yLDkuNTlhNyw3LDAsMCwwLDIuNDQsMy4yNCwyLjY2LDIuNjYsMCwwLDAsMi4zNC40NkEyLjU2LDIuNTYsMCwwLDAsMjc1LDUwLjc4YTMsMywwLDAsMCwuMTctMS42Myw5Ljg2LDkuODYsMCwwLDAtLjI4LTEuMjNabS0xNi0xMy4xMWExMywxMywwLDAsMC0xLjIxLDYuNWwzLTIuODRBOS41Myw5LjUzLDAsMCwwLDI2OC4zNCwzMC42NVoiLz48cGF0aCBjbGFzcz0iY2xzLTEiIGQ9Ik0zOTQuNDIsNTYuNjVjMCwuNDEtLjA2LjkyLS4xNCwxLjU0YTIzLDIzLDAsMCwxLS41OSwyLjY4QTEyLjMsMTIuMywwLDAsMSwzOTIsNjQuMzlhMTIuNzQsMTIuNzQsMCwwLDEtMi45MywzLjA3cS01LjI3LDMuNzctMTMuMzMsMS4xOC01LjUyLTEuNzctNy4xNS03LjkzYTIzLDIzLDAsMCwxLS4wOC05LjksMzEsMzEsMCwwLDEsMi4xMy03LjczLDU4LDU4LDAsMCwxLDMuNzEtNy41OCwxOS4xNywxOS4xNywwLDAsMSw1LjEtNS43NiwxMC4xNCwxMC4xNCwwLDAsMSw2LjIzLTIuMjMsOS43OSw5Ljc5LDAsMCwxLDcuODcsNCwxMS41OCwxMS41OCwwLDAsMSwxLjg5LDQuMTQsMTQuNjEsMTQuNjEsMCwwLDEsLjQyLDQuNzFjLS4xMSwxLjU1LS4yNCwyLjc2LS4zNiwzLjYzcy0uMjgsMS42Ni0uNDUsMi4zN0E0Ljg5LDQuODksMCwwLDEsMzkxLjcyLDUwbC0xMy4zLDQuMzdhNyw3LDAsMCwwLC44NCw0LDIuNywyLjcsMCwwLDAsMS45MiwxLjQxLDIuNTcsMi41NywwLDAsMCwxLjg4LS42MywzLDMsMCwwLDAsLjg1LTEuNDEsMTIuMjgsMTIuMjgsMCwwLDAsLjI3LTEuMjNaTTM4NS41MSwzOGExMi45MywxMi45MywwLDAsMC0zLjg0LDUuMzhsMy45My0xLjNBOS4yLDkuMiwwLDAsMCwzODUuNTEsMzhaIi8+PHBhdGggY2xhc3M9ImNscy0xIiBkPSJNNDE3LjI1LDEzLjQycTEwLjkyLTEuMjQsMTYuMjksNS4yYTE1LjczLDE1LjczLDAsMCwxLDMsNS45MSwxOC42OSwxOC42OSwwLDAsMSwuNjUsNi41MmMtLjE4LDIuMTEtLjM1LDMuNy0uNTIsNC43OUExNiwxNiwwLDAsMSw0MzYsMzguNmwtMTEuNDctMy41MnYuMDhhMTguOTIsMTguOTIsMCwwLDAsLjY2LTQuOCw3LjA4LDcuMDgsMCwwLDAtLjk0LTRjLS44Mi0xLTIuNjgtMS4zLTUuNTUtMS0xLjgyLjItMy4yOSwxLjk1LTQuNDEsNS4yMnEtMiw2LjM5LTEsMTUuNzNhMzguNjIsMzguNjIsMCwwLDAsNCwxNC4xOCwxNS44MSwxNS44MSwwLDAsMCwxLjUsMi4xOSw2LjM1LDYuMzUsMCwwLDAsMS4xMSwxLjEyYy4yNi4xOC40NS4yNy41Ni4yNSwxLjUzLS4xNywyLjQ5LS42MSwyLjg5LTEuMzFhOS45Miw5LjkyLDAsMCwwLC4zOS01LjE3LDI0LjQzLDI0LjQzLDAsMCwwLTEuNTUtNS44NWwxMS4xNi00LjY1YTMwLjM3LDMwLjM3LDAsMCwxLDEsMi45MnEuNTEsMS43MywxLjIxLDUuMTNhMjMuNTYsMjMuNTYsMCwwLDEsLjMxLDcuMSwxNS43NiwxNS43NiwwLDAsMS0yLjExLDYuNTdxLTMuNjYsNi4zLTExLjk0LDcuMjRhMTEuNjksMTEuNjksMCwwLDEtMy4xOC0uMDhBMTYuMzMsMTYuMzMsMCwwLDEsNDE1LDc0LjgzYTEzLjg0LDEzLjg0LDAsMCwxLTQuMjMtMywyNi4xMSwyNi4xMSwwLDAsMS00LjA1LTUuNDMsNTAuNzUsNTAuNzUsMCwwLDEtNS40MS0xOC42NVE0MDAsMzUuODEsNDAyLjksMjYuOTFBMjIuODcsMjIuODcsMCwwLDEsNDA2LDIwLjRhMTUuNjYsMTUuNjYsMCwwLDEsNC00LjExLDE4LjU4LDE4LjU4LDAsMCwxLDMuODMtMkExMy43OSwxMy43OSwwLDAsMSw0MTcuMjUsMTMuNDJaIi8+PHBhdGggY2xhc3M9ImNscy0xIiBkPSJNNDY5LjY2LDM1LjA2cTIuNCwxMC41MywzLjM3LDM1Ljc4bC0xMC44OSwxLjI3cS0uNzQtMjAuNTYtMi41NC0zMS43MmMtLjE4LTEuMTItLjc4LTEuNDctMS43OC0xYTE5Ljc1LDE5Ljc1LDAsMCwwLTQuMzYsMi45MmMtMS40OSwxLjI5LTIuMjMsMi4zNC0yLjIzLDMuMTdsLjI2LDI1LjcxLTEwLjgsMS4xNy0uNjItNjcuNTcsMTAuODEtLjExLjIxLDI2LjUzcTcuMjEtNC42OCwxMi4yOS0zLjIzVDQ2OS42NiwzNS4wNloiLz48cGF0aCBjbGFzcz0iY2xzLTEiIGQ9Ik00ODMuMzksMjUuNjdhNi4wNyw2LjA3LDAsMCwxLTMuMTktLjg0LDYuNTYsNi41NiwwLDAsMS0yLjM0LTIuMzQsNi4zMSw2LjMxLDAsMCwxLS45LTMuMjIsNi4xMyw2LjEzLDAsMCwxLDEuODMtNC41MSw2LjIsNi4yLDAsMCwxLDQuNTItMS45Myw2LDYsMCwwLDEsNC41LDEuODQsNi4yMiw2LjIyLDAsMCwxLDEuODgsNC41Miw2LjI4LDYuMjgsMCwwLDEtMS43OCw0LjU1QTYuMDksNi4wOSwwLDAsMSw0ODMuMzksMjUuNjdaIi8+PHBvbHlnb24gY2xhc3M9ImNscy0xIiBwb2ludHM9IjQ3Ny4zNSA3NS43MiA0NzcuOTcgMzMuNjEgNDg4LjgxIDMyLjQ0IDQ4OC4xOSA3NC4zNyA0NzcuMzUgNzUuNzIiLz48cGF0aCBjbGFzcz0iY2xzLTEiIGQ9Ik01MTQuNTksNjEuNDRsNi4wOSw5YTgwLjE1LDgwLjE1LDAsMCwxLTkuNTEsNS44NnEtNi44OSwzLjQ5LTExLjExLDNhOC40Miw4LjQyLDAsMCwxLTIuMzMtLjY2cS0zLjgxLTEuNjUtNC4xOC03Ljc3YTc0LDc0LDAsMCwxLC4xMi03Ljk0cS40OC04LDIuMjEtMjEuNTMsMi0xNS4yMSw0LjMzLTMwLjM3bDEwLjczLDIuMDlRNTA4LjgxLDI2LjIyLDUwNywzOS43NXEtMi4wOCwxNi4zNS0yLjQ5LDI1LjA2Yy0uMTEsMS44My40NiwyLjQ0LDEuNzMsMS44M0E2Ni44OCw2Ni44OCwwLDAsMCw1MTQuNTksNjEuNDRaIi8+PHBhdGggY2xhc3M9ImNscy0xIiBkPSJNNTM3LjA3LDQ1LjU0YTE1LjIxLDE1LjIxLDAsMCwxLDAsMS41NCwyMy42LDIzLjYsMCwwLDEtLjMyLDIuNzIsMTIuMTMsMTIuMTMsMCwwLDEtMS4zMSwzLjY3LDEyLjU4LDEyLjU4LDAsMCwxLTIuNiwzLjM1UTUyOCw2MS4xLDUxOS43LDU5LjMycS01LjY2LTEuMjItNy45LTcuMTlhMjIuOTQsMjIuOTQsMCwwLDEtMS4wNy05LjgzLDMxLDMxLDAsMCwxLDEuMzYtNy45MUE1Ny45Miw1Ny45MiwwLDAsMSw1MTUsMjYuNDhhMTkuMzgsMTkuMzgsMCwwLDEsNC41MS02LjI0LDEwLjIxLDEwLjIxLDAsMCwxLDYtMi44NCw5LjgsOS44LDAsMCwxLDguMjQsMy4yM0ExMS41MywxMS41MywwLDAsMSw1MzYsMjQuNTVhMTUsMTUsMCwwLDEsLjg5LDQuNjVjMCwxLjU1LDAsMi43NywwLDMuNjVzLS4xMSwxLjY3LS4yMSwyLjRhNC44Nyw0Ljg3LDAsMCwxLTMsMy45MWwtMTIuOCw1LjY2YTcsNywwLDAsMCwxLjIzLDMuODcsMi42NiwyLjY2LDAsMCwwLDIuMDUsMS4yMSwyLjU1LDIuNTUsMCwwLDAsMS44MS0uODEsMi45MSwyLjkxLDAsMCwwLC43LTEuNDgsOC42MSw4LjYxLDAsMCwwLC4xNC0xLjI2Wk01MjYuMzUsMjcuODhhMTMsMTMsMCwwLDAtMy4yOSw1LjczbDMuNzktMS42N0E5LjQ0LDkuNDQsMCwwLDAsNTI2LjM1LDI3Ljg4WiIvPjxwYXRoIGNsYXNzPSJjbHMtMiIgZD0iTTAsMzIuODF2LS43M0ExMS40MywxMS40MywwLDAsMSw2LjczLDIxLjY3YTMuMzEsMy4zMSwwLDAsMSw0LjY4LDNoMGEzLDMsMCwwLDEtMS44NiwyLjcyLDUsNSwwLDAsMC0zLjE3LDQuNjd2LjczYTUsNSwwLDAsMCw1LDVINzIuMjh2Ni4zOEgxMS40MUExMS40MSwxMS40MSwwLDAsMSwwLDMyLjgxWiIvPjxwYXRoIGNsYXNzPSJjbHMtMyIgZD0iTTQ3LjkxLDBhNDEsNDEsMCwwLDEsNDEsNDFoLTQxWiIvPjxwYXRoIGNsYXNzPSJjbHMtNCIgZD0iTTQ3LjkxLDQxaDQxYTQxLDQxLDAsMCwxLTQxLDQxWiIvPjxwYXRoIGNsYXNzPSJjbHMtNSIgZD0iTTg4Ljg4LDBhNDEsNDEsMCwwLDEsNDEsNDFoLTQxWiIvPjxwYXRoIGNsYXNzPSJjbHMtNiIgZD0iTTg4Ljg4LDQxaDQxYTQxLDQxLDAsMCwxLTQxLDQxWiIvPjxwYXRoIGNsYXNzPSJjbHMtNyIgZD0iTTEyOS44NCwwYTQxLDQxLDAsMCwxLDQxLDQxaC00MVoiLz48cGF0aCBjbGFzcz0iY2xzLTgiIGQ9Ik0xMjkuODQsNDFoNDFhNDEsNDEsMCwwLDEtNDEsNDFaIi8+PC9nPjwvZz48L3N2Zz4=" alt="We Love Chile" />
+    <img class="topbar-logo" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MzcuMDkgODEuOTMiPjxkZWZzPjxzdHlsZT4uY2xzLTF7ZmlsbDojZjVlYmUxO30uY2xzLTJ7ZmlsbDojMWYyZjNlO30uY2xzLTN7ZmlsbDojZGU5ZTAwO30uY2xzLTR7ZmlsbDojZmRiNDAwO30uY2xzLTV7ZmlsbDojNWMxODVhO30uY2xzLTZ7ZmlsbDojN2QyMTdiO30uY2xzLTd7ZmlsbDojYzczNjM4O30uY2xzLTh7ZmlsbDojZTgzZjQxO308L3N0eWxlPjwvZGVmcz48ZyBpZD0iQ2FtYWRhXzIiIGRhdGEtbmFtZT0iQ2FtYWRhIDIiPjxnIGlkPSJDYW1hZGFfMS0yIiBkYXRhLW5hbWU9IkNhbWFkYSAxIj48cGF0aCBjbGFzcz0iY2xzLTEiIGQ9Ik0zMDkuMjgsNTYuNjZsNi41LDguN2E2Ni41OSw2Ni41OSwwLDAsMS02LjM4LDQuMTFjLTQuNDcsMi41NS04LjEzLDMuNzEtMTAuOTUsMy40OGE4LjEzLDguMTMsMCwwLDEtMi4zNi0uNTVxLTMuODgtMS40Ny00LjU1LTcuNTdhNzUuODMsNzUuODMsMCwwLDEtLjI1LTcuOTNxLjEyLTgsMS4yMS0yMS42MVEyOTMuNzMsMjAsMjk1LjQsNC43NWwxMC44MiwxLjU5cS0xLjUyLDEzLjIyLTIuNywyNi44Mi0xLjMyLDE2LjQzLTEuMzEsMjUuMTVjMCwxLjg0LjU3LDIuNDIsMS44MSwxLjc1QTUwLjg0LDUwLjg0LDAsMCwwLDMwOS4yOCw1Ni42NloiLz48cGF0aCBjbGFzcz0iY2xzLTEiIGQ9Ik0zMTIuOTQsMjUuNDFxMy45My02LjQ1LDEwLjE3LTYuNjhjNC4xNy0uMTUsNy43MSwxLjgxLDEwLjY1LDUuOXM0LjUxLDkuMjgsNC43NSwxNS41Ny0xLDExLjYtMy41OCwxNS45My02LDYuNTYtMTAuMTcsNi43Mi03LjcxLTEuODMtMTAuNjQtNi00LjUyLTkuMzItNC43Ni0xNS42MVMzMTAuMzIsMjkuNzEsMzEyLjk0LDI1LjQxWk0zMjQuNCw1MmMuNDEsMCwuODgtLjQ2LDEuNDEtMS4zNGExMy44MSwxMy44MSwwLDAsMCwxLjQtNCwyMywyMywwLDAsMCwuNDktNS45MiwyMy40OCwyMy40OCwwLDAsMC0uOTMtNS45NSwxNC4wNywxNC4wNywwLDAsMC0xLjctMy45M2MtLjU5LS44NC0xLjEtMS4yNS0xLjUxLTEuMjNhMS4xOCwxLjE4LDAsMCwwLS43OC41Miw3LjcsNy43LDAsMCwwLS45MiwxLjQ5LDE0Ljc0LDE0Ljc0LDAsMCwwLS44OSwyLjMsMjAuMTIsMjAuMTIsMCwwLDAtLjYzLDMuMTcsMjIuNzcsMjIuNzcsMCwwLDAtLjE3LDMuOTEsMjEuODMsMjEuODMsMCwwLDAsMSw1Ljg2LDE0LjI0LDE0LjI0LDAsMCwwLDEuNzQsMy45M0MzMjMuNDgsNTEuNTYsMzI0LDUyLDMyNC40LDUyWiIvPjxwYXRoIGNsYXNzPSJjbHMtMSIgZD0iTTM2NS45LDIwLjY0bDkuNzUsNC44Ny0xNy45LDM3Ljc4LTkuNy4xMUwzMzYuNzcsMjEuMzFsMTAuNDYtMi44OSw3LjExLDI1LjM5WiIvPjxwYXRoIGNsYXNzPSJjbHMtMSIgZD0iTTI0OC4yNywzMi4zMnExMC43NSwyMy4yNSw2LDMzLjI1YTExLjU2LDExLjU2LDAsMCwxLTQsNC44MiwxMy4yNSwxMy4yNSwwLDAsMS02LDIuMjlsLS4yNSwwQTE3LjE0LDE3LjE0LDAsMCwxLDIzMCw2OC41YTIzLjY3LDIzLjY3LDAsMCwxLTMuODgtNC41Yy0uMjUuNzEtLjUsMS4zNi0uNzYsMnEtMy43LDkuNTMtMTAuOTMsMTAuNTJsLS4yNSwwYTExLjM3LDExLjM3LDAsMCwxLTEwLjYtNC4xNnEtNS43OS03LTUuMTItMjMuNjNhMTIwLjU1LDEyMC41NSwwLDAsMSw2LjItMzIuNDNsMTAuODYsMy42MXEtNS42NywxNy4yOS01LjY5LDMxLjc3YTMxLjMsMzEuMywwLDAsMCwuNTMsNy43NiwyNi41LDI2LjUsMCwwLDAsMS4yMSw0LjI1LDMuMzcsMy4zNywwLDAsMCwxLDEuNTJsLjE3LDBhMi44NCwyLjg0LDAsMCwwLC40NS0uNDQsOS4xNyw5LjE3LDAsMCwwLC45NC0xLjU2LDE3LjM4LDE3LjM4LDAsMCwwLDEuMTktMi45NCw0Mi43OSw0Mi43OSwwLDAsMCwxLjE1LTQuOTNjLjQxLTIuMTMuNzUtNC41MiwxLTcuMTVxLjYzLTYuMzUuNjQtMTMuNjJsMTAuMTYtMS4yOXEyLjEzLDguODcsMi4zOSwxMC4xOSwyLjk0LDEzLjA4LDYuODQsMTYuNDdhNi4wNiw2LjA2LDAsMCwwLDUuMTcsMS40NmMuNzItLjA5LDEuMTctLjMyLDEuMzUtLjY4YTMuNTYsMy41NiwwLDAsMCwuMzQtMS4wNiwxMy4zNiwxMy4zNiwwLDAsMCwwLTIuNTQsMjUuMjQsMjUuMjQsMCwwLDAtLjY3LTQuMjcsNjQuNzksNjQuNzksMCwwLDAtMi02LjU2cS0xLjQ2LTQuMTItMy42OS05LjA5YTE3MC4xNSwxNzAuMTUsMCwwLDAtMTAuMDktMTguNzdsOS43My02QTE5Ni4xMSwxOTYuMTEsMCwwLDEsMjQ4LjI3LDMyLjMyWiIvPjxwYXRoIGNsYXNzPSJjbHMtMSIgZD0iTTI4NC4zLDQzLjc2Yy4xNi4zOC4zMy44Ni41MiwxLjQ2YTI0Ljg5LDI0Ljg5LDAsMCwxLC42LDIuNjcsMTIuOCwxMi44LDAsMCwxLTEuMzcsNy45MXEtMy4xNyw1LjY2LTExLjU4LDYuNzItNS43NS43My05LjgzLTQuMTZhMjMsMjMsMCwwLDEtNC4yNi04LjkzQTMxLDMxLDAsMCwxLDI1Nyw0MS41MmE1Ny4xNyw1Ny4xNywwLDAsMSwuMTYtOC40MywxOSwxOSwwLDAsMSwyLjE4LTcuMzgsMTAuMTUsMTAuMTUsMCwwLDEsNC42OS00LjY2LDkuNzcsOS43NywwLDAsMSw4Ljg0LjMxLDExLjc2LDExLjc2LDAsMCwxLDMuNDcsMi45NCwxNC43NywxNC43NywwLDAsMSwyLjM3LDQuMWMuNTUsMS40NSwxLDIuNiwxLjIxLDMuNDRzLjQ0LDEuNjIuNTksMi4zNEE0Ljg2LDQuODYsMCwwLDEsMjc5LDM4Ljg1bC0xMC4yLDkuNTlhNyw3LDAsMCwwLDIuNDQsMy4yNCwyLjY2LDIuNjYsMCwwLDAsMi4zNC40NkEyLjU2LDIuNTYsMCwwLDAsMjc1LDUwLjc4YTMsMywwLDAsMCwuMTctMS42Myw5Ljg2LDkuODYsMCwwLDAtLjI4LTEuMjNabS0xNi0xMy4xMWExMywxMywwLDAsMC0xLjIxLDYuNWwzLTIuODRBOS41Myw5LjUzLDAsMCwwLDI2OC4zNCwzMC42NVoiLz48cGF0aCBjbGFzcz0iY2xzLTEiIGQ9Ik0zOTQuNDIsNTYuNjVjMCwuNDEtLjA2LjkyLS4xNCwxLjU0YTIzLDIzLDAsMCwxLS41OSwyLjY4QTEyLjMsMTIuMywwLDAsMSwzOTIsNjQuMzlhMTIuNzQsMTIuNzQsMCwwLDEtMi45MywzLjA3cS01LjI3LDMuNzctMTMuMzMsMS4xOC01LjUyLTEuNzctNy4xNS03LjkzYTIzLDIzLDAsMCwxLS4wOC05LjksMzEsMzEsMCwwLDEsMi4xMy03LjczLDU4LDU4LDAsMCwxLDMuNzEtNy41OCwxOS4xNywxOS4xNywwLDAsMSw1LjEtNS43NiwxMC4xNCwxMC4xNCwwLDAsMSw2LjIzLTIuMjMsOS43OSw5Ljc5LDAsMCwxLDcuODcsNCwxMS41OCwxMS41OCwwLDAsMSwxLjg5LDQuMTQsMTQuNjEsMTQuNjEsMCwwLDEsLjQyLDQuNzFjLS4xMSwxLjU1LS4yNCwyLjc2LS4zNiwzLjYzcy0uMjgsMS42Ni0uNDUsMi4zN0E0Ljg5LDQuODksMCwwLDEsMzkxLjcyLDUwbC0xMy4zLDQuMzdhNyw3LDAsMCwwLC44NCw0LDIuNywyLjcsMCwwLDAsMS45MiwxLjQxLDIuNTcsMi41NywwLDAsMCwxLjg4LS42MywzLDMsMCwwLDAsLjg1LTEuNDEsMTIuMjgsMTIuMjgsMCwwLDAsLjI3LTEuMjNaTTM4NS41MSwzOGExMi45MywxMi45MywwLDAsMC0zLjg0LDUuMzhsMy45My0xLjNBOS4yLDkuMiwwLDAsMCwzODUuNTEsMzhaIi8+PHBhdGggY2xhc3M9ImNscy0xIiBkPSJNNDE3LjI1LDEzLjQycTEwLjkyLTEuMjQsMTYuMjksNS4yYTE1LjczLDE1LjczLDAsMCwxLDMsNS45MSwxOC42OSwxOC42OSwwLDAsMSwuNjUsNi41MmMtLjE4LDIuMTEtLjM1LDMuNy0uNTIsNC43OUExNiwxNiwwLDAsMSw0MzYsMzguNmwtMTEuNDctMy41MnYuMDhhMTguOTIsMTguOTIsMCwwLDAsLjY2LTQuOCw3LjA4LDcuMDgsMCwwLDAtLjk0LTRjLS44Mi0xLTIuNjgtMS4zLTUuNTUtMS0xLjgyLjItMy4yOSwxLjk1LTQuNDEsNS4yMnEtMiw2LjM5LTEsMTUuNzNhMzguNjIsMzguNjIsMCwwLDAsNCwxNC4xOCwxNS44MSwxNS44MSwwLDAsMCwxLjUsMi4xOSw2LjM1LDYuMzUsMCwwLDAsMS4xMSwxLjEyYy4yNi4xOC40NS4yNy41Ni4yNSwxLjUzLS4xNywyLjQ5LS42MSwyLjg5LTEuMzFhOS45Miw5LjkyLDAsMCwwLC4zOS01LjE3LDI0LjQzLDI0LjQzLDAsMCwwLTEuNTUtNS44NWwxMS4xNi00LjY1YTMwLjM3LDMwLjM3LDAsMCwxLDEsMi45MnEuNTEsMS43MywxLjIxLDUuMTNhMjMuNTYsMjMuNTYsMCwwLDEsLjMxLDcuMSwxNS43NiwxNS43NiwwLDAsMS0yLjExLDYuNTdxLTMuNjYsNi4zLTExLjk0LDcuMjRhMTEuNjksMTEuNjksMCwwLDEtMy4xOC0uMDhBMTYuMzMsMTYuMzMsMCwwLDEsNDE1LDc0LjgzYTEzLjg0LDEzLjg0LDAsMCwxLTQuMjMtMywyNi4xMSwyNi4xMSwwLDAsMS00LjA1LTUuNDMsNTAuNzUsNTAuNzUsMCwwLDEtNS40MS0xOC42NVE0MDAsMzUuODEsNDAyLjksMjYuOTFBMjIuODcsMjIuODcsMCwwLDEsNDA2LDIwLjRhMTUuNjYsMTUuNjYsMCwwLDEsNC00LjExLDE4LjU4LDE4LjU4LDAsMCwxLDMuODMtMkExMy43OSwxMy43OSwwLDAsMSw0MTcuMjUsMTMuNDJaIi8+PHBhdGggY2xhc3M9ImNscy0xIiBkPSJNNDY5LjY2LDM1LjA2cTIuNCwxMC41MywzLjM3LDM1Ljc4bC0xMC44OSwxLjI3cS0uNzQtMjAuNTYtMi41NC0zMS43MmMtLjE4LTEuMTItLjc4LTEuNDctMS43OC0xYTE5Ljc1LDE5Ljc1LDAsMCwwLTQuMzYsMi45MmMtMS40OSwxLjI5LTIuMjMsMi4zNC0yLjIzLDMuMTdsLjI2LDI1LjcxLTEwLjgsMS4xNy0uNjItNjcuNTcsMTAuODEtLjExLjIxLDI2LjUzcTcuMjEtNC42OCwxMi4yOS0zLjIzVDQ2OS42NiwzNS4wNloiLz48cGF0aCBjbGFzcz0iY2xzLTEiIGQ9Ik00ODMuMzksMjUuNjdhNi4wNyw2LjA3LDAsMCwxLTMuMTktLjg0LDYuNTYsNi41NiwwLDAsMS0yLjM0LTIuMzQsNi4zMSw2LjMxLDAsMCwxLS45LTMuMjIsNi4xMyw2LjEzLDAsMCwxLDEuODMtNC41MSw2LjIsNi4yLDAsMCwxLDQuNTItMS45Myw2LDYsMCwwLDEsNC41LDEuODQsNi4yMiw2LjIyLDAsMCwxLDEuODgsNC41Miw2LjI4LDYuMjgsMCwwLDEtMS43OCw0LjU1QTYuMDksNi4wOSwwLDAsMSw0ODMuMzksMjUuNjdaIi8+PHBvbHlnb24gY2xhcz0iY2xzLTEiIHBvaW50cz0iNDc3LjM1IDc1LjcyIDQ3Ny45NyAzMy42MSA0ODguODEgMzIuNDQgNDg4LjE5IDc0LjM3IDQ3Ny4zNSA3NS43MiIvPjxwYXRoIGNsYXNzPSJjbHMtMSIgZD0iTTUxNC41OSw2MS40NGw2LjA5LDlhODAuMTUsODAuMTUsMCwwLDEtOS41MSw1Ljg2cS02Ljg5LDMuNDktMTEuMTEsM2E4LjQyLDguNDIsMCwwLDEtMi4zMy0uNjZxLTMuODEtMS42NS00LjE4LTcuNzdhNzQsNzQsMCwwLDEsLjEyLTcuOTRxLjQ4LTgsMi4yMS0yMS41MywyLTE1LjIxLDQuMzMtMzAuMzdsMTAuNzMsMi4wOVE1MDguODEsMjYuMjIsNTA3LDM5Ljc1cS0yLjA4LDE2LjM1LTIuNDksMjUuMDZjLS4xMSwxLjgzLjQ2LDIuNDQsMS43MywxLjgzQTY2Ljg4LDY2Ljg4LDAsMCwwLDUxNC41OSw2MS40NFoiLz48cGF0aCBjbGFzcz0iY2xzLTEiIGQ9Ik01MzcuMDcsNDUuNTRhMTUuMjEsMTUuMjEsMCwwLDEsMCwxLjU0LDIzLjYsMjMuNiwwLDAsMSwuMzIsMi43MiwxMi4xMywxMi4xMywwLDAsMSwxLjMxLDMuNjcsMTIuNTgsMTIuNTgsMCwwLDEsMi42LDMuMzVRNTI4LDYxLjEsNTE5LjcsNTkuMzJxLTUuNjYtMS4yMi03LjktNy4xOWEyMi45NCwyMi45NCwwLDAsMSwxLjA3LTkuODMsMzEsMzEsMCwwLDEsMS4zNi03LjkxQTU3LjkyLDU3LjkyLDAsMCwxLDUxNSwyNi40OGExOS4zOCwxOS4zOCwwLDAsMSw0LjUxLTYuMjQsMTAuMjEsMTAuMjEsMCwwLDEsNi0yLjg0LDkuOCw5LjgsMCwwLDEsOC4yNCwzLjIzQTExLjUzLDExLjUzLDAsMCwxLDUzNiwyNC41NWExNSwxNSwwLDAsMSwuODksNC42NWMwLDEuNTUsMCwyLjc3LDAsMy42NXMtLjExLDEuNjctLjIxLDIuNGE0Ljg3LDQuODcsMCwwLDEtMywzLjkxbC0xMi44LDUuNjZhNyw3LDAsMCwwLDEuMjMsMy44NywyLjY2LDIuNjYsMCwwLDAsMi4wNSwxLjIxLDIuNTUsMi41NSwwLDAsMCwxLjgxLS44MSwyLjkxLDIuOTEsMCwwLDAsLjctMS40OCw4LjYxLDguNjEsMCwwLDAsLjE0LTEuMjZaTTUyNi4zNSwyNy44OGExMywxMywwLDAsMC0zLjI5LDUuNzNsMy43OS0xLjY3QTkuNDQsOS40NCwwLDAsMCw1MjYuMzUsMjcuODhaIi8+PHBhdGggY2xhc3M9ImNscy0yIiBkPSJNMCwzMi44MXYtLjczQTExLjQzLDExLjQzLDAsMCwxLDYuNzMsMjEuNjdhMy4zMSwzLjMxLDAsMCwxLDQuNjgsMy4zaDBhMywzLDAsMCwxLTEuODYsMi43Miw1LDUsMCwwLDAtMy4xNyw0LjY3di43M2E1LDUsMCwwLDAsNSw1SDcyLjI4djYuMzhIMTEuNDFBMTEuNDEsMTEuNDEsMCwwLDEsMCwzMi44MVoiLz48cGF0aCBjbGFzcz0iY2xzLTMiIGQ9Ik00Ny45MSwwYTQxLDQxLDAsMCwxLDQxLDQxaC00MVoiLz48cGF0aCBjbGFzcz0iY2xzLTQiIGQ9Ik00Ny45MSw0MWg0MWE0MSw0MSwwLDAsMSw0MSw0MVoiLz48cGF0aCBjbGFzcz0iY2xzLTUiIGQ9Ik04OC44OCwwYTQxLDQxLDAsMCwxLDQxLDQxaC00MVoiLz48cGF0aCBjbGFzcz0iY2xzLTYiIGQ9Ik04OC44OCw0MWg0MWE0MSw0MSwwLDAsMSw0MSw0MVoiLz48cGF0aCBjbGFzcz0iY2xzLTciIGQ9Ik0xMjkuODQsMGE0MSw0MSwwLDAsMSw0MSw0MWgtNDFaIi8+PHBhdGggY2xhc3M9ImNscy04IiBkPSJNMTI5Ljg0LDQxaDQxYTQxLDQxLDAsMCwxLTQxLDQxWiIvPjwvZz48L2c+PC9zdmc+" alt="Máquina de Conteúdos" />
+    <div class="t-nav active" data-page="home">Painel</div>
+    <div class="t-nav" data-page="ideas">Ideias</div>
+    <div class="t-nav" data-page="week">Semana</div>
+    <div class="t-nav" data-page="wizard">Produzir</div>
+    <div class="t-nav" data-page="metrics">Métricas</div>
+    <div class="t-nav" data-page="analyzer">Analisador</div>
     <div class="t-sep"></div>
-    <div class="t-nav active" data-page="home">🏠 Painel</div>
-    <div class="t-nav" data-page="ideas">💡 Ideias</div>
-    <div class="t-nav" data-page="week">📅 Semana</div>
-    <div class="t-nav" data-page="wizard">✏️ Produzir</div>
-    <div class="t-nav" data-page="metrics">📊 Métricas</div>
-    <div class="t-nav" data-page="analyzer">🔗 Analisador</div>
     <div id="notionSyncPill" class="notion-pill" title="Sincronizar com Notion" onclick="openNotionModal()">◯ Notion</div>
-    <button id="wlcSaveBtn" class="wlc-save-btn" onclick="wlcSaveFile()" title="Salvar alterações no arquivo">💾 Salvar</button>
+    <button id="wlcSaveBtn" class="wlc-save-btn" onclick="wlcSaveFile()" title="Salvar alterações no arquivo">Salvar</button>
     <div class="t-sp"></div>
     <span class="t-date" id="topbarDate">Terça, 14 de Abril de 2026</span>
     <div class="t-avatar">L</div>
   </div>
 
   <div class="main-container">
-    <!-- ═══ HOME PAGE ═══ -->
+    <!-- ═══ TOP HEADER V6 ═══ -->
+    <div class="v6-header">
+      <span class="v6-header-date" id="v6HeaderDate">14/04</span>
+      <div class="v6-dest-pill"><span class="flag">🇨🇱</span> Chile</div>
+      <div class="v6-dest-pill"><span class="flag">🇦🇷</span> Argentina</div>
+      <div class="v6-dest-pill"><span class="flag">🇧🇷</span> Brasil</div>
+      <div class="v6-dest-pill"><span class="flag">🇵🇪</span> Peru</div>
+      <div class="v6-dest-pill"><span class="flag">🇺🇾</span> Uruguai</div>
+      <div class="v6-header-spacer"></div>
+      <button class="v6-btn-nova-ideia" onclick="document.querySelector('[data-page=ideas]').click()">+ Ideia</button>
+      <div class="v6-header-avatar">L</div>
+    </div>
+    <!-- ═══ HOME PAGE V6 ═══ -->
     <div class="page active" id="home">
       <div class="home-body">
 
-        <!-- ── ZONA 1: META ── -->
-        <div class="zone-meta">
-
-          <!-- Bloco 1: Meta do mês -->
-          <div class="zm-block">
-            <div class="z-section-label" style="margin-bottom:12px">Meta do mês — Abr 2026</div>
-            <div class="ring-wrap">
-              <svg class="ring-svg" viewBox="0 0 52 52">
-                <circle cx="26" cy="26" r="22" fill="none" stroke="#F0EBE3" stroke-width="6"/>
-                <circle cx="26" cy="26" r="22" fill="none" stroke="#D63B2F" stroke-width="6"
-                  stroke-dasharray="138.2" id="ringCircle"
-                  stroke-dashoffset="116.1"
-                  stroke-linecap="round"
-                  transform="rotate(-90 26 26)"/>
-                <text x="26" y="30" text-anchor="middle" font-size="8" font-weight="800" fill="#D63B2F" id="ringPct">16%</text>
-              </svg>
-              <div class="ring-text">
-                <div class="ring-big" id="homeVideoCount">0</div>
-                <div class="ring-small">de 300</div>
-              </div>
-            </div>
-            <div class="prog-block" style="margin-top:12px">
-              <div class="prog-header">
-                <span class="prog-label" id="homeGravadosLabel">0 gravados</span>
-                <span class="prog-pct" id="homePct">0%</span>
-              </div>
-              <div class="prog-bar-thin">
-                <div class="prog-fill-red" id="homeMonthBar" style="width:16%"></div>
-              </div>
-              <div style="display:flex;justify-content:space-between;margin-top:2px;">
-                <span style="font-size:8px;color:#C5BEB5">0</span>
-                <span style="font-size:8px;color:#C5BEB5">300</span>
-              </div>
+        <!-- ── BANNER DE PROGRESSO ── -->
+        <div class="v6-progress-banner">
+          <div class="v6-pct-big" id="v6PctBig">0%</div>
+          <div style="flex:1">
+            <div class="v6-pct-label"><span id="v6GravadosNum">0</span> de 300 conteúdos gravados</div>
+            <div class="v6-pct-sub" id="v6ProgSub">Meta do mês — Abr 2026</div>
+            <div class="v6-pct-sub" id="v6ProgRitmo" style="font-size:10px;opacity:0.75;margin-top:2px;"></div>
+            <div class="v6-progress-bar-track" style="margin-top:8px;">
+              <div class="v6-progress-bar-fill" id="v6MonthBarFill" style="width:0%"></div>
             </div>
           </div>
-
-          <!-- Bloco 2: Hoje -->
-          <div class="zm-block">
-            <div class="z-section-label" style="margin-bottom:6px">Hoje</div>
-            <div class="today-num"><span id="homeTodayCount">0</span><span style="font-size:14px;font-weight:400;color:#C5BEB5">/10</span></div>
-            <div class="today-sub">gravados hoje</div>
-            <div id="todayProgressBar" class="day-progress-bar" style="margin-top:6px;"></div>
-          </div>
-
-          <!-- Bloco 3: Semana -->
-          <div class="zm-block">
-            <div class="z-section-label" style="margin-bottom:8px">Semana</div>
-            <div class="week-bars" id="homeWeekBars"></div>
-          </div>
-
-          <!-- Bloco 4: Próxima atualização (sem divider embaixo) -->
-          <div class="next-update-box">
-            <div class="nu-label">🔄 Próx. atualização</div>
-            <div class="nu-date">Segunda, 20/04</div>
-            <div class="nu-sub">banco de ideias</div>
-          </div>
-
+          <div class="v6-new-badge">NEW</div>
+          <!-- Hidden elements for JS compatibility -->
+          <span id="homeGravadosLabel" style="display:none">0 gravados</span>
+          <span id="homePct" style="display:none">0%</span>
+          <div id="homeMonthBar" style="display:none;width:0%"></div>
         </div>
 
-        <!-- ── ZONA 2: CHECKLIST ── -->
-        <div class="zone-checklist">
-          <div class="checklist-header">
-            <div class="day-tabs" id="homeDayTabs"></div>
-            <span class="cl-counter" id="homeClCounter">0/0</span>
+        <!-- ── ÁREA INFERIOR: 3 COLUNAS ── -->
+        <div class="v6-home-bottom">
+
+          <!-- COLUNA ESQUERDA: Gravar + Checklist -->
+          <div class="v6-col-left">
+            <div class="v6-card-gravar">
+              <div>
+                <div class="v6-card-label">Hoje — <span id="v6HojeDate">14/04</span></div>
+                <div style="display:flex;align-items:baseline;gap:4px;margin-top:4px;">
+                  <div class="v6-card-num"><span id="homeTodayCount">0</span></div>
+                  <div class="v6-card-num-sub">/10</div>
+                </div>
+                <div class="v6-card-sublabel">gravados hoje</div>
+              </div>
+              <div class="v6-card-checklist" id="v6HomeChecklist">
+                <!-- Populado pelo JS via renderHomeDayTabs / renderHomeChecklist -->
+              </div>
+              <div class="v6-hoy-badge">HOY</div>
+            </div>
           </div>
-          <div id="homeChecklist" style="display:flex;flex-direction:column;gap:6px;"></div>
-        </div>
 
-        <!-- ── ZONA 3: NOVA IDEIA ── -->
-        <div class="zone-ideas">
-          <div class="ideas-zone-title">💡 Nova ideia</div>
-
-          <div class="idea-quick-card">
-            <textarea id="quickIdeaText" class="idea-textarea-sim" placeholder="Digite sua ideia de conteúdo..."></textarea>
-
-            <div>
-              <div class="plat-selector-label">Plataforma</div>
-              <div class="plat-selector-row" id="quickPlatRow">
-                <div class="plat-sel-btn" data-plat="yt">YT</div>
-                <div class="plat-sel-btn" data-plat="ig">IG</div>
-                <div class="plat-sel-btn" data-plat="tk">TK</div>
-                <div class="plat-sel-btn" data-plat="ad">AD</div>
+          <!-- COLUNA CENTRAL: Stats + Captura Rápida -->
+          <div class="v6-col-mid">
+            <!-- Stats row -->
+            <div class="v6-stat-row">
+              <!-- Banco de Ideias Ativas -->
+              <div class="v6-card-ativas">
+                <div class="v6-card-label" style="color:rgba(255,255,255,0.7)">Banco de Ideias</div>
+                <div class="v6-stat-num" id="v6IdeasAtivas">—</div>
+                <div class="v6-card-sublabel" style="color:rgba(255,255,255,0.6)">Ativas</div>
+                <div class="v6-stat-dest-row" id="v6DestRow">
+                  <span class="v6-stat-dest-tag">🇨🇱 Chile</span>
+                  <span class="v6-stat-dest-tag">🇦🇷 Santiago</span>
+                  <span class="v6-stat-dest-tag">🍷 Vinhos</span>
+                </div>
+              </div>
+              <!-- Semana -->
+              <div class="v6-card-agendadas">
+                <div class="v6-card-semana-label">Semana — <span id="v6SemanaRange"></span></div>
+                <div class="v6-stat-num" id="v6IdeasAgendadas">—</div>
+                <div class="v6-card-sublabel" style="color:rgba(255,255,255,0.7)">Agendadas</div>
+                <div class="v6-semana-sub" id="v6SemanaDetail"></div>
+                <div id="homeWeekBars" style="display:none"></div>
+                <div id="todayProgressBar" style="display:none" class="day-progress-bar"></div>
               </div>
             </div>
 
-            <div>
-              <div class="dest-label">Enviar para</div>
-              <div class="dest-btn dest-hoje" id="destHoje">
-                <span class="dest-icon">⚡</span>
-                <div style="flex:1">
-                  <div class="dest-name">Gravar hoje</div>
-                  <div class="dest-sub">Adiciona à lista de hoje</div>
+            <!-- Captura Rápida -->
+            <div class="v6-captura">
+              <div class="v6-captura-title">+ Adicionar ideia</div>
+              <textarea
+                id="quickIdeaText"
+                class="v6-textarea"
+                placeholder="POV: primeira noite no Atacama — cortar em 3 clipes (Santiago, estrada, céu)."
+              ></textarea>
+
+              <!-- Destino buttons (com lógica JS existente) -->
+              <div class="v6-captura-btns">
+                <div class="v6-captura-btn v6-btn-yt" id="destHoje" onclick="">
+                  YT
+                </div>
+                <div class="v6-captura-btn v6-btn-igtk" id="destSemana" onclick="">
+                  IG · TK
+                </div>
+                <div class="v6-captura-btn v6-btn-salvar" id="destBanco" onclick="">
+                  Salvar →
                 </div>
               </div>
-              <div class="dest-btn dest-semana" id="destSemana">
-                <span class="dest-icon">📅</span>
-                <div style="flex:1">
-                  <div class="dest-name">Esta semana</div>
-                  <div class="dest-sub">Entra no planejamento semanal</div>
-                </div>
-              </div>
-              <div class="dest-btn dest-banco" id="destBanco">
-                <span class="dest-icon">💾</span>
-                <div style="flex:1">
-                  <div class="dest-name">Banco de ideias</div>
-                  <div class="dest-sub">Salva para uso futuro</div>
+
+              <!-- Platform selector (hidden but kept for JS) -->
+              <div style="display:none">
+                <div id="quickPlatRow">
+                  <div class="plat-sel-btn" data-plat="yt">YT</div>
+                  <div class="plat-sel-btn" data-plat="ig">IG</div>
+                  <div class="plat-sel-btn" data-plat="tk">TK</div>
+                  <div class="plat-sel-btn" data-plat="ad">AD</div>
                 </div>
               </div>
             </div>
           </div>
 
-          <div class="last-label">Últimas adicionadas</div>
-          <div id="homeLastAdded"></div>
+          <!-- COLUNA DIREITA: Meta mensal + mini semana + checklist completo -->
+          <div class="v6-col-right">
+            <!-- Mini meta mensal -->
+            <div class="v6-meta-section">
+              <div class="v6-meta-title">Meta do mês</div>
+              <div class="v6-ring-wrap">
+                <svg class="ring-svg" viewBox="0 0 52 52" style="width:52px;height:52px;flex-shrink:0;">
+                  <circle cx="26" cy="26" r="22" fill="none" stroke="#F0EBE3" stroke-width="6"/>
+                  <circle cx="26" cy="26" r="22" fill="none" stroke="#D63B2F" stroke-width="6"
+                    stroke-dasharray="138.2" id="ringCircle"
+                    stroke-dashoffset="138.2"
+                    stroke-linecap="round"
+                    transform="rotate(-90 26 26)"/>
+                  <text x="26" y="30" text-anchor="middle" font-size="8" font-weight="800" fill="#D63B2F" id="ringPct">0%</text>
+                </svg>
+                <div>
+                  <div class="ring-big" id="homeVideoCount" style="font-size:28px;font-weight:900;color:#D63B2F;line-height:1;">0</div>
+                  <div class="ring-small" style="font-size:11px;color:#C5BEB5;font-weight:600;">de 300</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Checklist completo (dias + itens) -->
+            <div class="v6-checklist-area">
+              <div class="v6-checklist-header">
+                <div class="day-tabs" id="homeDayTabs" style="display:flex;gap:6px;flex-wrap:wrap;"></div>
+                <span class="cl-counter" id="homeClCounter">0/0</span>
+              </div>
+              <div id="homeChecklist" style="display:flex;flex-direction:column;gap:5px;"></div>
+            </div>
+
+            <!-- Últimas adicionadas (hidden from view, kept for JS) -->
+            <div style="display:none">
+              <div id="homeLastAdded"></div>
+            </div>
+          </div>
+
         </div>
+
+        <!-- Old zones kept hidden for JS compatibility -->
+        <div class="zone-meta" style="display:none!important">
+          <div class="zm-block"></div>
+        </div>
+        <div class="zone-checklist" style="display:none!important"></div>
+        <div class="zone-ideas" style="display:none!important"></div>
 
       </div>
     </div>
@@ -4192,6 +4747,8 @@
       renderHomeChecklist();
       setupQuickIdea();
       renderHomeLastAdded();
+      // V6 banner + stats sync
+      setTimeout(renderV6Stats, 50);
     }
 
     // ── Zone 1: Meta ──
@@ -4246,6 +4803,14 @@
       const barEl = document.getElementById('homeMonthBar');
       if (barEl) barEl.style.width = pct + '%';
 
+      // V6 banner update
+      const v6PctBig = document.getElementById('v6PctBig');
+      if (v6PctBig) v6PctBig.textContent = pct + '%';
+      const v6Grav = document.getElementById('v6GravadosNum');
+      if (v6Grav) v6Grav.textContent = monthTotal;
+      const v6Fill = document.getElementById('v6MonthBarFill');
+      if (v6Fill) v6Fill.style.width = pct + '%';
+
       // Weekly bar chart
       const barsEl = document.getElementById('homeWeekBars');
       if (barsEl && weeksOfYear.length > 0) {
@@ -4268,6 +4833,114 @@
           });
         }
       }
+    }
+
+    // ── V6 Banner + Stats sync ──
+    function renderV6Stats() {
+      // Sync progress banner
+      const monthTotal = parseInt((document.getElementById('homeVideoCount') || {}).textContent || '0') || 0;
+      const pct = Math.round((monthTotal / 300) * 100);
+
+      const v6PctBig = document.getElementById('v6PctBig');
+      if (v6PctBig) v6PctBig.textContent = pct + '%';
+
+      const v6Grav = document.getElementById('v6GravadosNum');
+      if (v6Grav) v6Grav.textContent = monthTotal;
+
+      const v6Fill = document.getElementById('v6MonthBarFill');
+      if (v6Fill) v6Fill.style.width = pct + '%';
+
+      // Métricas dinâmicas: dias restantes · ritmo · ideal
+      const v6Ritmo = document.getElementById('v6ProgRitmo');
+      if (v6Ritmo) {
+        const hoje = new Date();
+        const diaAtual = hoje.getDate();
+        const diasNoMes = new Date(hoje.getFullYear(), hoje.getMonth() + 1, 0).getDate();
+        const diasRestantes = Math.max(diasNoMes - diaAtual, 0);
+        const ritmo = diaAtual > 0 ? (monthTotal / diaAtual).toFixed(1) : '0.0';
+        const ideal = diasRestantes > 0 ? ((300 - monthTotal) / diasRestantes).toFixed(1) : '—';
+        v6Ritmo.textContent = diasRestantes + ' dias restam · ritmo ' + ritmo + '/d · ideal ' + ideal + '/d';
+      }
+
+      // Sync today date labels
+      const now = new Date();
+      const d = now.getDate().toString().padStart(2,'0');
+      const m = (now.getMonth()+1).toString().padStart(2,'0');
+      const v6HojeDate = document.getElementById('v6HojeDate');
+      if (v6HojeDate) v6HojeDate.textContent = d + '/' + m;
+
+      const v6HDate = document.getElementById('v6HeaderDate');
+      if (v6HDate) v6HDate.textContent = d + '/' + m;
+
+      // Ativas = total ideas no banco (not gravado/publicado)
+      const skipStatus = ['gravado','em_edicao','fazer_correcoes','aprovado','programado','publicado','analisado'];
+      const ativas = (ideasData || []).filter(i => !skipStatus.includes(i.status)).length;
+      const v6Ativas = document.getElementById('v6IdeasAtivas');
+      if (v6Ativas) v6Ativas.textContent = ativas || '—';
+
+      // Agendadas = items na semana atual do kanban
+      let agendadasCount = 0;
+      if (weeksOfYear && weeksOfYear.length > 0 && currentWeekIdx !== undefined) {
+        const week = weeksOfYear[currentWeekIdx];
+        if (week) {
+          week.days.forEach(day => {
+            agendadasCount += (weekKanban[day.dateStr] || []).length;
+          });
+          // Semana range
+          const first = week.days[0];
+          const last = week.days[week.days.length-1];
+          const semRange = document.getElementById('v6SemanaRange');
+          if (semRange && first && last) {
+            const fd = new Date(first.dateStr + 'T12:00:00');
+            const ld = new Date(last.dateStr + 'T12:00:00');
+            const mo = ['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
+            semRange.textContent = fd.getDate() + '–' + ld.getDate() + ' ' + mo[ld.getMonth()];
+          }
+        }
+      }
+      const v6Agend = document.getElementById('v6IdeasAgendadas');
+      if (v6Agend) v6Agend.textContent = agendadasCount || '—';
+
+      // Semana detail (platform counts this week)
+      const todayStr = localDateISO();
+      const todayItems = weekKanban[todayStr] || [];
+      const checked = todayItems.filter(it => checkedKanbanItems.has(`${todayStr}::${it.ideaIdx}`)).length;
+      const semDetail = document.getElementById('v6SemanaDetail');
+      if (semDetail) semDetail.textContent = checked > 0 ? checked + ' gravados hoje' : '';
+
+      // Also rerender v6 checklist from homeChecklist
+      syncV6Checklist();
+    }
+
+    function syncV6Checklist() {
+      const src = document.getElementById('homeChecklist');
+      const dst = document.getElementById('v6HomeChecklist');
+      if (!src || !dst) return;
+      // Clone items into v6 card with v6 styles
+      dst.innerHTML = '';
+      const items = src.querySelectorAll('.ci');
+      if (items.length === 0) {
+        dst.innerHTML = '<div style="color:rgba(255,255,255,0.35);font-size:11px;padding:8px 0;">Nenhum item para hoje</div>';
+        return;
+      }
+      items.forEach(ci => {
+        const isDone = ci.classList.contains('done-item');
+        const titleEl = ci.querySelector('.ci-title');
+        const platEl = ci.querySelector('.ci-plat');
+        const title = titleEl ? titleEl.textContent : '';
+        const plat = platEl ? platEl.textContent : '';
+
+        const div = document.createElement('div');
+        div.className = 'v6-ci' + (isDone ? ' done-item' : '');
+        div.innerHTML = `
+          <div class="v6-cb${isDone ? ' done' : ''}"></div>
+          <div class="v6-ci-title">${title}</div>
+          ${plat ? `<span class="v6-ci-plat">${plat}</span>` : ''}
+        `;
+        // Copy click event by cloning the original
+        div.addEventListener('click', () => ci.click());
+        dst.appendChild(div);
+      });
     }
 
     // ── Zone 2: Day tabs + checklist ──
@@ -4340,6 +5013,8 @@
         });
         listEl.appendChild(row);
       });
+      // Sync V6 checklist card
+      if (typeof syncV6Checklist === 'function') syncV6Checklist();
     }
 
     // Keep kanban's progress bars in sync when toggling from home
