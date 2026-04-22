@@ -5145,7 +5145,7 @@
       scriptLabelRow.style.cssText = 'display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;';
       const scriptLabel = document.createElement('div');
       scriptLabel.style.cssText = 'font-size:11px;font-weight:700;color:#9B9BAA;text-transform:uppercase;letter-spacing:.06em;';
-      scriptLabel.textContent = '📝 Roteiro (Seção 4)';
+      scriptLabel.textContent = '📝 Roteiro';
       scriptLabelRow.appendChild(scriptLabel);
 
       if (scriptA) {
@@ -5183,8 +5183,8 @@
         scriptEmpty.style.cssText = 'padding:14px;border-radius:10px;background:#F8F6F3;border:1px dashed #DDD8CF;text-align:center;';
         const isLoading = idea._notionId && !scriptA;
         scriptEmpty.innerHTML = isLoading
-          ? '<span style="font-size:11px;color:#C5BEB5;">⏳ Carregando roteiro do Notion…</span>'
-          : '<span style="font-size:11px;color:#C5BEB5;">Seção 4 (Roteiro) ainda não preenchida no Notion</span>';
+          ? '<span style="font-size:11px;color:#C5BEB5;">⏳ Carregando roteiro do Notion… (abrindo o drawer novamente em instantes)</span>'
+          : '<span style="font-size:11px;color:#C5BEB5;">Roteiro (Seção 4) ainda não preenchida no Notion</span>';
         scriptWrap.appendChild(scriptEmpty);
       }
       body.appendChild(scriptWrap);
@@ -7484,6 +7484,10 @@
       // Re-render dos badges "PRONTO" no kanban (scripts.A agora preenchido)
       try { renderKanban(); } catch(e) {}
       try { renderIdeasGrid(); } catch(e) {}
+      // Fix D-reg: se o drawer estiver aberto, re-renderiza pra mostrar o script recém-carregado
+      if (drawerCurrentIdx !== null) {
+        try { openIdeaDrawer(drawerCurrentIdx); } catch(e) {}
+      }
     }
 
     // ── Push single idea ──
