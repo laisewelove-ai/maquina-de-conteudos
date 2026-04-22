@@ -8677,10 +8677,12 @@
     const NOTION_PROXY     = '/api/notion';
     const NOTION_VER       = '2022-06-28';
 
-    // Token pré-configurado — integração "We Love Chile - Máquina de Conteúdo"
-    let notionToken     = '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';
+    // Token real fica server-side (env var NOTION_API_KEY no Netlify, injetada pelo proxy).
+    // Esta string é só um placeholder pra manter os guards `if (notionToken)` funcionando.
+    let notionToken     = 'server-managed';
     let notionPageMap   = {};
-    try { const _nt = localStorage.getItem('wlc_notion_token'); if (_nt) notionToken = _nt; } catch(e) {}
+    // Legado: remove token antigo do localStorage se existir (agora é server-side).
+    try { localStorage.removeItem('wlc_notion_token'); } catch(e) {}
     try { const _np = localStorage.getItem('wlc_notion_pagemap'); if (_np) notionPageMap = JSON.parse(_np); } catch(e) {}
 
     // ══════════════════════════════════════════════════════
@@ -8845,8 +8847,7 @@
         }
       }
 
-      // Notion token + pagemap
-      if (idbToken && !notionToken) notionToken = idbToken;
+      // Notion pagemap (token agora é server-managed — ignoramos idbToken)
       if (idbPageMap && typeof idbPageMap === 'object' && Object.keys(notionPageMap).length === 0) {
         notionPageMap = idbPageMap;
       }
