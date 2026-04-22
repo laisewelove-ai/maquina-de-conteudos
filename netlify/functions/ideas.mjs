@@ -25,9 +25,10 @@
 // O dashboard local lê do Notion no próximo sync (syncFromNotion).
 
 const NOTION_DB_IDEAS = '086760ce782547ff995468b038b97b69';
-const NOTION_PROXY    = 'https://maquina-de-conteudos.netlify.app/api/notion';
+// ideas.mjs chama o proxy interno — o proxy injeta o Authorization com NOTION_API_KEY
+// server-side, então não precisamos passar o token daqui.
+const NOTION_PROXY    = 'https://maquinadeconteudos47.netlify.app/api/notion';
 const NOTION_VERSION  = '2022-06-28';
-const NOTION_TOKEN    = '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';
 
 function genDashId() {
   return 'wlc_' + Date.now() + '_' + Math.random().toString(36).slice(2, 7);
@@ -41,12 +42,11 @@ function normalizePlatform(p) {
 
 const PLATFORM_NOTION = { yt: 'YouTube', ig: 'Instagram', tk: 'TikTok', ad: 'Ads' };
 
-async function notionRequest(method, path, body, token) {
+async function notionRequest(method, path, body) {
   const res = await fetch(`${NOTION_PROXY}/${path}`, {
     method,
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`,
       'Notion-Version': NOTION_VERSION,
     },
     body: body ? JSON.stringify(body) : undefined,
@@ -158,11 +158,10 @@ export default async (req) => {
   let action = 'created';
 
   try {
-    const notionToken = process.env.NOTION_TOKEN || NOTION_TOKEN;
     const createRes = await notionRequest('POST', 'pages', {
       parent: { database_id: NOTION_DB_IDEAS },
       properties: notionProps,
-    }, notionToken);
+    });
 
     if (createRes.ok) {
       const page = await createRes.json();

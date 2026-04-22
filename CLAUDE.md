@@ -43,8 +43,11 @@ O arquivo fonte editável está em:
 ## Notion
 
 - **Database ID:** `086760ce782547ff995468b038b97b69`
-- **Token:** embutido no HTML (`ntn_206675072017...`) — também lido do localStorage
-- **Proxy:** `/api/notion/*` → `/.netlify/functions/notion-proxy/:splat`
+- **Integração:** `WLB Claude API` (Internal Integration do Notion)
+- **Token:** **server-side** via env var `NOTION_API_KEY` no Netlify — injetado pelo proxy. Nunca exposto no HTML público nem em nenhuma function.
+- **Proxy:** `/api/notion/*` → `/.netlify/functions/notion-proxy/:splat`. O proxy lê `process.env.NOTION_API_KEY` e injeta o header `Authorization` server-side. Cliente usa placeholder `'server-managed'` pra manter os guards `if (notionToken)` funcionando.
+- **ideas.mjs** também chama o proxy interno — não precisa token próprio.
+- **Para rotacionar o token:** gerar novo token no Notion → `netlify env:set NOTION_API_KEY "ntn_..."` (ou UI do dashboard) → trigger redeploy. Não precisa mexer em código.
 - **Campos sincronizados:** Título, Plataforma, Categoria, Subcategoria, Fonte, Status, Impacto, Destino, Descrição, Adicionado por, Data de adição, Dashboard ID, Data da gravação
 
 ## Status das ideias
