@@ -160,23 +160,14 @@ export default async (req) => {
   let finalDashId = dashId; // may be overridden if page already exists
 
   try {
-<<<<<<< HEAD
-    const createRes = await notionRequest('POST', 'pages', {
-      parent: { database_id: NOTION_DB_IDEAS },
-      properties: notionProps,
-    });
-=======
-    const notionToken = process.env.NOTION_TOKEN || NOTION_TOKEN;
-
-    // 1. Query database for existing page with same title
+    // 1. Query database for existing page with same title (proxy injeta Authorization server-side)
     const queryRes = await notionRequest('POST', `databases/${NOTION_DB_IDEAS}/query`, {
       filter: {
         property: 'Título',
         title: { equals: title.trim() },
       },
       page_size: 1,
-    }, notionToken);
->>>>>>> 90029c4 (fix: endpoint /api/ideas — URL proxy Notion correta + upsert por título)
+    });
 
     let existingPage = null;
     if (queryRes.ok) {
@@ -203,7 +194,7 @@ export default async (req) => {
 
       const updateRes = await notionRequest('PATCH', `pages/${existingPageId}`, {
         properties: notionProps,
-      }, notionToken);
+      });
 
       if (updateRes.ok) {
         notionPageId = existingPageId;
@@ -214,7 +205,7 @@ export default async (req) => {
       const createRes = await notionRequest('POST', 'pages', {
         parent: { database_id: NOTION_DB_IDEAS },
         properties: notionProps,
-      }, notionToken);
+      });
 
       if (createRes.ok) {
         const page = await createRes.json();

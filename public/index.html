@@ -5136,6 +5136,59 @@
 
       body.appendChild(metaWrap);
 
+      // ── Roteiro (Fix D: script extraído do corpo da página Notion) ──
+      const scriptA = (idea.scripts && idea.scripts.A) ? idea.scripts.A.trim() : '';
+      const scriptWrap = document.createElement('div');
+      scriptWrap.style.cssText = 'margin-top:16px;padding-top:16px;border-top:1px solid #F0EBE3;';
+
+      const scriptLabelRow = document.createElement('div');
+      scriptLabelRow.style.cssText = 'display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;';
+      const scriptLabel = document.createElement('div');
+      scriptLabel.style.cssText = 'font-size:11px;font-weight:700;color:#9B9BAA;text-transform:uppercase;letter-spacing:.06em;';
+      scriptLabel.textContent = '📝 Roteiro (Seção 4)';
+      scriptLabelRow.appendChild(scriptLabel);
+
+      if (scriptA) {
+        // Botão copiar
+        const copyScriptBtn = document.createElement('button');
+        copyScriptBtn.type = 'button';
+        copyScriptBtn.style.cssText = 'padding:3px 10px;border-radius:12px;font-size:10px;font-weight:700;cursor:pointer;border:1.5px solid #E8E0D6;background:white;color:#6B6B7A;transition:all .12s;';
+        copyScriptBtn.textContent = '⎘ Copiar';
+        copyScriptBtn.addEventListener('click', () => {
+          navigator.clipboard.writeText(scriptA).then(() => {
+            copyScriptBtn.textContent = '✓ Copiado!';
+            copyScriptBtn.style.color = '#10B981';
+            setTimeout(() => { copyScriptBtn.textContent = '⎘ Copiar'; copyScriptBtn.style.color = '#6B6B7A'; }, 1500);
+          }).catch(() => {});
+        });
+        scriptLabelRow.appendChild(copyScriptBtn);
+      }
+
+      scriptWrap.appendChild(scriptLabelRow);
+
+      if (scriptA) {
+        const scriptPre = document.createElement('pre');
+        scriptPre.style.cssText = [
+          'margin:0;padding:12px 14px;border-radius:10px;',
+          'background:#F8F6F3;border:1px solid #EDE8E0;',
+          'font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:11px;line-height:1.65;',
+          'color:#3D3D4A;white-space:pre-wrap;word-break:break-word;',
+          'max-height:380px;overflow-y:auto;'
+        ].join('');
+        scriptPre.textContent = scriptA;
+        scriptWrap.appendChild(scriptPre);
+      } else {
+        // Script ainda não carregado ou página sem Seção 4
+        const scriptEmpty = document.createElement('div');
+        scriptEmpty.style.cssText = 'padding:14px;border-radius:10px;background:#F8F6F3;border:1px dashed #DDD8CF;text-align:center;';
+        const isLoading = idea._notionId && !scriptA;
+        scriptEmpty.innerHTML = isLoading
+          ? '<span style="font-size:11px;color:#C5BEB5;">⏳ Carregando roteiro do Notion…</span>'
+          : '<span style="font-size:11px;color:#C5BEB5;">Seção 4 (Roteiro) ainda não preenchida no Notion</span>';
+        scriptWrap.appendChild(scriptEmpty);
+      }
+      body.appendChild(scriptWrap);
+
       // ── Excluir ideia ──
       const deleteWrap = document.createElement('div');
       deleteWrap.style.cssText = 'margin-top:24px;padding-top:16px;border-top:1px solid #F0EBE3;';
@@ -7154,6 +7207,9 @@
     window.addEventListener('beforeunload', () => { saveExtraIdeas(); });
     setInterval(() => { if (ideasData.some(i => i._dashId)) saveExtraIdeas(); }, 3000);
 
+    // ── Token padrão atual (fallback quando localStorage está vazio ou inválido) ──
+    const NOTION_TOKEN_DEFAULT = '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';
+
     // ── API helper ──
     async function notionAPI(path, method, body) {
       if (!notionToken) throw new Error('Token não configurado');
@@ -7168,6 +7224,23 @@
       };
       if (body) opts.body = JSON.stringify(body);
       const res = await fetch(url, opts);
+
+      // Auto-recovery: se token expirou/foi revogado (401), tenta com o token padrão atualizado
+      if (res.status === 401 && notionToken !== NOTION_TOKEN_DEFAULT) {
+        console.warn('Notion token inválido — substituindo pelo token padrão atualizado e retentando...');
+        notionToken = NOTION_TOKEN_DEFAULT;
+        try { localStorage.setItem('wlc_notion_token', notionToken); } catch(e) {}
+        if (window._idb) window._idb.set('wlc_notion_token', notionToken);
+        // Retry com token novo
+        opts.headers['Authorization'] = 'Bearer ' + notionToken;
+        const res2 = await fetch(url, opts);
+        if (!res2.ok) {
+          const err2 = await res2.json().catch(() => ({}));
+          throw new Error(err2.message || 'HTTP ' + res2.status);
+        }
+        return res2.json();
+      }
+
       if (!res.ok) {
         const err = await res.json().catch(() => ({}));
         throw new Error(err.message || 'HTTP ' + res.status);
@@ -7229,8 +7302,97 @@
         desc:        txt('Descrição'),
         addedBy:       txt('Adicionado por'),
         addedAt:       dt('Data de adição'),
-        recordingDate: dt('Data da gravação') || null
+        // Usa "Data da gravação" se preenchida; caso contrário, usa "Data de publicação" como fallback
+        recordingDate: dt('Data da gravação') || dt('Data de publicação') || null,
+        publishDate:   dt('Data de publicação') || null,
+        // scripts.A será preenchido por fetchScriptFromPageBlocks() durante o sync
+        scripts: { A: '', B: '', C: '' }
       };
+    }
+
+    // ── Fix D: Extrai Seção 4 (Roteiro) do corpo da página Notion ──
+    // Aceita tanto formato legado (heading_3 "4. Roteiro") quanto callout ("4. Roteiro")
+    // Suporta paginação: concatena todos os blocos se has_more = true
+    async function fetchScriptFromPageBlocks(pageId) {
+      try {
+        let allBlocks = [];
+        let cursor;
+        do {
+          const params = new URLSearchParams({ page_size: '100' });
+          if (cursor) params.set('start_cursor', cursor);
+          const data = await notionAPI('/blocks/' + pageId + '/children?' + params.toString(), 'GET');
+          allBlocks = allBlocks.concat(data.results || []);
+          cursor = data.has_more ? data.next_cursor : null;
+        } while (cursor);
+
+        // Helper: extrai texto simples de um bloco (rich_text ou heading/callout/paragraph/to_do/bulleted_list)
+        function blockText(block) {
+          const btype = block.type;
+          const data  = block[btype] || {};
+          const rt    = data.rich_text || [];
+          return rt.map(t => t.plain_text || t.text?.content || '').join('');
+        }
+
+        // Regex que detecta marcadores de seção: "4. Roteiro" ou "4. Roteiro (Wri)" etc.
+        // Compatível com legado (heading_3) e novo (callout), texto simples ou bold
+        const SEC_PATTERN = /^\d+\.\s+/;
+        const ROT_PATTERN = /^4\.\s+Roteiro/i;
+
+        // Encontra o índice do bloco marcador da seção 4
+        let sec4Start = -1;
+        for (let i = 0; i < allBlocks.length; i++) {
+          const b = allBlocks[i];
+          const validType = ['heading_1','heading_2','heading_3','callout','paragraph'].includes(b.type);
+          if (!validType) continue;
+          const text = blockText(b);
+          if (ROT_PATTERN.test(text)) {
+            sec4Start = i;
+            break;
+          }
+        }
+        if (sec4Start === -1) return ''; // página sem seção 4 ainda
+
+        // Encontra o índice do próximo marcador de seção (número diferente de 4)
+        let sec4End = allBlocks.length;
+        for (let i = sec4Start + 1; i < allBlocks.length; i++) {
+          const b = allBlocks[i];
+          const validType = ['heading_1','heading_2','heading_3','callout','paragraph'].includes(b.type);
+          if (!validType) continue;
+          const text = blockText(b);
+          // Detecta qualquer "N. Nome" onde N não é 4 — fim da seção
+          if (SEC_PATTERN.test(text) && !ROT_PATTERN.test(text)) {
+            sec4End = i;
+            break;
+          }
+        }
+
+        // Extrai e renderiza os blocos da seção 4
+        const sectionBlocks = allBlocks.slice(sec4Start + 1, sec4End);
+        const lines = [];
+        for (const b of sectionBlocks) {
+          const text = blockText(b);
+          if (!text && b.type === 'divider') {
+            lines.push('---');
+            continue;
+          }
+          if (!text) continue; // imagens, etc.
+          switch (b.type) {
+            case 'heading_1':   lines.push('# ' + text); break;
+            case 'heading_2':   lines.push('## ' + text); break;
+            case 'heading_3':   lines.push('### ' + text); break;
+            case 'to_do':       lines.push((b.to_do?.checked ? '[x] ' : '[ ] ') + text); break;
+            case 'bulleted_list_item': lines.push('• ' + text); break;
+            case 'callout':     lines.push('▌ ' + text); break;
+            default:            lines.push(text); break; // paragraph e outros
+          }
+        }
+
+        const script = lines.join('\n').trim();
+        return script;
+      } catch(e) {
+        console.warn('fetchScriptFromPageBlocks failed for', pageId, e.message);
+        return '';
+      }
     }
 
     // ── Pull from Notion ──
@@ -7264,16 +7426,64 @@
         if (notionIdeas.length > 0) {
           ideasData.length = 0;
           notionIdeas.forEach(i => ideasData.push(i));
+
+          // ── Auto-popular weekKanban por recordingDate / Data de publicação ──
+          // Para cada ideia com data definida, adiciona ao dia correspondente no kanban
+          // sem duplicar se já estiver lá (identifica por _notionId ou _dashId).
+          ideasData.forEach((idea, idx) => {
+            const dateStr = idea.recordingDate;
+            if (!dateStr) return;
+            if (!weekKanban[dateStr]) weekKanban[dateStr] = [];
+            const alreadyIn = weekKanban[dateStr].some(
+              it => (it.idea && (it.idea._notionId === idea._notionId || it.idea._dashId === idea._dashId))
+                 || it.ideaIdx === idx
+            );
+            if (!alreadyIn) {
+              weekKanban[dateStr].push({ ideaIdx: idx, platforms: [], idea });
+            }
+          });
+          saveWeekKanban();
         }
 
         saveExtraIdeas();
         savePageMap();
         setSyncStatus('synced');
         renderIdeasSidebar(); renderIdeasGrid(); renderHomeLastAdded();
+        try { renderKanban(); } catch(e) {}
+        try { renderHomeZone1(); renderHomeChecklist(); } catch(e) {}
+
+        // ── Fix D: buscar scripts do corpo das páginas (assíncrono pós-render) ──
+        // Roda em background pra não bloquear a UI. Atualiza scripts.A das ideias
+        // que têm _notionId e ainda não têm script (ou vieram do Notion sem scripts).
+        if (notionIdeas.length > 0) {
+          _syncScriptsFromPageBodies(notionIdeas);
+        }
+
       } catch(e) {
         console.warn('Notion sync failed:', e.message);
         setSyncStatus('error', e.message);
       }
+    }
+
+    // ── Fix D: busca scripts em paralelo (lote de 5 pra não thrashear a API) ──
+    async function _syncScriptsFromPageBodies(ideas) {
+      const BATCH = 5; // chamadas paralelas por vez
+      const toFetch = ideas.filter(i => i._notionId);
+      for (let i = 0; i < toFetch.length; i += BATCH) {
+        const batch = toFetch.slice(i, i + BATCH);
+        await Promise.all(batch.map(async idea => {
+          const script = await fetchScriptFromPageBlocks(idea._notionId);
+          if (script) {
+            if (!idea.scripts) idea.scripts = { A: '', B: '', C: '' };
+            idea.scripts.A = script;
+          }
+        }));
+      }
+      // Persiste e re-renderiza após carregar todos os scripts
+      saveExtraIdeas();
+      // Re-render dos badges "PRONTO" no kanban (scripts.A agora preenchido)
+      try { renderKanban(); } catch(e) {}
+      try { renderIdeasGrid(); } catch(e) {}
     }
 
     // ── Push single idea ──
