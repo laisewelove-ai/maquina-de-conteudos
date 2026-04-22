@@ -1,5 +1,28 @@
-// Netlify Function — proxy para API do Notion (evita problemas de CORS)
+// Netlify Function — proxy para API do Notion (evita CORS + injeta token server-side)
 export default async (req) => {
+  // CORS preflight primeiro (não precisa de token)
+  if (req.method === 'OPTIONS') {
+    return new Response(null, {
+      status: 204,
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'GET, POST, PATCH, DELETE, OPTIONS',
+        'Access-Control-Allow-Headers': 'Content-Type, Authorization, Notion-Version',
+        'Access-Control-Max-Age': '86400',
+      }
+    });
+  }
+
+  // Token injetado server-side a partir da env var NOTION_API_KEY do Netlify.
+  // Cliente NUNCA vê o token — esse é o ponto da correção de segurança.
+  const serverToken = process.env.NOTION_API_KEY;
+  if (!serverToken) {
+    return new Response(JSON.stringify({ error: 'NOTION_API_KEY não configurada no servidor' }), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' }
+    });
+  }
+
   // Parse the path — handles both direct and redirect routes:
   //   /.netlify/functions/notion-proxy/databases/xxx → databases/xxx
   //   /api/notion/databases/xxx                      → databases/xxx
@@ -17,27 +40,11 @@ export default async (req) => {
 
   const notionUrl = 'https://api.notion.com/v1/' + notionPath + url.search;
 
-  // Forward headers from the client
   const headers = {
     'Content-Type': 'application/json',
     'Notion-Version': req.headers.get('Notion-Version') || '2022-06-28',
+    'Authorization': 'Bearer ' + serverToken,
   };
-
-  const auth = req.headers.get('Authorization');
-  if (auth) headers['Authorization'] = auth;
-
-  // Handle CORS preflight
-  if (req.method === 'OPTIONS') {
-    return new Response(null, {
-      status: 204,
-      headers: {
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Methods': 'GET, POST, PATCH, DELETE, OPTIONS',
-        'Access-Control-Allow-Headers': 'Content-Type, Authorization, Notion-Version',
-        'Access-Control-Max-Age': '86400',
-      }
-    });
-  }
 
   try {
     const fetchOpts = { method: req.method, headers };
