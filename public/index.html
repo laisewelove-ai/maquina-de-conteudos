@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Máquina de Conteúdo V5 - We Love Chile</title>
+  <title>Máquina de Conteúdos · We Love</title>
   <link rel="preconnect" href="https://fonts.cdnfonts.com">
   <link href="https://fonts.cdnfonts.com/css/lufga" rel="stylesheet">
   <style>
@@ -120,6 +120,14 @@
       font-size: 22px;
       line-height: 1;
       cursor: pointer;
+      border-radius: 6px;
+      transition: background 0.12s, outline 0.12s;
+    }
+    .t-flag:hover { background: rgba(0,0,0,0.06); }
+    .t-flag.active {
+      background: var(--yellow);
+      padding: 2px 4px;
+      outline: 2px solid #000;
     }
     .t-add-btn {
       background: var(--red);
@@ -1672,6 +1680,87 @@
     #ideasSearchWrap:focus-within { box-shadow: 3px 3px 0 var(--yellow); }
     #ideasSearchInput { border: none; outline: none; font-size: 13px; color: #000; background: transparent; flex: 1; min-width: 0; font-family: 'Lufga', sans-serif; font-weight: 600; }
     #ideasSearchClear { display: none; background: none; border: none; cursor: pointer; color: var(--gray); font-size: 13px; padding: 0; line-height: 1; }
+
+    /* ═══ CALENDÁRIO EDITORIAL ═══ */
+    .cal-page { display: flex; flex-direction: column; height: 100%; padding: 24px; overflow-y: auto; gap: 0; }
+    .cal-top { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 14px; flex-wrap: wrap; gap: 10px; }
+    .cal-title-wrap .cal-title { font-size: 22px; font-weight: 900; color: var(--navy); font-family: 'Lufga', sans-serif; }
+    .cal-title-wrap .cal-subtitle { font-size: 12px; color: var(--gray); font-weight: 600; margin-top: 2px; font-family: 'Lufga', sans-serif; }
+    .cal-right { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+    .cal-month-nav { display: flex; align-items: center; gap: 8px; }
+    .cal-month-label { font-size: 15px; font-weight: 800; color: var(--navy); min-width: 150px; text-align: center; font-family: 'Lufga', sans-serif; }
+    .cal-nav-btn { width: 30px; height: 30px; border: 2px solid #000; border-radius: 8px; background: white; cursor: pointer; font-size: 16px; font-weight: 800; display: flex; align-items: center; justify-content: center; transition: background .12s; }
+    .cal-nav-btn:hover { background: var(--yellow); }
+    .cal-wa-btn { background: var(--purple); color: white; border: 2px solid #000; border-radius: 10px; padding: 8px 15px; font-size: 13px; font-weight: 800; cursor: pointer; font-family: 'Lufga', sans-serif; display: flex; align-items: center; gap: 6px; box-shadow: 3px 3px 0 #000; transition: all .12s; }
+    .cal-wa-btn:hover { transform: translate(-1px,-1px); box-shadow: 4px 4px 0 #000; }
+    .cal-wa-btn:active { transform: translate(1px,1px); box-shadow: 2px 2px 0 #000; }
+    .cal-legend { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
+    .cal-legend-item { display: flex; align-items: center; gap: 4px; font-size: 11px; font-weight: 700; font-family: 'Lufga', sans-serif; }
+    .cal-legend-dot { width: 10px; height: 10px; border-radius: 50%; border: 1.5px solid rgba(0,0,0,.25); flex-shrink:0; }
+    .cal-grid-wrap { background: white; border: 2px solid #000; border-radius: 14px; overflow: hidden; flex: 1; }
+    .cal-weekdays { display: grid; grid-template-columns: repeat(7,1fr); background: var(--navy); }
+    .cal-weekday { padding: 8px 4px; text-align: center; font-size: 11px; font-weight: 800; color: white; font-family: 'Lufga', sans-serif; text-transform: uppercase; letter-spacing: .5px; }
+    .cal-grid { display: grid; grid-template-columns: repeat(7,1fr); }
+    .cal-cell { min-height: 100px; border-right: 1px solid #E8E0D6; border-bottom: 1px solid #E8E0D6; padding: 5px 5px 4px; display: flex; flex-direction: column; gap: 3px; }
+    .cal-cell:nth-child(7n) { border-right: none; }
+    .cal-cell.outside { background: #F8F5F0; }
+    .cal-cell.today .cal-day-num { background: var(--red); color: white; border-radius: 50%; }
+    .cal-day-num { font-size: 12px; font-weight: 800; color: var(--navy); width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-family: 'Lufga', sans-serif; margin-bottom: 1px; }
+    .cal-card { border-radius: 5px; padding: 3px 6px; font-size: 10px; font-weight: 700; font-family: 'Lufga', sans-serif; border: 1.5px solid rgba(0,0,0,.15); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: pointer; display: flex; align-items: center; gap: 3px; transition: opacity .1s; }
+    .cal-card:hover { opacity: .8; }
+    .cal-more { font-size: 10px; color: var(--gray); font-weight: 700; padding-left: 4px; cursor: pointer; font-family: 'Lufga', sans-serif; }
+    .cal-empty-banner { text-align: center; padding: 48px 20px; color: var(--gray); }
+    .cal-empty-banner .cal-empty-icon { font-size: 40px; margin-bottom: 10px; }
+    .cal-empty-banner .cal-empty-text { font-size: 14px; font-weight: 700; font-family: 'Lufga', sans-serif; margin-bottom: 6px; }
+    .cal-empty-banner .cal-empty-sub { font-size: 12px; font-weight: 500; }
+
+    /* ── Briefing Modal ── */
+    .briefing-overlay { position: fixed; inset: 0; background: rgba(26,32,53,.5); z-index: 900; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity .22s; }
+    .briefing-overlay.open { opacity: 1; pointer-events: auto; }
+    .briefing-modal { background: var(--bg); border: 3px solid #000; border-radius: 18px; width: 540px; max-width: 95vw; max-height: 88vh; overflow-y: auto; box-shadow: 6px 6px 0 #000; }
+    .briefing-header { padding: 18px 20px 0; display: flex; align-items: center; justify-content: space-between; }
+    .briefing-title { font-size: 18px; font-weight: 900; color: var(--navy); font-family: 'Lufga', sans-serif; }
+    .briefing-close { background: none; border: none; cursor: pointer; font-size: 20px; color: var(--gray); padding: 0; line-height: 1; }
+    .briefing-progress { display: flex; gap: 6px; padding: 10px 20px 0; }
+    .briefing-prog-dot { height: 4px; flex: 1; border-radius: 2px; background: #DDD6C9; transition: background .2s; }
+    .briefing-prog-dot.done { background: var(--purple); }
+    .briefing-body { padding: 16px 20px; }
+    .briefing-step { display: none; }
+    .briefing-step.active { display: block; }
+    .briefing-label { font-size: 10px; font-weight: 800; color: var(--gray); text-transform: uppercase; letter-spacing: .8px; margin-bottom: 7px; font-family: 'Lufga', sans-serif; }
+    .briefing-q { font-size: 15px; font-weight: 800; color: var(--navy); margin-bottom: 12px; font-family: 'Lufga', sans-serif; line-height: 1.35; }
+    .briefing-chips { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 14px; }
+    .briefing-chip { padding: 6px 12px; border: 2px solid #DDD6C9; border-radius: 20px; font-size: 12px; font-weight: 700; cursor: pointer; background: white; color: #000; font-family: 'Lufga', sans-serif; transition: all .12s; }
+    .briefing-chip:hover { border-color: #000; }
+    .briefing-chip.active { background: var(--navy); border-color: var(--navy); color: white; }
+    .briefing-text { width: 100%; padding: 10px 13px; border: 2px solid #DDD6C9; border-radius: 10px; font-size: 13px; font-family: 'Lufga', sans-serif; background: white; resize: none; outline: none; box-sizing: border-box; }
+    .briefing-text:focus { border-color: var(--purple); }
+    .briefing-vol-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 14px; }
+    .briefing-vol-item { background: white; border: 2px solid #DDD6C9; border-radius: 10px; padding: 9px 11px; display: flex; align-items: center; gap: 7px; }
+    .briefing-vol-emoji { font-size: 17px; flex-shrink: 0; }
+    .briefing-vol-label { flex: 1; font-size: 12px; font-weight: 700; font-family: 'Lufga', sans-serif; }
+    .briefing-vol-num { font-size: 15px; font-weight: 900; color: var(--navy); min-width: 18px; text-align: center; font-family: 'Lufga', sans-serif; }
+    .briefing-vol-btn { width: 24px; height: 24px; border: 2px solid #DDD6C9; border-radius: 6px; background: var(--bg); cursor: pointer; font-size: 13px; font-weight: 800; display: flex; align-items: center; justify-content: center; transition: all .1s; }
+    .briefing-vol-btn:hover { border-color: #000; background: #E8E0D6; }
+    .briefing-days { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 14px; }
+    .briefing-day-btn { width: 44px; height: 40px; border: 2px solid #DDD6C9; border-radius: 10px; background: white; cursor: pointer; font-size: 11px; font-weight: 800; font-family: 'Lufga', sans-serif; display: flex; align-items: center; justify-content: center; transition: all .12s; }
+    .briefing-day-btn.active { background: var(--navy); border-color: var(--navy); color: white; }
+    .briefing-footer { padding: 0 20px 18px; display: flex; justify-content: space-between; align-items: center; }
+    .briefing-step-label { font-size: 12px; color: var(--gray); font-weight: 600; font-family: 'Lufga', sans-serif; }
+    .briefing-generate-btn { background: var(--purple); color: white; border: 2px solid #000; border-radius: 10px; padding: 9px 20px; font-size: 13px; font-weight: 800; cursor: pointer; font-family: 'Lufga', sans-serif; box-shadow: 3px 3px 0 #000; transition: all .12s; }
+    .briefing-generate-btn:hover { opacity: .9; transform: translate(-1px,-1px); box-shadow: 4px 4px 0 #000; }
+    .briefing-month-row { display: flex; gap: 8px; align-items: center; margin-bottom: 14px; }
+    .briefing-select { padding: 8px 11px; border: 2px solid #DDD6C9; border-radius: 10px; font-size: 13px; font-family: 'Lufga', sans-serif; font-weight: 700; background: white; outline: none; }
+    .briefing-select:focus { border-color: var(--purple); }
+    .briefing-flags { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 14px; }
+    .briefing-flag-btn { padding: 7px 9px; border: 2px solid #DDD6C9; border-radius: 10px; background: white; cursor: pointer; font-size: 18px; line-height: 1; transition: all .12s; }
+    .briefing-flag-btn:hover { border-color: #000; }
+    .briefing-flag-btn.active { border-color: #000; background: var(--yellow); }
+    .briefing-spec-input { width: 100%; padding: 7px 12px; border: 2px solid #DDD6C9; border-radius: 10px; font-size: 13px; font-family: 'Lufga', sans-serif; background: white; outline: none; margin-bottom: 7px; box-sizing: border-box; }
+    .briefing-spec-input:focus { border-color: var(--purple); }
+    .briefing-spec-tags { display: flex; flex-wrap: wrap; gap: 5px; }
+    .briefing-spec-tag { padding: 4px 8px; background: white; border: 1.5px solid #DDD6C9; border-radius: 20px; font-size: 11px; font-weight: 700; display: flex; align-items: center; gap: 4px; font-family: 'Lufga', sans-serif; }
+    .briefing-spec-tag button { background: none; border: none; cursor: pointer; color: var(--gray); font-size: 12px; padding: 0; line-height: 1; }
   </style>
 </head>
 <body>
@@ -1692,8 +1781,10 @@
     <div class="t-nav" data-page="ideas">Ideias</div>
     <div class="t-nav" data-page="week">Semana</div>
     <div class="t-nav" data-page="wizard">Produzir</div>
+    <div class="t-nav" data-page="avulso">✦ Avulso</div>
     <div class="t-nav" data-page="metrics">Métricas</div>
     <div class="t-nav" data-page="analyzer">Analisador</div>
+    <div class="t-nav" data-page="calendario">📅 Calendário</div>
     <div class="sb-card sb-banco">
       <div class="sb-card-label">BANCO DE IDEIAS</div>
       <div class="sb-card-num" id="homeBancoCount">218</div>
@@ -1728,6 +1819,7 @@
     <span class="t-flag" title="Patagônia">🏔️</span>
     <span class="t-flag" title="Atacama">🌵</span>
     <span class="t-flag" title="We Love Business">💻</span>
+    <span class="t-flag" title="We Love Homes">🏠</span>
     <!-- Spacer -->
     <div class="t-sp"></div>
     <!-- Botão + Ideia -->
@@ -2410,6 +2502,176 @@
 
   </div>
 
+  <!-- ═══ AVULSO PAGE ═══ -->
+  <div class="page" id="avulso">
+    <div style="max-width:640px;margin:0 auto;padding:32px 0 48px;">
+
+      <div style="font-size:12px;font-weight:700;color:#D63B2F;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;">✦ CONTEÚDO AVULSO</div>
+      <h1 style="font-size:32px;font-weight:800;color:#1A1A2E;margin:0 0 6px 0;">Registrar Peça Avulsa</h1>
+      <p style="color:#6B6B8A;font-size:15px;margin:0 0 32px 0;">Para conteúdos fora do Sistema 1×10 — qualquer empresa, qualquer plataforma.</p>
+
+      <div style="background:white;border-radius:20px;padding:28px 32px;box-shadow:0 2px 12px rgba(36,34,88,0.08);">
+
+        <!-- EMPRESA -->
+        <div style="margin-bottom:24px;">
+          <div style="font-size:11px;font-weight:800;color:#9B9BAA;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:10px;">Empresa / Destino</div>
+          <div id="avulsoEmpresaBtns" style="display:flex;flex-wrap:wrap;gap:8px;"></div>
+        </div>
+
+        <!-- DESTINO WLC (só aparece se empresa = WLC) -->
+        <div id="avulsoDestinoWrap" style="display:none;margin-bottom:24px;">
+          <div style="font-size:11px;font-weight:800;color:#9B9BAA;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:10px;">Destino (WLC)</div>
+          <div id="avulsoDestinoBtns" style="display:flex;flex-wrap:wrap;gap:8px;"></div>
+        </div>
+
+        <!-- PLATAFORMA -->
+        <div style="margin-bottom:24px;">
+          <div style="font-size:11px;font-weight:800;color:#9B9BAA;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:10px;">Plataforma</div>
+          <div id="avulsoPlatBtns" style="display:flex;flex-wrap:wrap;gap:8px;"></div>
+        </div>
+
+        <!-- TÍTULO -->
+        <div style="margin-bottom:24px;">
+          <div style="font-size:11px;font-weight:800;color:#9B9BAA;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:10px;">Título / Tema <span style="color:#D63B2F;">*</span></div>
+          <input id="avulsoTitle" type="text" placeholder="Ex: Como usar o Claude para responder DMs" style="width:100%;padding:12px 14px;border:1.5px solid #E8E0D6;border-radius:12px;font-size:14px;color:#1A1A2E;background:white;outline:none;box-sizing:border-box;transition:border-color .15s;" />
+        </div>
+
+        <!-- DESCRIÇÃO -->
+        <div style="margin-bottom:28px;">
+          <div style="font-size:11px;font-weight:800;color:#9B9BAA;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:10px;">Descrição <span style="font-size:10px;font-weight:600;color:#BBB;">(opcional)</span></div>
+          <textarea id="avulsoDesc" rows="3" placeholder="Contexto, referência, roteiro inicial..." style="width:100%;padding:12px 14px;border:1.5px solid #E8E0D6;border-radius:12px;font-size:14px;color:#1A1A2E;background:white;outline:none;box-sizing:border-box;resize:vertical;font-family:inherit;transition:border-color .15s;"></textarea>
+        </div>
+
+        <!-- ENVIAR PARA -->
+        <div style="margin-bottom:28px;">
+          <div style="font-size:11px;font-weight:800;color:#9B9BAA;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:12px;">Enviar para</div>
+          <div style="display:flex;gap:10px;flex-wrap:wrap;">
+            <label style="display:flex;align-items:center;gap:8px;cursor:pointer;padding:10px 16px;border:1.5px solid #E8E0D6;border-radius:10px;font-size:13px;font-weight:600;color:#1A1A2E;transition:all .15s;" id="avulsoDestBancoLbl">
+              <input type="radio" name="avulsoDest" value="banco" checked style="accent-color:#D63B2F;" /> 💡 Banco de Ideias
+            </label>
+            <label style="display:flex;align-items:center;gap:8px;cursor:pointer;padding:10px 16px;border:1.5px solid #E8E0D6;border-radius:10px;font-size:13px;font-weight:600;color:#1A1A2E;transition:all .15s;" id="avulsoDestSemanaLbl">
+              <input type="radio" name="avulsoDest" value="semana" style="accent-color:#D63B2F;" /> 📅 Semana — dia:
+              <select id="avulsoDaySelect" style="border:none;outline:none;font-size:13px;font-weight:600;color:#1A1A2E;background:transparent;cursor:pointer;margin-left:4px;"></select>
+            </label>
+          </div>
+        </div>
+
+        <!-- FEEDBACK -->
+        <div id="avulsoFeedback" style="display:none;padding:12px 16px;border-radius:10px;font-size:13px;font-weight:600;margin-bottom:16px;"></div>
+
+        <!-- BOTÃO -->
+        <button id="btnRegistrarAvulso" style="width:100%;padding:14px;background:#D63B2F;color:white;border:none;border-radius:14px;font-size:15px;font-weight:800;cursor:pointer;transition:opacity .15s;letter-spacing:0.3px;">+ Registrar Avulso</button>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ CALENDÁRIO EDITORIAL PAGE ═══ -->
+  <div class="page" id="calendario">
+    <div class="cal-page">
+      <div class="cal-top">
+        <div class="cal-title-wrap">
+          <div class="cal-title">Calendário Editorial</div>
+          <div class="cal-subtitle">Planejamento mensal de conteúdo por objetivo</div>
+        </div>
+        <div class="cal-right">
+          <div class="cal-month-nav">
+            <button class="cal-nav-btn" id="calPrevMonth">‹</button>
+            <div class="cal-month-label" id="calMonthLabel">Maio 2026</div>
+            <button class="cal-nav-btn" id="calNextMonth">›</button>
+          </div>
+          <button class="cal-wa-btn" id="calWaBtn">✨ WeAgent — Preencher Calendário</button>
+        </div>
+      </div>
+      <div class="cal-legend" id="calLegend"></div>
+      <div class="cal-grid-wrap">
+        <div class="cal-weekdays">
+          <div class="cal-weekday">Dom</div>
+          <div class="cal-weekday">Seg</div>
+          <div class="cal-weekday">Ter</div>
+          <div class="cal-weekday">Qua</div>
+          <div class="cal-weekday">Qui</div>
+          <div class="cal-weekday">Sex</div>
+          <div class="cal-weekday">Sáb</div>
+        </div>
+        <div class="cal-grid" id="calGrid"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ BRIEFING MODAL ═══ -->
+  <div class="briefing-overlay" id="briefingOverlay">
+    <div class="briefing-modal">
+      <div class="briefing-header">
+        <div class="briefing-title">✨ Briefing do Mês</div>
+        <button class="briefing-close" id="briefingClose">✕</button>
+      </div>
+      <div class="briefing-progress">
+        <div class="briefing-prog-dot done" id="bprog1"></div>
+        <div class="briefing-prog-dot" id="bprog2"></div>
+        <div class="briefing-prog-dot" id="bprog3"></div>
+      </div>
+      <div class="briefing-body">
+
+        <!-- Step 1: Foco -->
+        <div class="briefing-step active" id="bstep1">
+          <div class="briefing-label">Passo 1 de 3 · Foco</div>
+          <div class="briefing-q">Qual é o grande objetivo deste mês?</div>
+          <textarea class="briefing-text" id="bObjText" rows="2" placeholder="Ex: Lançar o pacote neve de junho, crescer no IG, gerar leads para o Rota Chile..."></textarea>
+          <div class="briefing-chips" id="bObjChips" style="margin-top:10px;">
+            <button class="briefing-chip" data-obj="crescimento">📈 Crescimento</button>
+            <button class="briefing-chip" data-obj="conversao">💰 Conversão</button>
+            <button class="briefing-chip" data-obj="lancamento">🎓 Lançamento</button>
+            <button class="briefing-chip" data-obj="awareness">🌟 Awareness</button>
+            <button class="briefing-chip" data-obj="sazonalidade">📅 Sazonalidade</button>
+          </div>
+          <div class="briefing-label">Mês de referência</div>
+          <div class="briefing-month-row">
+            <select class="briefing-select" id="bMonthSel"></select>
+            <select class="briefing-select" id="bYearSel"></select>
+          </div>
+          <div class="briefing-label">Destino em foco</div>
+          <div class="briefing-flags" id="bDestFlags"></div>
+        </div>
+
+        <!-- Step 2: Volume -->
+        <div class="briefing-step" id="bstep2">
+          <div class="briefing-label">Passo 2 de 3 · Volume</div>
+          <div class="briefing-q">Quantos conteúdos por dia, por plataforma?</div>
+          <div class="briefing-vol-grid" id="bVolGrid"></div>
+          <div class="briefing-label">Quais dias você grava?</div>
+          <div class="briefing-days" id="bDayBtns"></div>
+        </div>
+
+        <!-- Step 3: Contexto -->
+        <div class="briefing-step" id="bstep3">
+          <div class="briefing-label">Passo 3 de 3 · Contexto</div>
+          <div class="briefing-q">Qual é o tom do mês?</div>
+          <div class="briefing-chips" id="bTomChips">
+            <button class="briefing-chip" data-tom="educativo">🎓 Educativo</button>
+            <button class="briefing-chip" data-tom="inspiracional">😍 Inspiracional</button>
+            <button class="briefing-chip" data-tom="vendas">🔥 Vendas</button>
+            <button class="briefing-chip" data-tom="conversacional">🗣️ Conversacional</button>
+          </div>
+          <div class="briefing-label" style="margin-top:10px;">Datas especiais do mês <span style="font-weight:400;text-transform:none;font-size:11px;letter-spacing:0;">(Enter para adicionar)</span></div>
+          <input class="briefing-spec-input" id="bSpecInput" type="text" placeholder="Ex: Dia das Mães, Temporada neve começa, Feriado..."/>
+          <div class="briefing-spec-tags" id="bSpecTags"></div>
+          <div class="briefing-label" style="margin-top:12px;">Observação livre <span style="font-weight:400;text-transform:none;font-size:11px;letter-spacing:0;">(opcional)</span></div>
+          <textarea class="briefing-text" id="bNotasText" rows="2" placeholder="Alguma restrição? Semana de férias, evento especial..."></textarea>
+        </div>
+
+      </div>
+      <div class="briefing-footer">
+        <div class="briefing-step-label" id="bStepLabel">Passo 1 de 3</div>
+        <div style="display:flex;gap:8px;align-items:center;">
+          <button class="briefing-chip" id="bPrevBtn" style="display:none;">← Voltar</button>
+          <button class="briefing-chip" id="bNextBtn" style="background:var(--navy);border-color:var(--navy);color:white;">Próximo →</button>
+          <button class="briefing-generate-btn" id="bGenerateBtn" style="display:none;">✨ Gerar Calendário</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- Script Side Panel -->
   <div class="script-panel-overlay" id="scriptPanelOverlay"></div>
   <div class="script-panel" id="scriptPanel">
@@ -2507,8 +2769,33 @@
       { key: 'uyuni',        flag: '🧂',  name: 'Uyuni' },
       { key: 'cusco',        flag: '🏛️',  name: 'Cusco' },
       { key: 'buenos_aires', flag: '🇦🇷', name: 'Buenos Aires' },
-      { key: 'patagonia',    flag: '🏔️',  name: 'Patagônia' }
+      { key: 'patagonia',    flag: '🏔️',  name: 'Patagônia' },
+      { key: 'wlb',          flag: '💻',  name: 'We Love Business' },
+      { key: 'wlh',          flag: '🏠',  name: 'We Love Homes' },
     ];
+
+    // Categorias padrão por marca/destino — aparecem mesmo sem ideias cadastradas
+    const BRAND_DEFAULT_CATS = {
+      wlc:          ['Restaurantes','Pontos Turísticos','Planejamento de Viagem','Guias','Passeios','Inverno','Verão','Outono','Primavera','Bares','Cafeterias','Compras','Hospedagem','Festas'],
+      santiago:     ['Restaurantes','Pontos Turísticos','Planejamento de Viagem','Guias','Passeios','Bares','Cafeterias','Compras','Festas'],
+      atacama:      ['Passeios','Pontos Turísticos','Guias','Planejamento de Viagem','Inverno','Verão'],
+      patagonia:    ['Passeios','Pontos Turísticos','Guias','Hospedagem','Inverno'],
+      cusco:        ['Passeios','Pontos Turísticos','Planejamento de Viagem','Guias','Restaurantes'],
+      buenos_aires: ['Restaurantes','Pontos Turísticos','Bares','Compras','Festas','Guias'],
+      wlb:          ['Dor','Desejo','Objeção','O Público Valoriza','Segmentos','IA para Negócios','Claude no Dia a Dia','Ferramentas','Estratégia de Conteúdo','Cases de Uso','Produtividade','Marketing Digital'],
+      wlh:          ['Hospedagem','Check-in / Check-out','Experiências','Comodidades','Localização','Temporada Alta','Temporada Baixa','Avaliações'],
+    };
+
+    // Mapa: título do t-flag → chave de destino
+    const FLAG_DEST_MAP = {
+      'We Love Chile':     'santiago',
+      'We Love Peru':      'cusco',
+      'We Love Argentina': 'buenos_aires',
+      'Patagônia':         'patagonia',
+      'Atacama':           'atacama',
+      'We Love Business':  'wlb',
+      'We Love Homes':     'wlh',
+    };
 
     // Idea sources — canonical types + user-added ones
     const DEFAULT_IDEA_SOURCES = [
@@ -2994,6 +3281,34 @@
       });
     });
 
+    // Topbar destination flags — click to filter Banco de Ideias by brand/destination
+    document.querySelectorAll('.t-flag').forEach(flag => {
+      flag.addEventListener('click', function() {
+        const title = this.getAttribute('title');
+        const destKey = FLAG_DEST_MAP[title];
+        if (!destKey) return;
+
+        // Toggle: clicar no mesmo flag ativo limpa o filtro
+        if (activeDestFilter === destKey) {
+          activeDestFilter = null;
+          document.querySelectorAll('.t-flag').forEach(f => f.classList.remove('active'));
+        } else {
+          activeDestFilter = destKey;
+          document.querySelectorAll('.t-flag').forEach(f => f.classList.remove('active'));
+          this.classList.add('active');
+        }
+
+        // Navega para o Banco de Ideias (switchPage já chama initIdeasPage internamente)
+        // Se já estiver na página de ideias, re-renderiza manualmente
+        if (currentPage === 'ideas') {
+          renderIdeasSidebar();
+          renderIdeasGrid();
+        } else {
+          switchPage('ideas');
+        }
+      });
+    });
+
     function switchPage(page) {
       document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
       document.getElementById(page).classList.add('active');
@@ -3008,6 +3323,10 @@
         initIdeasPage();
       } else if (page === 'home') {
         initHome();
+      } else if (page === 'calendario') {
+        initCalendario();
+      } else if (page === 'avulso') {
+        initAvulsoPage();
       }
     }
 
@@ -3026,6 +3345,8 @@
       const monthNames = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
       const topbarDate = document.getElementById('topbarDate');
       if (topbarDate) topbarDate.textContent = `${dayNames[now.getDay()]}, ${now.getDate()} de ${monthNames[now.getMonth()]} de ${now.getFullYear()}`;
+      const topbarDateShort = document.getElementById('topbarDateShort');
+      if (topbarDateShort) topbarDateShort.textContent = `${String(now.getDate()).padStart(2,'0')}/${String(now.getMonth()+1).padStart(2,'0')}`;
 
       renderHomeZone1();
       renderHomeDayTabs();
@@ -4116,6 +4437,189 @@
       return ideasData.filter(i => normalizePlatform(i.platform) === key);
     }
 
+    // ── Avulso page ──
+    const AVULSO_EMPRESAS = [
+      { key: 'wlc',         flag: '🇨🇱', name: 'We Love Chile' },
+      { key: 'wlb',         flag: '💻',  name: 'We Love Business' },
+      { key: 'wlh',         flag: '🏠',  name: 'We Love Homes' },
+      { key: 'cusco',       flag: '🏛️',  name: 'We Love Peru' },
+      { key: 'buenos_aires',flag: '🇦🇷', name: 'We Love Argentina' },
+      { key: 'patagonia',   flag: '🏔️',  name: 'Patagônia' },
+    ];
+    const AVULSO_WLC_DESTS = [
+      { key: 'santiago',  flag: '🇨🇱', name: 'Santiago' },
+      { key: 'atacama',   flag: '🏜️',  name: 'Atacama' },
+      { key: 'uyuni',     flag: '🧂',  name: 'Uyuni' },
+      { key: 'patagonia', flag: '🏔️',  name: 'Patagônia' },
+    ];
+    const AVULSO_PLATS = [
+      { key: 'yt',  emoji: '▶️',  name: 'YouTube' },
+      { key: 'ig',  emoji: '📸',  name: 'Instagram' },
+      { key: 'tk',  emoji: '🎵',  name: 'TikTok' },
+      { key: 'ad',  emoji: '📣',  name: 'Anúncio' },
+      { key: 'pin', emoji: '📌',  name: 'Pinterest' },
+      { key: 'thr', emoji: '🧵',  name: 'Threads' },
+      { key: 'eml', emoji: '✉️',  name: 'Email' },
+    ];
+
+    let avulsoEmpresa = null;
+    let avulsoDestinoWLC = null;
+    let avulsoPlat = null;
+
+    function initAvulsoPage() {
+      avulsoEmpresa = null; avulsoDestinoWLC = null; avulsoPlat = null;
+
+      // Build empresa buttons
+      const empEl = document.getElementById('avulsoEmpresaBtns');
+      if (empEl) {
+        empEl.innerHTML = '';
+        AVULSO_EMPRESAS.forEach(e => {
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          btn.style.cssText = 'padding:8px 14px;border:1.5px solid #E8E0D6;border-radius:10px;background:white;cursor:pointer;font-size:13px;font-weight:700;color:#1A1A2E;transition:all .15s;';
+          btn.innerHTML = `${e.flag} ${e.name}`;
+          btn.addEventListener('click', () => {
+            avulsoEmpresa = e.key;
+            avulsoDestinoWLC = null;
+            empEl.querySelectorAll('button').forEach(b => { b.style.background='white'; b.style.borderColor='#E8E0D6'; b.style.color='#1A1A2E'; });
+            btn.style.background = '#D63B2F'; btn.style.borderColor = '#D63B2F'; btn.style.color = 'white';
+            const wrap = document.getElementById('avulsoDestinoWrap');
+            if (wrap) {
+              if (e.key === 'wlc') {
+                wrap.style.display = 'block';
+                buildAvulsoDestinos();
+              } else {
+                wrap.style.display = 'none';
+              }
+            }
+          });
+          empEl.appendChild(btn);
+        });
+      }
+
+      // Build platform buttons
+      const platEl = document.getElementById('avulsoPlatBtns');
+      if (platEl) {
+        platEl.innerHTML = '';
+        AVULSO_PLATS.forEach(p => {
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          btn.style.cssText = 'padding:8px 14px;border:1.5px solid #E8E0D6;border-radius:10px;background:white;cursor:pointer;font-size:13px;font-weight:700;color:#1A1A2E;transition:all .15s;';
+          btn.innerHTML = `${p.emoji} ${p.name}`;
+          btn.addEventListener('click', () => {
+            avulsoPlat = p.key;
+            platEl.querySelectorAll('button').forEach(b => { b.style.background='white'; b.style.borderColor='#E8E0D6'; b.style.color='#1A1A2E'; });
+            btn.style.background = '#1A1A2E'; btn.style.borderColor = '#1A1A2E'; btn.style.color = 'white';
+          });
+          platEl.appendChild(btn);
+        });
+      }
+
+      // Build day select
+      const daySelect = document.getElementById('avulsoDaySelect');
+      if (daySelect) {
+        daySelect.innerHTML = '';
+        const dayNames = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
+        const today = new Date();
+        for (let i = 0; i < 7; i++) {
+          const d = new Date(today);
+          d.setDate(today.getDate() + i);
+          const opt = document.createElement('option');
+          opt.value = d.toISOString().slice(0, 10);
+          opt.textContent = i === 0 ? `Hoje (${dayNames[d.getDay()]})` : `${dayNames[d.getDay()]} ${d.getDate()}/${d.getMonth()+1}`;
+          daySelect.appendChild(opt);
+        }
+      }
+
+      // Clear fields
+      const titleEl = document.getElementById('avulsoTitle');
+      const descEl  = document.getElementById('avulsoDesc');
+      if (titleEl) titleEl.value = '';
+      if (descEl)  descEl.value  = '';
+      const fb = document.getElementById('avulsoFeedback');
+      if (fb) fb.style.display = 'none';
+
+      // Register button
+      const btn = document.getElementById('btnRegistrarAvulso');
+      if (btn) {
+        btn.onclick = registrarAvulso;
+      }
+    }
+
+    function buildAvulsoDestinos() {
+      const el = document.getElementById('avulsoDestinoBtns');
+      if (!el) return;
+      el.innerHTML = '';
+      AVULSO_WLC_DESTS.forEach(d => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.style.cssText = 'padding:8px 14px;border:1.5px solid #E8E0D6;border-radius:10px;background:white;cursor:pointer;font-size:13px;font-weight:700;color:#1A1A2E;transition:all .15s;';
+        btn.innerHTML = `${d.flag} ${d.name}`;
+        btn.addEventListener('click', () => {
+          avulsoDestinoWLC = d.key;
+          el.querySelectorAll('button').forEach(b => { b.style.background='white'; b.style.borderColor='#E8E0D6'; b.style.color='#1A1A2E'; });
+          btn.style.background = '#0369A1'; btn.style.borderColor = '#0369A1'; btn.style.color = 'white';
+        });
+        el.appendChild(btn);
+      });
+    }
+
+    function registrarAvulso() {
+      const title = (document.getElementById('avulsoTitle') || {}).value || '';
+      const desc  = (document.getElementById('avulsoDesc')  || {}).value || '';
+      const dest  = document.querySelector('input[name="avulsoDest"]:checked');
+      const destVal = dest ? dest.value : 'banco';
+      const dayVal  = destVal === 'semana' ? ((document.getElementById('avulsoDaySelect') || {}).value || '') : null;
+
+      const fb = document.getElementById('avulsoFeedback');
+      function showFb(msg, ok) {
+        if (!fb) return;
+        fb.style.display = 'block';
+        fb.style.background = ok ? '#F0FDF4' : '#FFF0F0';
+        fb.style.color = ok ? '#16A34A' : '#D63B2F';
+        fb.style.border = `1px solid ${ok ? '#86EFAC' : '#FCA5A5'}`;
+        fb.textContent = msg;
+      }
+
+      if (!title.trim()) { showFb('⚠️ Título obrigatório.', false); return; }
+      if (!avulsoEmpresa) { showFb('⚠️ Escolha uma empresa / destino.', false); return; }
+      if (!avulsoPlat)    { showFb('⚠️ Escolha a plataforma.', false); return; }
+
+      const finalDest = avulsoEmpresa === 'wlc' ? (avulsoDestinoWLC || 'santiago') : avulsoEmpresa;
+
+      const idea = {
+        id:          Date.now(),
+        dashId:      genDashId(),
+        title:       title.trim(),
+        platform:    avulsoPlat,
+        destination: finalDest,
+        desc:        desc.trim(),
+        source:      'avulso',
+        status:      'novo',
+        addedBy:     'Laise',
+        addedDate:   new Date().toISOString().slice(0,10),
+        scripts:     { A: '', B: '', C: '' },
+      };
+
+      ideasData.push(idea);
+      saveExtraIdeas();
+      pushIdeaToNotion(idea);
+
+      if (destVal === 'semana' && dayVal) {
+        if (!weekKanban[dayVal]) weekKanban[dayVal] = [];
+        weekKanban[dayVal].push({ ideaIdx: ideasData.length - 1, id: idea.id });
+        saveWeekKanban();
+      }
+
+      showFb(`✅ "${idea.title}" registrado no ${destVal === 'semana' ? 'planejamento da semana' : 'Banco de Ideias'}!`, true);
+
+      // Reset form
+      setTimeout(() => {
+        avulsoEmpresa = null; avulsoDestinoWLC = null; avulsoPlat = null;
+        initAvulsoPage();
+      }, 2000);
+    }
+
     // Initialize ideas page (called every time the page is shown)
     function initIdeasPage() {
       renderIdeasSidebar();
@@ -4227,9 +4731,10 @@
         allBtn.addEventListener('click', () => { activeDestFilter = null; refresh(); });
         topDestEl.appendChild(allBtn);
 
+        const ALWAYS_SHOW_DESTS = new Set(['wlb','wlh']);
         DESTINATIONS.forEach(dest => {
           const count = allDestCounts[dest.key] || 0;
-          if (count === 0) return;
+          if (count === 0 && !ALWAYS_SHOW_DESTS.has(dest.key)) return;
           const btn = document.createElement('button');
           btn.type = 'button';
           btn.className = 'top-dest-btn' + (activeDestFilter === dest.key ? ' active' : '');
@@ -4322,11 +4827,24 @@
       const CP_MAIN_CATS = ['Dor', 'Desejo', 'Objeção', 'O Público Valoriza', 'Segmentos'];
       if (catList) {
         catList.innerHTML = '';
+
+        // Filtra ideias pelo destino ativo para calcular contagens de categoria
+        const destFilteredForCats = activeDestFilter
+          ? (activeDestFilter === '__none__'
+              ? platformIdeas.filter(i => !i.destination)
+              : platformIdeas.filter(i => i.destination === activeDestFilter))
+          : platformIdeas;
+
         const catCounts = {};
-        platformIdeas.forEach(i => (i.tags || []).forEach(t => { catCounts[t] = (catCounts[t] || 0) + 1; }));
+        destFilteredForCats.forEach(i => (i.tags || []).forEach(t => { catCounts[t] = (catCounts[t] || 0) + 1; }));
+
+        // Categorias padrão do preset da marca/destino ativo (aparecem mesmo com 0 ideias)
+        const brandPreset = activeDestFilter ? (BRAND_DEFAULT_CATS[activeDestFilter] || []) : [];
+        brandPreset.forEach(c => { if (!(c in catCounts)) catCounts[c] = 0; });
 
         // All known categories (CP + template), ensuring all appear even with 0 ideas
-        const ALL_KNOWN_CATS = [...CP_MAIN_CATS, ...allTags];
+        // Quando não há filtro de destino, comportamento original: mostra tudo
+        const ALL_KNOWN_CATS = activeDestFilter ? [] : [...CP_MAIN_CATS, ...allTags];
         ALL_KNOWN_CATS.forEach(c => { if (!(c in catCounts)) catCounts[c] = 0; });
 
         // Sort: categories with ideas first (desc), then alphabetically the zero-count ones
@@ -7063,7 +7581,7 @@
       if (savedPlat && ['instagram','tiktok','youtube','ads'].includes(savedPlat)) currentPlatformFilter = savedPlat;
 
       const savedPage = embPage || wn.page;
-      if (savedPage && ['home','ideas','week','wizard','metrics','analyzer'].includes(savedPage) && savedPage !== 'home') {
+      if (savedPage && ['home','ideas','week','wizard','metrics','analyzer','avulso','calendario'].includes(savedPage) && savedPage !== 'home') {
         switchPage(savedPage);
       }
     })();
@@ -7102,7 +7620,7 @@
       }
 
       // Page (only if still on home and sync sources had nothing)
-      if (idbPage && ['ideas','week','wizard','metrics','analyzer'].includes(idbPage)) {
+      if (idbPage && ['ideas','week','wizard','metrics','analyzer','avulso','calendario'].includes(idbPage)) {
         if (currentPage === 'home' && extraIdeas.length === 0) {
           try { switchPage(idbPage); } catch(e) {}
         }
@@ -7625,6 +8143,439 @@
 
   <!-- Notion modal button listeners (must run after modal HTML is in the DOM) -->
   <script>
+    // ═══════════════════════════════════════════════════
+    // CALENDÁRIO EDITORIAL — state, render, briefing, WeAgent
+    // ═══════════════════════════════════════════════════
+
+    const PLAT_CFG = {
+      yt:           { emoji: '▶️', label: 'YouTube',    color: '#F5C233', tc: '#000' },
+      ig_reels:     { emoji: '🎬', label: 'Reels',      color: '#D94848', tc: '#fff' },
+      ig_carrossel: { emoji: '🖼️', label: 'Carrossel',  color: '#E87575', tc: '#fff' },
+      ig_stories:   { emoji: '○',  label: 'Stories',    color: '#FCA5A5', tc: '#000' },
+      tk:           { emoji: '🎵', label: 'TikTok',     color: '#6B4AD4', tc: '#fff' },
+      ads:          { emoji: '📣', label: 'Ads',        color: '#3CB8A8', tc: '#000' },
+    };
+
+    // Distribuição de categorias por objetivo × marca
+    const CAT_DIST = {
+      crescimento:  {
+        wlc: ['Pontos Turísticos','Guias','Planejamento de Viagem','Passeios','Restaurantes','Pontos Turísticos','Guias','Passeios'],
+        wlb: ['IA para Negócios','Marketing Digital','Cases de Uso','Ferramentas','Produtividade','IA para Negócios','Cases de Uso','Marketing Digital'],
+      },
+      conversao: {
+        wlc: ['Dor','Dor','Objeção','Desejo','O Público Valoriza','Segmentos','Dor','Objeção'],
+        wlb: ['Dor','Dor','Objeção','Desejo','O Público Valoriza','Segmentos','Dor','Objeção'],
+      },
+      lancamento: {
+        wlc: ['Guias','Passeios','We Love Chile','Pontos Turísticos','Planejamento de Viagem','Guias','We Love Chile','Passeios'],
+        wlb: ['Claude no Dia a Dia','Ferramentas','IA para Negócios','Cases de Uso','Estratégia de Conteúdo','Claude no Dia a Dia','Ferramentas','Cases de Uso'],
+      },
+      awareness: {
+        wlc: ['Pontos Turísticos','Restaurantes','Bares','Compras','Cafeterias','Festas','Pontos Turísticos','Guias'],
+        wlb: ['IA para Negócios','Claude no Dia a Dia','Marketing Digital','Produtividade','Ferramentas','IA para Negócios','Cases de Uso','Produtividade'],
+      },
+      sazonalidade: {
+        wlc: ['Inverno','Passeios','Guias','Hospedagem','Pontos Turísticos','Inverno','Passeios','Guias'],
+        wlb: ['Estratégia de Conteúdo','Cases de Uso','Ferramentas','Marketing Digital','Produtividade','Estratégia de Conteúdo','Cases de Uso','Ferramentas'],
+      },
+    };
+
+    // Ajuste sazonal automático para WLC
+    function getSeasonalCats(month) {
+      // Southern hemisphere (Chile): Jun-Aug = winter, Dec-Feb = summer
+      const isWinter = month >= 5 && month <= 7;
+      const isSummer = month >= 11 || month <= 1;
+      if (isWinter) return ['Inverno','Passeios','Neve','Guias','Hospedagem','Pontos Turísticos','Inverno','Passeios'];
+      if (isSummer) return ['Verão','Restaurantes','Pontos Turísticos','Guias','Compras','Festas','Verão','Passeios'];
+      return ['Pontos Turísticos','Guias','Planejamento de Viagem','Passeios','Restaurantes','Outono','Primavera','Guias'];
+    }
+
+    // Calendar state
+    let calViewYear  = new Date().getFullYear();
+    let calViewMonth = new Date().getMonth();
+    let calData      = {}; // { 'YYYY-MM-DD': [{plat, cat, ideaTitle, destino},...] }
+
+    (function loadCalData() {
+      try { const s = localStorage.getItem('wlc_calData'); if (s) calData = JSON.parse(s); } catch(e) {}
+    })();
+    function saveCalData() {
+      try { localStorage.setItem('wlc_calData', JSON.stringify(calData)); } catch(e) {}
+    }
+
+    // Briefing state
+    let calBriefing = {
+      objetivoText: '', objetivoChip: null,
+      year: new Date().getFullYear(), month: new Date().getMonth(),
+      destino: null,
+      volume: { yt: 1, ig_reels: 1, ig_carrossel: 1, ig_stories: 0, tk: 0, ads: 0 },
+      diasGravacao: new Set([1,2,3,4,5]),
+      tom: null, datasEspeciais: [], notasText: '',
+    };
+
+    // ── Init ──
+    function initCalendario() {
+      renderCalLegend();
+      renderCalendar();
+      setupCalNav();
+    }
+
+    function setupCalNav() {
+      const prevBtn = document.getElementById('calPrevMonth');
+      const nextBtn = document.getElementById('calNextMonth');
+      const waBtn   = document.getElementById('calWaBtn');
+      if (!prevBtn || prevBtn._wired) return;
+      prevBtn._wired = true;
+      prevBtn.addEventListener('click', () => {
+        calViewMonth--;
+        if (calViewMonth < 0) { calViewMonth = 11; calViewYear--; }
+        renderCalendar();
+      });
+      nextBtn.addEventListener('click', () => {
+        calViewMonth++;
+        if (calViewMonth > 11) { calViewMonth = 0; calViewYear++; }
+        renderCalendar();
+      });
+      waBtn.addEventListener('click', () => openBriefingWizard());
+    }
+
+    // ── Legend ──
+    function renderCalLegend() {
+      const el = document.getElementById('calLegend');
+      if (!el) return;
+      el.innerHTML = Object.entries(PLAT_CFG).map(([,v]) =>
+        `<div class="cal-legend-item"><div class="cal-legend-dot" style="background:${v.color}"></div>${v.label}</div>`
+      ).join('');
+    }
+
+    // ── Calendar grid ──
+    function renderCalendar() {
+      const MONTH_NAMES = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+      const lbl = document.getElementById('calMonthLabel');
+      if (lbl) lbl.textContent = `${MONTH_NAMES[calViewMonth]} ${calViewYear}`;
+
+      const grid = document.getElementById('calGrid');
+      if (!grid) return;
+      grid.innerHTML = '';
+
+      const todayStr   = new Date().toISOString().split('T')[0];
+      const firstDay   = new Date(calViewYear, calViewMonth, 1);
+      const daysInMonth = new Date(calViewYear, calViewMonth + 1, 0).getDate();
+      const startDow   = firstDay.getDay();
+      const monthKey   = `${calViewYear}-${String(calViewMonth+1).padStart(2,'0')}`;
+      const hasData    = Object.keys(calData).some(k => k.startsWith(monthKey));
+
+      // Leading empty cells
+      for (let i = 0; i < startDow; i++) {
+        const c = document.createElement('div');
+        c.className = 'cal-cell outside';
+        grid.appendChild(c);
+      }
+
+      for (let d = 1; d <= daysInMonth; d++) {
+        const dateStr = `${calViewYear}-${String(calViewMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+        const entries = calData[dateStr] || [];
+        const cell = document.createElement('div');
+        cell.className = 'cal-cell' + (dateStr === todayStr ? ' today' : '');
+
+        const numEl = document.createElement('div');
+        numEl.className = 'cal-day-num';
+        numEl.textContent = d;
+        cell.appendChild(numEl);
+
+        const maxCards = 3;
+        entries.slice(0, maxCards).forEach(e => {
+          const cfg = PLAT_CFG[e.plat] || PLAT_CFG.ig_reels;
+          const card = document.createElement('div');
+          card.className = 'cal-card';
+          card.style.background = cfg.color;
+          card.style.color = cfg.tc;
+          card.title = `${cfg.label} · ${e.cat}${e.ideaTitle ? '\n📌 ' + e.ideaTitle : ''}`;
+          card.innerHTML = `<span>${cfg.emoji}</span><span style="overflow:hidden;text-overflow:ellipsis;">${e.cat}</span>`;
+          cell.appendChild(card);
+        });
+        if (entries.length > maxCards) {
+          const more = document.createElement('div');
+          more.className = 'cal-more';
+          more.textContent = `+${entries.length - maxCards} mais`;
+          cell.appendChild(more);
+        }
+        grid.appendChild(cell);
+      }
+
+      // Trailing empty cells
+      const totalCells = startDow + daysInMonth;
+      const trailing = totalCells % 7 === 0 ? 0 : 7 - (totalCells % 7);
+      for (let i = 0; i < trailing; i++) {
+        const c = document.createElement('div');
+        c.className = 'cal-cell outside';
+        grid.appendChild(c);
+      }
+
+      // Empty state banner (shown inside grid spanning all columns)
+      if (!hasData) {
+        const banner = document.createElement('div');
+        banner.className = 'cal-empty-banner';
+        banner.style.gridColumn = '1 / -1';
+        banner.innerHTML = `
+          <div class="cal-empty-icon">✨</div>
+          <div class="cal-empty-text">Calendário vazio para este mês</div>
+          <div class="cal-empty-sub">Clique em <strong>WeAgent — Preencher Calendário</strong> para gerar o plano editorial automaticamente</div>`;
+        grid.appendChild(banner);
+      }
+    }
+
+    // ══════════════════════════════════════
+    // BRIEFING WIZARD
+    // ══════════════════════════════════════
+    let briefingStep = 1;
+
+    function openBriefingWizard() {
+      setupBriefingWizard();
+      // Sync pickers to current view month
+      const ms = document.getElementById('bMonthSel');
+      const ys = document.getElementById('bYearSel');
+      if (ms) ms.value = calViewMonth;
+      if (ys) ys.value = calViewYear;
+      calBriefing.month = calViewMonth;
+      calBriefing.year  = calViewYear;
+      document.getElementById('briefingOverlay').classList.add('open');
+      showBriefingStep(1);
+    }
+    function closeBriefingWizard() {
+      document.getElementById('briefingOverlay').classList.remove('open');
+    }
+
+    function setupBriefingWizard() {
+      const overlay = document.getElementById('briefingOverlay');
+      if (overlay._wired) return;
+      overlay._wired = true;
+
+      document.getElementById('briefingClose').addEventListener('click', closeBriefingWizard);
+      overlay.addEventListener('click', e => { if (e.target === overlay) closeBriefingWizard(); });
+
+      // Objective chips
+      document.querySelectorAll('#bObjChips .briefing-chip').forEach(chip => {
+        chip.addEventListener('click', () => {
+          document.querySelectorAll('#bObjChips .briefing-chip').forEach(c => c.classList.remove('active'));
+          chip.classList.toggle('active');
+          calBriefing.objetivoChip = chip.classList.contains('active') ? chip.dataset.obj : null;
+        });
+      });
+
+      // Month / Year selectors
+      const ms = document.getElementById('bMonthSel');
+      const ys = document.getElementById('bYearSel');
+      ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'].forEach((m, i) => {
+        const o = document.createElement('option');
+        o.value = i; o.textContent = m;
+        if (i === calViewMonth) o.selected = true;
+        ms.appendChild(o);
+      });
+      const curY = new Date().getFullYear();
+      for (let y = curY; y <= curY + 1; y++) {
+        const o = document.createElement('option');
+        o.value = y; o.textContent = y;
+        if (y === calViewYear) o.selected = true;
+        ys.appendChild(o);
+      }
+      ms.addEventListener('change', () => { calBriefing.month = parseInt(ms.value); });
+      ys.addEventListener('change', () => { calBriefing.year  = parseInt(ys.value); });
+
+      // Destination flags
+      const flagsEl = document.getElementById('bDestFlags');
+      [
+        { key: null,          emoji: '🗺️', name: 'Todos os destinos' },
+        { key: 'santiago',    emoji: '🇨🇱', name: 'Santiago' },
+        { key: 'atacama',     emoji: '🌵',  name: 'Atacama' },
+        { key: 'patagonia',   emoji: '🏔️',  name: 'Patagônia' },
+        { key: 'cusco',       emoji: '🏛️',  name: 'Cusco' },
+        { key: 'buenos_aires',emoji: '🇦🇷', name: 'Buenos Aires' },
+        { key: 'wlb',         emoji: '💻',  name: 'We Love Business' },
+        { key: 'wlh',         emoji: '🏠',  name: 'We Love Homes' },
+      ].forEach(d => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'briefing-flag-btn' + (d.key === null ? ' active' : '');
+        btn.title = d.name;
+        btn.textContent = d.emoji;
+        btn.dataset.dest = d.key || '';
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('#bDestFlags .briefing-flag-btn').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          calBriefing.destino = d.key;
+        });
+        flagsEl.appendChild(btn);
+      });
+
+      // Volume grid
+      const volGrid = document.getElementById('bVolGrid');
+      Object.entries(PLAT_CFG).forEach(([key, cfg]) => {
+        const item = document.createElement('div');
+        item.className = 'briefing-vol-item';
+        item.innerHTML = `
+          <span class="briefing-vol-emoji">${cfg.emoji}</span>
+          <span class="briefing-vol-label">${cfg.label}</span>
+          <button class="briefing-vol-btn" data-key="${key}" data-dir="-">−</button>
+          <span class="briefing-vol-num" id="bvol_${key}">${calBriefing.volume[key] ?? 0}</span>
+          <button class="briefing-vol-btn" data-key="${key}" data-dir="+">+</button>`;
+        item.querySelectorAll('.briefing-vol-btn').forEach(btn => {
+          btn.addEventListener('click', () => {
+            const k = btn.dataset.key, dir = btn.dataset.dir;
+            calBriefing.volume[k] = Math.max(0, Math.min(5, (calBriefing.volume[k] ?? 0) + (dir === '+' ? 1 : -1)));
+            document.getElementById(`bvol_${k}`).textContent = calBriefing.volume[k];
+          });
+        });
+        volGrid.appendChild(item);
+      });
+
+      // Day buttons
+      const daysEl = document.getElementById('bDayBtns');
+      ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'].forEach((lbl, i) => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'briefing-day-btn' + (calBriefing.diasGravacao.has(i) ? ' active' : '');
+        btn.textContent = lbl;
+        btn.addEventListener('click', () => {
+          if (calBriefing.diasGravacao.has(i)) { calBriefing.diasGravacao.delete(i); btn.classList.remove('active'); }
+          else { calBriefing.diasGravacao.add(i); btn.classList.add('active'); }
+        });
+        daysEl.appendChild(btn);
+      });
+
+      // Tom chips
+      document.querySelectorAll('#bTomChips .briefing-chip').forEach(chip => {
+        chip.addEventListener('click', () => {
+          document.querySelectorAll('#bTomChips .briefing-chip').forEach(c => c.classList.remove('active'));
+          chip.classList.toggle('active');
+          calBriefing.tom = chip.classList.contains('active') ? chip.dataset.tom : null;
+        });
+      });
+
+      // Datas especiais
+      const specInput = document.getElementById('bSpecInput');
+      specInput.addEventListener('keydown', e => {
+        if (e.key === 'Enter' && specInput.value.trim()) {
+          const v = specInput.value.trim();
+          if (!calBriefing.datasEspeciais.includes(v)) calBriefing.datasEspeciais.push(v);
+          specInput.value = '';
+          renderSpecTags();
+        }
+      });
+
+      // Nav buttons
+      document.getElementById('bNextBtn').addEventListener('click', () => {
+        if (briefingStep < 3) showBriefingStep(briefingStep + 1);
+      });
+      document.getElementById('bPrevBtn').addEventListener('click', () => {
+        if (briefingStep > 1) showBriefingStep(briefingStep - 1);
+      });
+      document.getElementById('bGenerateBtn').addEventListener('click', () => {
+        weAgentGenerate();
+        closeBriefingWizard();
+      });
+    }
+
+    function renderSpecTags() {
+      const el = document.getElementById('bSpecTags');
+      if (!el) return;
+      el.innerHTML = '';
+      calBriefing.datasEspeciais.forEach(t => {
+        const tag = document.createElement('div');
+        tag.className = 'briefing-spec-tag';
+        tag.innerHTML = `${t} <button title="Remover">×</button>`;
+        tag.querySelector('button').addEventListener('click', () => {
+          calBriefing.datasEspeciais = calBriefing.datasEspeciais.filter(x => x !== t);
+          renderSpecTags();
+        });
+        el.appendChild(tag);
+      });
+    }
+
+    function showBriefingStep(n) {
+      briefingStep = n;
+      document.querySelectorAll('.briefing-step').forEach((s, i) => s.classList.toggle('active', i + 1 === n));
+      document.querySelectorAll('.briefing-prog-dot').forEach((d, i) => d.classList.toggle('done', i < n));
+      document.getElementById('bStepLabel').textContent = `Passo ${n} de 3`;
+      document.getElementById('bPrevBtn').style.display    = n > 1 ? '' : 'none';
+      document.getElementById('bNextBtn').style.display    = n < 3 ? '' : 'none';
+      document.getElementById('bGenerateBtn').style.display = n === 3 ? '' : 'none';
+    }
+
+    // ══════════════════════════════════════
+    // WEAGENT — geração inteligente do calendário
+    // ══════════════════════════════════════
+    function weAgentGenerate() {
+      const { objetivoChip, year, month, destino, volume, diasGravacao } = calBriefing;
+
+      // Navega para o mês gerado
+      calViewYear  = year;
+      calViewMonth = month;
+
+      // Limpa dados existentes do mês
+      const monthKey = `${year}-${String(month+1).padStart(2,'0')}`;
+      Object.keys(calData).forEach(k => { if (k.startsWith(monthKey)) delete calData[k]; });
+
+      // Contexto de marca
+      const isWlb = destino === 'wlb' || destino === 'wlh';
+      const objKey = objetivoChip || 'crescimento';
+
+      // Pool de categorias: sazonalidade automática para WLC
+      let catPool;
+      if (objKey === 'sazonalidade' && !isWlb) {
+        catPool = getSeasonalCats(month);
+      } else {
+        catPool = (CAT_DIST[objKey] || CAT_DIST.crescimento)[isWlb ? 'wlb' : 'wlc'];
+      }
+
+      // Lista de plataformas do dia (repetida pelo volume configurado)
+      const platList = [];
+      Object.entries(volume).forEach(([plat, qty]) => {
+        for (let i = 0; i < qty; i++) platList.push(plat);
+      });
+      if (platList.length === 0) platList.push('ig_reels'); // fallback mínimo
+
+      // Ideias do banco que combinam com o destino selecionado
+      const bankIdeas = (typeof ideasData !== 'undefined' ? ideasData : []).filter(i =>
+        !['gravado','em_edicao','aprovado','programado','publicado','analisado'].includes(i.status) &&
+        i.source !== 'Template' &&
+        (!destino || i.destination === destino)
+      );
+
+      let catIdx  = 0;
+      let ideaPtr = 0;
+
+      const daysInMonth = new Date(year, month + 1, 0).getDate();
+      for (let d = 1; d <= daysInMonth; d++) {
+        const dateStr = `${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+        const dow = new Date(year, month, d).getDay();
+        if (!diasGravacao.has(dow)) continue;
+
+        const entries = platList.map(plat => {
+          const cat = catPool[catIdx % catPool.length];
+          catIdx++;
+
+          // Tenta encaixar uma ideia do banco com a categoria do dia
+          let ideaTitle = null;
+          const matchIdx = bankIdeas.findIndex((idea, idx) =>
+            idx >= ideaPtr && (idea.tags || []).includes(cat)
+          );
+          if (matchIdx !== -1) {
+            ideaTitle = bankIdeas[matchIdx].title;
+            ideaPtr   = matchIdx + 1;
+          }
+
+          return { plat, cat, ideaTitle, destino };
+        });
+
+        calData[dateStr] = entries;
+      }
+
+      saveCalData();
+      renderCalendar();
+    }
+
+    // ══════════════════════════════════════
+
     (function() {
       var cancel = document.getElementById('notionModalCancel');
       var overlay = document.getElementById('notionModal');
