@@ -444,8 +444,8 @@ body { font-family:var(--sans); background:var(--bg); color:var(--text); -webkit
   <!-- ETAPA 3 — Tipo + Marca -->
   <div class="etapa" id="etapa3">
     <p class="etapa-label">Etapa 3 de 4</p>
-    <h1 class="etapa-title">Formato e marca</h1>
-    <p class="etapa-desc">Escolha o layout dos slides e a marca do carrossel.</p>
+    <h1 class="etapa-title">Formato</h1>
+    <p class="etapa-desc">Escolha o layout dos slides.</p>
 
     <div class="field-label" style="margin-bottom:10px;">Tipo de carrossel</div>
     <div class="tipo-grid" id="tipoGrid">
@@ -461,11 +461,13 @@ body { font-family:var(--sans); background:var(--bg); color:var(--text); -webkit
       </div>
     </div>
 
-    <div class="field-label" style="margin-bottom:10px;">Marca</div>
-    <div class="marca-row" id="marcaRow">
-      <div class="marca-pill selected" data-marca="wlb">We Love Business</div>
-      <div class="marca-pill" data-marca="wlc">We Love Chile</div>
-      <div class="marca-pill" data-marca="genérico">Genérico</div>
+    <div id="marcaSection" style="display:none;">
+      <div class="field-label" style="margin-bottom:10px;">Marca</div>
+      <div class="marca-row" id="marcaRow">
+        <div class="marca-pill selected" data-marca="wlb">We Love Business</div>
+        <div class="marca-pill" data-marca="wlc">We Love Chile</div>
+        <div class="marca-pill" data-marca="genérico">Genérico</div>
+      </div>
     </div>
 
     <div class="btn-row">
@@ -777,11 +779,18 @@ function renderHooks(hooks) {
    ETAPA 3 — TIPO + MARCA
    ══════════════════════════════════════════════════ */
 (function setupE3() {
+  function updateMarcaVisibility() {
+    const isEducativo = S.tipo === 'carrossel-educativo';
+    document.getElementById('marcaSection').style.display = isEducativo ? 'block' : 'none';
+    if (!isEducativo) S.marca = '';
+  }
+
   document.querySelectorAll('.tipo-card').forEach(card => {
     card.onclick = () => {
       document.querySelectorAll('.tipo-card').forEach(c => c.classList.remove('selected'));
       card.classList.add('selected');
       S.tipo = card.dataset.tipo;
+      updateMarcaVisibility();
     };
   });
   document.querySelectorAll('.marca-pill').forEach(pill => {
@@ -824,7 +833,7 @@ function buildSlides() {
 
   document.getElementById('painelTitulo').textContent     = S.titulo;
   document.getElementById('painelHook').textContent       = S.hook || '';
-  document.getElementById('painelTipoMarca').textContent  = S.tipo + ' · ' + S.marca;
+  document.getElementById('painelTipoMarca').textContent  = S.marca ? S.tipo + ' · ' + S.marca : S.tipo;
   document.getElementById('painelSlideTotal').textContent = ' / ' + S.total;
 
   loadAvatar().then(() => {
