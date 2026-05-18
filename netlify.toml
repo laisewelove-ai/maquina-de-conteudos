@@ -9,3 +9,18 @@
   from = "/api/notion/*"
   to = "/.netlify/functions/notion-proxy/:splat"
   status = 200
+
+[[redirects]]
+  from = "/api/carrossel-hooks"
+  to = "/.netlify/functions/carrossel-hooks"
+  status = 200
+
+[[redirects]]
+  from = "/api/carrossel-title"
+  to = "/.netlify/functions/carrossel-title"
+  status = 200
+
+[[redirects]]
+  from = "/api/carrossel-tweets"
+  to = "/.netlify/functions/carrossel-tweets"
+  status = 200

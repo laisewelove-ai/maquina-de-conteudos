@@ -1,0 +1,1057 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Máquina de Carrosséis</title>
+<link rel="preconnect" href="https://fonts.cdnfonts.com">
+<link href="https://fonts.cdnfonts.com/css/lufga" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<style>
+:root {
+  --red:    #E74041;
+  --navy:   #1A2035;
+  --cream:  #F5EFE8;
+  --yellow: #FCB415;
+  --black:  #0D0D0D;
+  --bg:     #F5EFE8;
+  --surf:   #FFFFFF;
+  --surf2:  #EDE7DC;
+  --text:   #1A1A2E;
+  --muted:  #7A7490;
+  --border: rgba(0,0,0,.1);
+  --sans:   'Lufga', system-ui, sans-serif;
+  --mono:   'JetBrains Mono', monospace;
+  --r:      12px;
+  --topbar-h: 52px;
+  --voice-h:  0px;
+}
+
+*,*::before,*::after { box-sizing:border-box; margin:0; padding:0; }
+html,body { height:100%; }
+body { font-family:var(--sans); background:var(--bg); color:var(--text); -webkit-font-smoothing:antialiased; }
+
+/* ── TOPBAR ── */
+.topbar {
+  position:fixed; top:0; left:0; right:0; z-index:900;
+  height:var(--topbar-h);
+  display:flex; align-items:center; gap:14px; padding:0 20px;
+  background:rgba(245,239,232,.97); border-bottom:2px solid var(--black);
+  backdrop-filter:blur(20px);
+}
+.topbar-back {
+  display:flex; align-items:center; gap:6px;
+  color:var(--muted); text-decoration:none;
+  font-size:.78rem; font-weight:700; letter-spacing:.04em;
+  padding:4px 10px; border-radius:8px;
+  border:1.5px solid var(--border); background:transparent;
+  transition:all .2s; flex-shrink:0;
+}
+.topbar-back:hover { color:var(--text); border-color:var(--red); }
+.topbar-sep { color:var(--border); flex-shrink:0; }
+.topbar-title { font-size:.9rem; font-weight:900; }
+.topbar-badge {
+  margin-left:auto;
+  font-size:.58rem; font-weight:800; letter-spacing:.1em;
+  text-transform:uppercase; padding:3px 10px; border-radius:20px;
+  background:var(--red); color:#fff; flex-shrink:0;
+}
+.voice-badge-pill {
+  font-size:.6rem; font-weight:800; letter-spacing:.08em; text-transform:uppercase;
+  padding:2px 8px; border-radius:12px; background:rgba(76,175,61,.15);
+  color:#2d8a1e; border:1px solid rgba(76,175,61,.35); flex-shrink:0; cursor:pointer;
+  transition:all .2s;
+}
+.voice-badge-pill:hover { background:rgba(76,175,61,.25); }
+
+/* ── TOM DE VOZ PANEL ── */
+.voice-panel {
+  position:fixed; top:var(--topbar-h); left:0; right:0; z-index:800;
+  background:var(--navy); color:#fff;
+  border-bottom:2px solid #000;
+  overflow:hidden;
+  max-height:0; transition:max-height .35s cubic-bezier(.4,0,.2,1);
+}
+.voice-panel.open { max-height:320px; }
+.voice-inner { padding:16px 20px; display:flex; flex-direction:column; gap:10px; }
+.voice-label {
+  font-family:var(--mono); font-size:.6rem; letter-spacing:.18em; text-transform:uppercase;
+  color:rgba(255,255,255,.5);
+}
+.voice-desc { font-size:.8rem; color:rgba(255,255,255,.65); line-height:1.45; }
+.voice-textarea {
+  width:100%; min-height:100px; max-height:160px;
+  padding:10px 14px; border-radius:8px;
+  background:rgba(255,255,255,.08); border:1.5px solid rgba(255,255,255,.15);
+  color:#fff; font-family:var(--sans); font-size:.82rem; resize:vertical;
+  outline:none; transition:border-color .2s; line-height:1.5;
+}
+.voice-textarea:focus { border-color:rgba(255,255,255,.4); }
+.voice-textarea::placeholder { color:rgba(255,255,255,.35); }
+.voice-row { display:flex; gap:8px; align-items:center; }
+.voice-save-btn {
+  padding:7px 16px; border-radius:8px; border:none; cursor:pointer;
+  background:var(--yellow); color:#000;
+  font-family:var(--sans); font-size:.78rem; font-weight:800;
+  transition:all .2s; flex-shrink:0;
+}
+.voice-save-btn:hover { background:#e0a000; }
+.voice-clear-btn {
+  padding:7px 12px; border-radius:8px;
+  background:transparent; color:rgba(255,255,255,.45);
+  border:1px solid rgba(255,255,255,.15); cursor:pointer;
+  font-family:var(--sans); font-size:.78rem; font-weight:700;
+  transition:all .2s; flex-shrink:0;
+}
+.voice-clear-btn:hover { color:#fff; border-color:rgba(255,255,255,.35); }
+.voice-status { font-size:.75rem; color:rgba(255,255,255,.45); flex:1; }
+
+/* ── PROGRESS BAR ── */
+.progress-wrap {
+  position:fixed; left:0; right:0; z-index:700;
+  padding:14px 20px;
+  background:var(--bg); border-bottom:1px solid var(--border);
+  transition:top .35s cubic-bezier(.4,0,.2,1);
+}
+.progress-steps {
+  display:flex; align-items:center; justify-content:center;
+  gap:0; max-width:480px; margin:0 auto;
+}
+.step-dot { display:flex; flex-direction:column; align-items:center; gap:5px; position:relative; flex:1; }
+.step-dot:not(:last-child)::after {
+  content:''; position:absolute; top:12px; left:calc(50% + 12px);
+  width:calc(100% - 24px); height:2px; background:var(--border); transition:background .3s;
+}
+.step-dot.done:not(:last-child)::after,
+.step-dot.active:not(:last-child)::after { background:var(--red); }
+.step-circle {
+  width:24px; height:24px; border-radius:50%;
+  border:2px solid var(--border); background:var(--surf); color:var(--muted);
+  font-size:.68rem; font-weight:800;
+  display:flex; align-items:center; justify-content:center;
+  transition:all .3s; position:relative; z-index:1;
+}
+.step-dot.active .step-circle { border-color:var(--red); background:var(--red); color:#fff; }
+.step-dot.done .step-circle { border-color:#4CAF7D; background:#4CAF7D; color:#fff; }
+.step-label { font-size:.58rem; font-weight:700; letter-spacing:.04em; color:var(--muted); text-align:center; white-space:nowrap; }
+.step-dot.active .step-label { color:var(--red); }
+.step-dot.done .step-label { color:#4CAF7D; }
+
+/* ── MAIN ── */
+.main { padding-top:calc(var(--topbar-h) + var(--voice-h) + 68px); min-height:100vh; }
+
+/* ── ETAPA ── */
+.etapa { display:none; max-width:660px; margin:0 auto; padding:36px 20px 80px; animation:fadeUp .3s ease both; }
+.etapa.active { display:block; }
+@keyframes fadeUp { from { opacity:0; transform:translateY(14px); } to { opacity:1; transform:translateY(0); } }
+
+.etapa-label { font-family:var(--mono); font-size:.62rem; letter-spacing:.2em; text-transform:uppercase; color:var(--muted); margin-bottom:8px; }
+.etapa-title {
+  font-size:1.8rem; font-weight:900; letter-spacing:-.02em; margin-bottom:6px;
+  background:linear-gradient(135deg, var(--red), #ff8a8b);
+  -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent;
+}
+.etapa-desc { font-size:.88rem; color:var(--muted); margin-bottom:24px; line-height:1.55; }
+
+/* ── INPUTS ── */
+.field-wrap { margin-bottom:20px; }
+.field-label { display:block; font-size:.72rem; font-weight:700; letter-spacing:.05em; text-transform:uppercase; color:var(--muted); margin-bottom:6px; }
+.field-input {
+  width:100%; padding:12px 16px;
+  background:var(--surf); border:1.5px solid var(--border);
+  border-radius:var(--r); color:var(--text);
+  font-family:var(--sans); font-size:1rem; font-weight:600;
+  outline:none; transition:border-color .2s; resize:none;
+}
+.field-input:focus { border-color:var(--red); }
+.field-input::placeholder { color:var(--muted); font-weight:400; }
+
+/* ── BUTTONS ── */
+.btn {
+  display:inline-flex; align-items:center; gap:8px;
+  padding:11px 22px; border-radius:var(--r);
+  font-family:var(--sans); font-size:.86rem; font-weight:800;
+  letter-spacing:.02em; border:none; cursor:pointer; transition:all .2s; text-decoration:none;
+}
+.btn-primary { background:var(--red); color:#fff; }
+.btn-primary:hover { background:#c42d2e; transform:translateY(-1px); }
+.btn-primary:disabled { opacity:.4; cursor:not-allowed; transform:none; }
+.btn-ghost { background:transparent; color:var(--muted); border:1.5px solid var(--border); }
+.btn-ghost:hover { color:var(--text); border-color:var(--red); }
+.btn-sm { padding:7px 14px; font-size:.75rem; border-radius:8px; }
+.btn-row { display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+
+/* ── SPINNER ── */
+.spinner { width:18px; height:18px; border-radius:50%; border:2px solid var(--border); border-top-color:var(--red); animation:spin .7s linear infinite; flex-shrink:0; }
+@keyframes spin { to { transform:rotate(360deg); } }
+.hooks-loading { display:flex; align-items:center; gap:10px; color:var(--muted); font-size:.88rem; padding:32px 0; }
+.hooks-error { padding:16px; background:rgba(231,64,65,.08); border:1px solid rgba(231,64,65,.2); border-radius:var(--r); color:#c42d2e; font-size:.82rem; margin-bottom:16px; }
+
+/* ── HOOKS GRID ── */
+.hooks-grid { display:flex; flex-direction:column; gap:8px; margin-bottom:24px; }
+.hook-card {
+  padding:14px 18px; background:var(--surf); border:1.5px solid var(--border);
+  border-radius:var(--r); cursor:pointer; font-size:.9rem; line-height:1.5; font-weight:500;
+  transition:all .2s; white-space:pre-wrap;
+}
+.hook-card:hover { border-color:rgba(231,64,65,.4); }
+.hook-card.selected { border-color:var(--red); background:rgba(231,64,65,.06); }
+.hook-num { font-family:var(--mono); font-size:.58rem; font-weight:700; color:var(--muted); margin-bottom:4px; display:block; letter-spacing:.1em; }
+.hook-card.selected .hook-num { color:var(--red); }
+
+/* ── TIPO CARDS ── */
+.tipo-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:12px; margin-bottom:20px; }
+@media(max-width:480px) { .tipo-grid { grid-template-columns:1fr; } }
+.tipo-card {
+  padding:22px 20px; background:var(--surf); border:2px solid var(--border); border-radius:var(--r);
+  cursor:pointer; transition:all .2s; display:flex; flex-direction:column; gap:8px;
+}
+.tipo-card:hover { border-color:rgba(231,64,65,.4); transform:translateY(-2px); }
+.tipo-card.selected { border-color:var(--red); background:rgba(231,64,65,.05); }
+.tipo-icon { font-size:2rem; }
+.tipo-name { font-size:.9rem; font-weight:800; }
+.tipo-desc { font-size:.78rem; color:var(--muted); line-height:1.4; }
+
+/* ── MARCA PILLS ── */
+.marca-row { display:flex; gap:8px; margin-bottom:24px; }
+.marca-pill {
+  padding:6px 14px; border-radius:20px; border:1.5px solid var(--border);
+  background:var(--surf); font-size:.78rem; font-weight:800; cursor:pointer;
+  transition:all .2s;
+}
+.marca-pill:hover { border-color:rgba(231,64,65,.4); }
+.marca-pill.selected { background:var(--navy); color:#fff; border-color:var(--navy); }
+
+/* ── ETAPA 4 (3 colunas) ── */
+#etapa4 {
+  max-width:100%; padding:0; display:none;
+  height:calc(100vh - var(--topbar-h) - 68px);
+}
+#etapa4.active {
+  display:grid;
+  grid-template-columns:68px 1fr 280px;
+  grid-template-rows:1fr;
+  overflow:hidden;
+}
+
+.export-col {
+  background:var(--navy); border-right:1px solid rgba(255,255,255,.06);
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  padding:12px 0; gap:10px;
+}
+.export-btn-all {
+  writing-mode:vertical-rl; text-orientation:mixed; transform:rotate(180deg);
+  background:var(--red); color:#fff; border:none; border-radius:8px;
+  font-family:var(--sans); font-size:.65rem; font-weight:800; letter-spacing:.1em;
+  text-transform:uppercase; padding:14px 7px; cursor:pointer; transition:background .2s;
+  white-space:nowrap;
+}
+.export-btn-all:hover { background:#c42d2e; }
+.export-btn-all:disabled { opacity:.5; cursor:not-allowed; }
+
+.slides-col {
+  background:#EDE7DC; display:flex; flex-direction:column;
+  align-items:center; justify-content:center; overflow:hidden; position:relative; padding:20px 0 50px;
+}
+.slide-nav-btn {
+  position:absolute; top:50%; transform:translateY(-50%);
+  width:36px; height:36px; border-radius:50%;
+  background:rgba(36,34,88,.08); border:1px solid rgba(36,34,88,.18);
+  color:var(--navy); font-size:.9rem; cursor:pointer;
+  display:flex; align-items:center; justify-content:center; transition:all .2s; z-index:10;
+}
+.slide-nav-btn:hover { background:rgba(36,34,88,.14); border-color:var(--red); }
+.slide-nav-btn:disabled { opacity:.3; cursor:not-allowed; }
+#navPrev { left:12px; } #navNext { right:12px; }
+.slide-viewport { position:relative; transform-origin:top center; }
+.slide-viewport-scaler { transform-origin:top center; }
+.slide-dots { position:absolute; bottom:16px; left:0; right:0; display:flex; align-items:center; justify-content:center; gap:5px; }
+.dot { width:6px; height:6px; border-radius:50%; background:var(--border); transition:all .2s; cursor:pointer; }
+.dot.active { background:var(--red); width:18px; border-radius:3px; }
+
+.painel {
+  background:var(--navy); border-left:1px solid rgba(255,255,255,.07);
+  display:flex; flex-direction:column; overflow-y:auto;
+}
+.painel-section { padding:14px 16px; border-bottom:1px solid rgba(255,255,255,.06); }
+.painel-label { font-family:var(--mono); font-size:.55rem; letter-spacing:.15em; text-transform:uppercase; color:rgba(255,255,255,.4); margin-bottom:4px; }
+.painel-value { font-size:.82rem; font-weight:700; line-height:1.4; word-break:break-word; }
+.painel-hook-value { font-size:.75rem; color:rgba(255,255,255,.7); line-height:1.45; word-break:break-word; white-space:pre-wrap; }
+.painel-slide-counter { font-family:var(--mono); font-size:1.3rem; font-weight:700; color:var(--red); }
+.painel-slide-total { font-family:var(--mono); font-size:.75rem; color:rgba(255,255,255,.4); }
+.painel-divider { height:1px; background:rgba(255,255,255,.07); flex-shrink:0; }
+.painel-ctrl-row { display:flex; gap:3px; flex-wrap:wrap; margin-top:5px; }
+.painel-btn-ctrl {
+  flex:1; padding:5px 3px; border-radius:5px;
+  border:1px solid rgba(255,255,255,.14); background:rgba(255,255,255,.05);
+  color:rgba(255,255,255,.55); font-family:var(--sans); font-size:9px; font-weight:700;
+  cursor:pointer; transition:all .18s; white-space:nowrap;
+}
+.painel-btn-ctrl:hover:not(.active) { background:rgba(255,255,255,.1); color:#fff; }
+.painel-btn-ctrl.active { background:var(--red); border-color:var(--red); color:#fff; }
+.painel-gerar-btn {
+  display:flex; align-items:center; justify-content:center; gap:5px;
+  padding:9px; border-radius:7px;
+  border:1px solid rgba(252,180,21,.35); background:rgba(252,180,21,.07);
+  color:#FCB415; font-size:12px; font-weight:700;
+  cursor:pointer; font-family:var(--sans); transition:all .2s;
+  width:calc(100% - 32px); margin:0 16px 4px;
+}
+.painel-gerar-btn:hover { background:rgba(252,180,21,.15); }
+.painel-gerar-btn:disabled { opacity:.5; cursor:not-allowed; }
+.btn-salvar {
+  margin:14px 16px; padding:11px 16px; border-radius:var(--r);
+  background:var(--yellow); color:#1a1a2e; border:none; cursor:pointer;
+  font-family:var(--sans); font-size:.82rem; font-weight:900; letter-spacing:.02em;
+  transition:all .2s; width:calc(100% - 32px);
+  display:flex; align-items:center; justify-content:center; gap:7px;
+}
+.btn-salvar:hover { background:#e0a000; transform:translateY(-1px); }
+.btn-salvar:disabled { opacity:.5; cursor:not-allowed; transform:none; }
+.btn-voltar-wizard {
+  margin:0 16px 14px; padding:9px; border-radius:var(--r);
+  background:transparent; color:rgba(255,255,255,.35);
+  border:1px solid rgba(255,255,255,.1); cursor:pointer;
+  font-family:var(--sans); font-size:.74rem; font-weight:700;
+  transition:all .2s; width:calc(100% - 32px);
+}
+.btn-voltar-wizard:hover { color:#fff; border-color:rgba(255,255,255,.3); }
+.gen-tweets-msg { font-size:10px; color:rgba(255,255,255,.45); padding:4px 16px 6px; line-height:1.5; display:none; }
+
+/* ── GEN SLIDE (660×825) ── */
+.gen-slide {
+  width:660px; height:825px; background:#fff;
+  padding:48px 56px; display:flex; flex-direction:column;
+  justify-content:flex-start; flex-shrink:0; position:relative;
+  font-family:'Lufga','Inter',system-ui,sans-serif;
+}
+.gen-slide .tweet-header { display:flex; align-items:center; gap:14px; margin-bottom:30px; }
+.gen-slide .tweet-avatar { width:52px; height:52px; border-radius:50%; object-fit:cover; flex-shrink:0; }
+.gen-slide .tweet-user-info { display:flex; flex-direction:column; gap:2px; }
+.gen-slide .tweet-name { font-weight:800; font-size:17px; color:#0f1419; display:flex; align-items:center; gap:5px; }
+.gen-slide .tweet-handle { color:#536471; font-size:15px; }
+.gen-slide .tweet-body { flex:1; display:flex; flex-direction:column; justify-content:center; }
+.gen-slide .tweet-text {
+  font-size:26px; color:#0f1419; line-height:1.5;
+  white-space:pre-wrap; word-break:break-word; font-weight:600;
+}
+.gen-slide .tweet-text[contenteditable="true"] { outline:none; border-bottom:2px dashed rgba(231,64,65,.35); min-height:60px; }
+.gen-slide .slide-num-badge { position:absolute; bottom:36px; right:40px; font-size:12px; font-weight:700; color:rgba(0,0,0,.18); }
+.verified-svg { width:18px; height:18px; flex-shrink:0; }
+.slide-wrapper { display:none; }
+.slide-wrapper.current { display:block; }
+</style>
+</head>
+<body>
+
+<!-- Topbar -->
+<header class="topbar">
+  <a class="topbar-back" href="/index.html">← Máquina</a>
+  <span class="topbar-sep">|</span>
+  <span class="topbar-title">Carrosséis</span>
+  <span id="voiceBadge" class="voice-badge-pill" style="display:none" onclick="toggleVoicePanel()">Tom de voz ativo ✓</span>
+  <button class="btn-ghost btn-sm btn" onclick="toggleVoicePanel()" id="voiceConfigBtn" style="margin-left:auto;">Tom de Voz</button>
+  <span class="topbar-badge">MC</span>
+</header>
+
+<!-- Tom de Voz Panel -->
+<div class="voice-panel" id="voicePanel">
+  <div class="voice-inner">
+    <div class="voice-label">Tom de Voz — Contexto para a IA</div>
+    <div class="voice-desc">Cole aqui seu arquivo de contexto de tom de voz. A IA vai usar esse texto para calibrar o estilo de todos os carrosséis gerados nesta sessão.</div>
+    <textarea class="voice-textarea" id="voiceTextarea"
+      placeholder="Cole aqui seu contexto de tom de voz... Ex: Voz da Laise Mesquita. Coloquial, primeira pessoa, sem jargão corporativo. Usa 'a gente', 'pra', 'tô'. Parentéticos íntimos como (sem surtar rs)..."></textarea>
+    <div class="voice-row">
+      <button class="voice-save-btn" onclick="saveVoiceContext()">Salvar contexto</button>
+      <button class="voice-clear-btn" onclick="clearVoiceContext()">Limpar</button>
+      <span class="voice-status" id="voiceStatus"></span>
+    </div>
+  </div>
+</div>
+
+<!-- Progress -->
+<div class="progress-wrap" id="progressWrap">
+  <div class="progress-steps">
+    <div class="step-dot active" id="sdot1">
+      <div class="step-circle">1</div>
+      <div class="step-label">Título</div>
+    </div>
+    <div class="step-dot" id="sdot2">
+      <div class="step-circle">2</div>
+      <div class="step-label">Hook</div>
+    </div>
+    <div class="step-dot" id="sdot3">
+      <div class="step-circle">3</div>
+      <div class="step-label">Formato</div>
+    </div>
+    <div class="step-dot" id="sdot4">
+      <div class="step-circle">4</div>
+      <div class="step-label">Preview</div>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main" id="mainArea">
+
+  <!-- ETAPA 1 — Título -->
+  <div class="etapa active" id="etapa1">
+    <p class="etapa-label">Etapa 1 de 4</p>
+    <h1 class="etapa-title">Qual é o tema?</h1>
+    <p class="etapa-desc">Digite o título ou tema central. Ele será usado para gerar os hooks.</p>
+
+    <div class="field-wrap">
+      <label class="field-label" for="inputTitulo">Título do carrossel</label>
+      <input type="text" id="inputTitulo" class="field-input"
+        placeholder="Ex: Os 7 erros que sabotam o seu conteúdo com IA" autocomplete="off">
+    </div>
+
+    <div id="titulosSugestoesArea" style="display:none;margin-bottom:16px;">
+      <div id="titulosLoading" style="display:none;align-items:center;gap:10px;font-size:13px;color:var(--muted);">
+        <div class="spinner"></div><span>Gerando sugestões…</span>
+      </div>
+      <div id="titulosGrid" style="display:flex;flex-direction:column;gap:7px;margin-top:4px;"></div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-ghost btn-sm" id="btnSugerirTitulo">✦ Sugerir título</button>
+      <button class="btn btn-primary" id="btnE1Next" disabled>Próximo →</button>
+    </div>
+  </div>
+
+  <!-- ETAPA 2 — Hook -->
+  <div class="etapa" id="etapa2">
+    <p class="etapa-label">Etapa 2 de 4</p>
+    <h1 class="etapa-title">Escolha o hook</h1>
+    <p class="etapa-desc">Selecione o hook que mais prende atenção. Você pode gerar novas opções.</p>
+
+    <div id="hooksArea">
+      <div class="hooks-loading" id="hooksLoading">
+        <div class="spinner"></div>
+        <span>Gerando 10 opções de hook…</span>
+      </div>
+      <div id="hooksError" class="hooks-error" style="display:none;"></div>
+      <div class="hooks-grid" id="hooksGrid" style="display:none;"></div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-ghost btn-sm" id="btnReloadHooks">↺ Gerar novos</button>
+      <button class="btn btn-primary" id="btnE2Next" disabled>Próximo →</button>
+    </div>
+  </div>
+
+  <!-- ETAPA 3 — Tipo + Marca -->
+  <div class="etapa" id="etapa3">
+    <p class="etapa-label">Etapa 3 de 4</p>
+    <h1 class="etapa-title">Formato e marca</h1>
+    <p class="etapa-desc">Escolha o layout dos slides e a marca do carrossel.</p>
+
+    <div class="field-label" style="margin-bottom:10px;">Tipo de carrossel</div>
+    <div class="tipo-grid" id="tipoGrid">
+      <div class="tipo-card selected" data-tipo="carrossel-opiniao" id="tipoOpiniao">
+        <div class="tipo-icon">💬</div>
+        <div class="tipo-name">Opinião (tweet)</div>
+        <div class="tipo-desc">Thread estilo X/Twitter — foto de perfil, badge verificado, handle.</div>
+      </div>
+      <div class="tipo-card" data-tipo="carrossel-educativo" id="tipoEducativo">
+        <div class="tipo-icon">📚</div>
+        <div class="tipo-name">Educativo</div>
+        <div class="tipo-desc">Slides educativos — fundo navy, título grande, pontos em destaque.</div>
+      </div>
+    </div>
+
+    <div class="field-label" style="margin-bottom:10px;">Marca</div>
+    <div class="marca-row" id="marcaRow">
+      <div class="marca-pill selected" data-marca="wlb">We Love Business</div>
+      <div class="marca-pill" data-marca="wlc">We Love Chile</div>
+      <div class="marca-pill" data-marca="genérico">Genérico</div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-ghost btn-sm" id="btnE3Back">← Voltar</button>
+      <button class="btn btn-primary" id="btnE3Next">Gerar carrossel →</button>
+    </div>
+  </div>
+
+  <!-- ETAPA 4 — Preview -->
+  <div id="etapa4">
+    <!-- Coluna export -->
+    <div class="export-col">
+      <button class="export-btn-all" id="btnExportAll" title="Exportar todos os slides como PNG">Exportar Todos</button>
+    </div>
+
+    <!-- Coluna slides -->
+    <div class="slides-col" id="slidesCol">
+      <button class="slide-nav-btn" id="navPrev" disabled>‹</button>
+      <div class="slide-viewport" id="slideViewport">
+        <div class="slide-viewport-scaler" id="slideScaler">
+          <div id="slidesContainer"></div>
+        </div>
+      </div>
+      <button class="slide-nav-btn" id="navNext">›</button>
+      <div class="slide-dots" id="slideDots"></div>
+    </div>
+
+    <!-- Painel direito -->
+    <div class="painel" id="painelDir">
+      <div class="painel-section">
+        <div class="painel-label">Slide</div>
+        <div><span class="painel-slide-counter" id="painelSlideNum">1</span><span class="painel-slide-total" id="painelSlideTotal"> / 8</span></div>
+      </div>
+      <div class="painel-section">
+        <div class="painel-label">Tema</div>
+        <div class="painel-value" id="painelTitulo">—</div>
+      </div>
+      <div class="painel-section">
+        <div class="painel-label">Hook</div>
+        <div class="painel-hook-value" id="painelHook">—</div>
+      </div>
+      <div class="painel-section">
+        <div class="painel-label">Tipo / Marca</div>
+        <div class="painel-value" id="painelTipoMarca">—</div>
+      </div>
+      <div class="painel-divider"></div>
+
+      <!-- Fonte -->
+      <div class="painel-section">
+        <div class="painel-label">Fonte</div>
+        <div class="painel-ctrl-row">
+          <button class="painel-btn-ctrl active" data-font="lufga" onclick="setFont('lufga',this)">Lufga</button>
+          <button class="painel-btn-ctrl" data-font="chalkiez" onclick="setFont('chalkiez',this)">Chalkiez</button>
+        </div>
+      </div>
+      <!-- Tamanho -->
+      <div class="painel-section">
+        <div class="painel-label">Tamanho</div>
+        <div class="painel-ctrl-row">
+          <button class="painel-btn-ctrl" data-size="20" onclick="setFontSize(20,this)">P</button>
+          <button class="painel-btn-ctrl active" data-size="26" onclick="setFontSize(26,this)">M</button>
+          <button class="painel-btn-ctrl" data-size="32" onclick="setFontSize(32,this)">G</button>
+          <button class="painel-btn-ctrl" data-size="38" onclick="setFontSize(38,this)">XG</button>
+        </div>
+      </div>
+      <!-- Peso -->
+      <div class="painel-section">
+        <div class="painel-label">Peso</div>
+        <div class="painel-ctrl-row">
+          <button class="painel-btn-ctrl" data-weight="400" onclick="setFontWeight(400,this)">Regular</button>
+          <button class="painel-btn-ctrl active" data-weight="700" onclick="setFontWeight(700,this)">Bold</button>
+          <button class="painel-btn-ctrl" data-weight="900" onclick="setFontWeight(900,this)">Black</button>
+        </div>
+      </div>
+      <!-- Fundo -->
+      <div class="painel-section">
+        <div class="painel-label">Fundo</div>
+        <div class="painel-ctrl-row">
+          <button class="painel-btn-ctrl active" data-theme="claro" onclick="setTheme('claro',this)">☀ Claro</button>
+          <button class="painel-btn-ctrl" data-theme="escuro" onclick="setTheme('escuro',this)">☾ Escuro</button>
+        </div>
+      </div>
+      <div class="painel-divider"></div>
+
+      <button class="painel-gerar-btn" id="btnGerarTweets">✦ Gerar slides com IA</button>
+      <div class="gen-tweets-msg" id="genTweetsMsg"></div>
+
+      <button class="btn-salvar" id="btnSalvar">⬇ Exportar PNG</button>
+      <button class="btn-voltar-wizard" id="btnVoltarWizard">← Voltar ao wizard</button>
+    </div>
+  </div>
+
+</div><!-- /main -->
+
+<img id="laiseHeadshot" src="" style="display:none;" crossorigin="anonymous">
+
+<script>
+/* ══════════════════════════════════════════════════
+   TOM DE VOZ
+   ══════════════════════════════════════════════════ */
+const LS_KEY = 'carrossel_voice_context';
+
+function getVoiceContext() {
+  return localStorage.getItem(LS_KEY) || '';
+}
+
+function loadVoiceUI() {
+  const saved = getVoiceContext();
+  const textarea = document.getElementById('voiceTextarea');
+  const badge    = document.getElementById('voiceBadge');
+  const configBtn = document.getElementById('voiceConfigBtn');
+  if (textarea) textarea.value = saved;
+  if (saved) {
+    badge.style.display = 'inline-flex';
+    configBtn.style.display = 'none';
+    document.getElementById('voiceStatus').textContent = 'Contexto ativo — a IA usará seu tom de voz.';
+  } else {
+    badge.style.display = 'none';
+    configBtn.style.display = 'inline-flex';
+  }
+}
+
+function toggleVoicePanel() {
+  const panel = document.getElementById('voicePanel');
+  panel.classList.toggle('open');
+  recalcProgressTop();
+}
+
+function saveVoiceContext() {
+  const val = document.getElementById('voiceTextarea').value.trim();
+  if (val) {
+    localStorage.setItem(LS_KEY, val);
+    document.getElementById('voiceStatus').textContent = '✓ Salvo! A IA vai usar esse tom de voz.';
+    loadVoiceUI();
+    setTimeout(() => {
+      document.getElementById('voicePanel').classList.remove('open');
+      recalcProgressTop();
+    }, 1200);
+  } else {
+    document.getElementById('voiceStatus').textContent = 'Cole algum conteúdo antes de salvar.';
+  }
+}
+
+function clearVoiceContext() {
+  localStorage.removeItem(LS_KEY);
+  document.getElementById('voiceTextarea').value = '';
+  document.getElementById('voiceStatus').textContent = 'Contexto removido.';
+  loadVoiceUI();
+}
+
+function recalcProgressTop() {
+  const panel = document.getElementById('voicePanel');
+  const topbarH = 52;
+  const panelH = panel.classList.contains('open') ? panel.scrollHeight : 0;
+  const totalOffset = topbarH + panelH;
+  document.getElementById('progressWrap').style.top = totalOffset + 'px';
+  document.getElementById('mainArea').style.paddingTop = (totalOffset + 68) + 'px';
+  // etapa4 height
+  document.getElementById('etapa4').style.height = `calc(100vh - ${topbarH}px - 68px)`;
+}
+
+/* ══════════════════════════════════════════════════
+   STATE
+   ══════════════════════════════════════════════════ */
+const S = {
+  etapa:     1,
+  titulo:    '',
+  hook:      null,
+  tipo:      'carrossel-opiniao',
+  marca:     'wlb',
+  slides:    [],
+  cur:       0,
+  total:     8,
+};
+
+/* ══════════════════════════════════════════════════
+   PROGRESS
+   ══════════════════════════════════════════════════ */
+function updateProgress(n) {
+  for (let i = 1; i <= 4; i++) {
+    const el = document.getElementById('sdot' + i);
+    el.classList.remove('active','done');
+    if (i < n)  el.classList.add('done');
+    if (i === n) el.classList.add('active');
+    const c = el.querySelector('.step-circle');
+    c.textContent = i < n ? '✓' : i;
+  }
+}
+
+function goTo(n) {
+  document.querySelectorAll('.etapa, #etapa4').forEach(el => el.classList.remove('active'));
+  const t = n === 4 ? document.getElementById('etapa4') : document.getElementById('etapa' + n);
+  if (t) t.classList.add('active');
+  S.etapa = n;
+  updateProgress(n);
+  recalcProgressTop();
+}
+
+/* ══════════════════════════════════════════════════
+   ETAPA 1 — TÍTULO
+   ══════════════════════════════════════════════════ */
+function setupE1() {
+  const input = document.getElementById('inputTitulo');
+  const btnNext = document.getElementById('btnE1Next');
+
+  input.addEventListener('input', () => { btnNext.disabled = input.value.trim().length < 3; });
+  input.addEventListener('keydown', e => { if (e.key === 'Enter' && !btnNext.disabled) btnNext.click(); });
+
+  btnNext.addEventListener('click', () => {
+    S.titulo = input.value.trim();
+    goTo(2);
+    loadHooks();
+  });
+
+  document.getElementById('btnSugerirTitulo').addEventListener('click', () => {
+    const area = document.getElementById('titulosSugestoesArea');
+    const load = document.getElementById('titulosLoading');
+    const grid = document.getElementById('titulosGrid');
+    area.style.display = 'block';
+    load.style.display = 'flex';
+    grid.innerHTML = '';
+    document.getElementById('btnSugerirTitulo').disabled = true;
+
+    fetch('/api/carrossel-title', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ input: input.value.trim(), voiceContext: getVoiceContext() }),
+    })
+    .then(r => r.json())
+    .then(d => {
+      load.style.display = 'none';
+      document.getElementById('btnSugerirTitulo').disabled = false;
+      (d.titulos || []).forEach(t => {
+        const b = document.createElement('button');
+        b.style.cssText = 'width:100%;text-align:left;padding:9px 13px;border-radius:8px;border:1.5px solid rgba(0,0,0,.1);background:#fff;font-family:\'Lufga\',sans-serif;font-size:.84rem;color:var(--text);cursor:pointer;transition:all .18s;line-height:1.4;font-weight:500;';
+        b.textContent = t;
+        b.onmouseenter = () => { b.style.borderColor = 'var(--red)'; b.style.background = 'rgba(231,64,65,.04)'; };
+        b.onmouseleave = () => { b.style.borderColor = 'rgba(0,0,0,.1)'; b.style.background = '#fff'; };
+        b.onclick = () => { input.value = t; S.titulo = t; btnNext.disabled = false; area.style.display = 'none'; };
+        grid.appendChild(b);
+      });
+    })
+    .catch(() => { load.style.display = 'none'; document.getElementById('btnSugerirTitulo').disabled = false; });
+  });
+}
+
+/* ══════════════════════════════════════════════════
+   ETAPA 2 — HOOKS
+   ══════════════════════════════════════════════════ */
+function loadHooks() {
+  const loading = document.getElementById('hooksLoading');
+  const error   = document.getElementById('hooksError');
+  const grid    = document.getElementById('hooksGrid');
+  const btnNext = document.getElementById('btnE2Next');
+
+  loading.style.display = 'flex';
+  error.style.display   = 'none';
+  grid.style.display    = 'none';
+  grid.innerHTML        = '';
+  btnNext.disabled      = true;
+  S.hook                = null;
+
+  fetch('/api/carrossel-hooks', {
+    method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ titulo: S.titulo, voiceContext: getVoiceContext() }),
+  })
+  .then(r => r.json())
+  .then(d => {
+    loading.style.display = 'none';
+    if (d.error) throw new Error(d.error);
+    renderHooks(d.hooks);
+  })
+  .catch(err => {
+    loading.style.display = 'none';
+    error.style.display   = 'block';
+    error.textContent     = '⚠️ Erro ao gerar hooks: ' + err.message;
+    renderHooks([
+      'Eu levei meses aprendendo isso sozinha. Você não vai precisar.',
+      'Ninguém te conta essa parte.',
+      'Comecei do zero. Hoje entrego 10x mais rápido.',
+      'Se você faz isso sem saber esses segredos, está no modo difícil.',
+      'O erro que eu cometi e nunca mais vou repetir.',
+    ]);
+  });
+
+  document.getElementById('btnReloadHooks').onclick = loadHooks;
+  btnNext.onclick = () => goTo(3);
+}
+
+function renderHooks(hooks) {
+  const grid    = document.getElementById('hooksGrid');
+  const btnNext = document.getElementById('btnE2Next');
+  grid.innerHTML = '';
+  grid.style.display = 'flex';
+  hooks.forEach((hook, i) => {
+    const card = document.createElement('div');
+    card.className = 'hook-card';
+    card.innerHTML = `<span class="hook-num">HOOK ${String(i+1).padStart(2,'0')}</span>${esc(hook)}`;
+    card.onclick = () => {
+      document.querySelectorAll('.hook-card').forEach(c => c.classList.remove('selected'));
+      card.classList.add('selected');
+      S.hook = hook;
+      btnNext.disabled = false;
+    };
+    grid.appendChild(card);
+  });
+}
+
+/* ══════════════════════════════════════════════════
+   ETAPA 3 — TIPO + MARCA
+   ══════════════════════════════════════════════════ */
+(function setupE3() {
+  document.querySelectorAll('.tipo-card').forEach(card => {
+    card.onclick = () => {
+      document.querySelectorAll('.tipo-card').forEach(c => c.classList.remove('selected'));
+      card.classList.add('selected');
+      S.tipo = card.dataset.tipo;
+    };
+  });
+  document.querySelectorAll('.marca-pill').forEach(pill => {
+    pill.onclick = () => {
+      document.querySelectorAll('.marca-pill').forEach(p => p.classList.remove('selected'));
+      pill.classList.add('selected');
+      S.marca = pill.dataset.marca;
+    };
+  });
+  document.getElementById('btnE3Back').onclick = () => goTo(2);
+  document.getElementById('btnE3Next').onclick = () => { goTo(4); buildSlides(); };
+})();
+
+/* ══════════════════════════════════════════════════
+   ETAPA 4 — SLIDES
+   ══════════════════════════════════════════════════ */
+let AVATAR_URL = '';
+
+function loadAvatar() {
+  return new Promise(resolve => {
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+    img.onload = () => {
+      try {
+        const cv = document.createElement('canvas');
+        cv.width = img.naturalWidth; cv.height = img.naturalHeight;
+        cv.getContext('2d').drawImage(img, 0, 0);
+        AVATAR_URL = cv.toDataURL('image/png');
+      } catch { AVATAR_URL = img.src; }
+      resolve(AVATAR_URL);
+    };
+    img.onerror = () => { AVATAR_URL = 'https://i.pravatar.cc/52?u=laise'; resolve(AVATAR_URL); };
+    img.src = '/assets/laise-mesquita.png';
+  });
+}
+
+function buildSlides() {
+  S.slides = [S.hook || '', '', '', '', '', '', '', 'Salva esse carrossel.\n\nComenta aqui embaixo 👇'];
+  S.total = 8; S.cur = 0;
+
+  document.getElementById('painelTitulo').textContent     = S.titulo;
+  document.getElementById('painelHook').textContent       = S.hook || '';
+  document.getElementById('painelTipoMarca').textContent  = S.tipo + ' · ' + S.marca;
+  document.getElementById('painelSlideTotal').textContent = ' / ' + S.total;
+
+  loadAvatar().then(() => {
+    renderSlidesDOM();
+    scaleViewport();
+    updateNav();
+    updatePainelNum();
+    buildDots();
+    generateTweetsAI();
+  });
+
+  document.getElementById('btnVoltarWizard').onclick = () => goTo(3);
+  document.getElementById('btnSalvar').onclick       = exportAllSlides;
+  document.getElementById('btnExportAll').onclick    = exportAllSlides;
+  document.getElementById('btnGerarTweets').onclick  = generateTweetsAI;
+  document.getElementById('navPrev').onclick = () => navigate(-1);
+  document.getElementById('navNext').onclick = () => navigate(1);
+  window.addEventListener('resize', scaleViewport);
+}
+
+function renderSlidesDOM() {
+  const c = document.getElementById('slidesContainer');
+  c.innerHTML = '';
+  S.slides.forEach((text, i) => {
+    const w = document.createElement('div');
+    w.className = 'slide-wrapper' + (i === 0 ? ' current' : '');
+    w.dataset.idx = i;
+    w.appendChild(buildSlideEl(i, text, i === S.total - 1));
+    c.appendChild(w);
+  });
+}
+
+function buildSlideEl(idx, text, isCTA) {
+  const slide = document.createElement('div');
+  slide.className = 'gen-slide'; slide.id = 'slide-' + idx;
+  const av = AVATAR_URL || 'https://i.pravatar.cc/52?u=laise';
+  slide.innerHTML = `
+    <div class="tweet-header">
+      <img class="tweet-avatar" src="${av}" alt="Laise Mesquita">
+      <div class="tweet-user-info">
+        <div class="tweet-name">Laise Mesquita
+          <svg class="verified-svg" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="12" cy="12" r="12" fill="#1D9BF0"/>
+            <path d="M17.5 8.5L10.5 15.5L7 12" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <div class="tweet-handle">@laisemesquita</div>
+      </div>
+    </div>
+    <div class="tweet-body">
+      <div class="tweet-text" contenteditable="${isCTA ? 'false' : 'true'}" data-idx="${idx}" spellcheck="false">${esc(text)}</div>
+    </div>
+    <div class="slide-num-badge">${idx + 1}/${S.total}</div>`;
+  slide.querySelector('.tweet-text').addEventListener('input', e => { S.slides[idx] = e.target.innerText; });
+  return slide;
+}
+
+function scaleViewport() {
+  const col    = document.getElementById('slidesCol');
+  const scaler = document.getElementById('slideScaler');
+  if (!col || !scaler) return;
+  const cW = col.clientWidth - 100, cH = col.clientHeight - 80;
+  const scale = Math.min(cW / 660, cH / 825, 1);
+  scaler.style.transform = `scale(${scale})`;
+  scaler.style.width = '660px'; scaler.style.height = '825px';
+  const sW = 660 * scale, sH = 825 * scale;
+  document.getElementById('slideViewport').style.width = sW + 'px';
+  document.getElementById('slideViewport').style.height = sH + 'px';
+}
+
+function navigate(d) {
+  const n = S.cur + d;
+  if (n < 0 || n >= S.total) return;
+  showSlide(n);
+}
+
+function showSlide(idx) {
+  document.querySelectorAll('.slide-wrapper').forEach(w => w.classList.remove('current'));
+  const w = document.querySelector(`.slide-wrapper[data-idx="${idx}"]`);
+  if (w) w.classList.add('current');
+  S.cur = idx;
+  updateNav(); updatePainelNum(); updateDots(idx);
+}
+
+function updateNav() {
+  document.getElementById('navPrev').disabled = S.cur === 0;
+  document.getElementById('navNext').disabled = S.cur === S.total - 1;
+}
+function updatePainelNum() { document.getElementById('painelSlideNum').textContent = S.cur + 1; }
+
+function buildDots() {
+  const el = document.getElementById('slideDots');
+  el.innerHTML = '';
+  for (let i = 0; i < S.total; i++) {
+    const d = document.createElement('div');
+    d.className = 'dot' + (i === 0 ? ' active' : '');
+    d.onclick = () => showSlide(i);
+    el.appendChild(d);
+  }
+}
+function updateDots(idx) {
+  document.querySelectorAll('.dot').forEach((d, i) => d.classList.toggle('active', i === idx));
+}
+
+/* ══════════════════════════════════════════════════
+   GERAR TWEETS VIA IA
+   ══════════════════════════════════════════════════ */
+function generateTweetsAI() {
+  const btn = document.getElementById('btnGerarTweets');
+  const msg = document.getElementById('genTweetsMsg');
+  btn.disabled = true;
+
+  for (let i = 1; i <= 6; i++) {
+    const el = document.querySelector(`.tweet-text[data-idx="${i}"]`);
+    if (el) { el.textContent = '✦ Gerando…'; el.style.color = 'rgba(0,0,0,.25)'; el.style.fontStyle = 'italic'; }
+  }
+  msg.textContent = '⏳ Gerando slides 2–7 com IA…';
+  msg.style.display = 'block';
+  msg.style.color = 'rgba(255,255,255,.45)';
+
+  fetch('/api/carrossel-tweets', {
+    method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ titulo: S.titulo, hook: S.hook, tipo: S.tipo, marca: S.marca, voiceContext: getVoiceContext() }),
+  })
+  .then(r => r.json())
+  .then(d => {
+    if (d.error) throw new Error(d.error);
+    d.tweets.forEach((text, i) => {
+      const idx = i + 1;
+      S.slides[idx] = text;
+      const el = document.querySelector(`.tweet-text[data-idx="${idx}"]`);
+      if (el) { el.innerText = text; el.style.color = ''; el.style.fontStyle = ''; }
+    });
+    msg.textContent = '✅ Slides 2–7 prontos!';
+    msg.style.color = '#4CAF7D';
+    setTimeout(() => { msg.style.display = 'none'; }, 3500);
+    btn.disabled = false;
+  })
+  .catch(err => {
+    msg.textContent = '⚠️ Erro: ' + err.message;
+    msg.style.color = 'rgba(231,64,65,.8)';
+    btn.disabled = false;
+  });
+}
+
+/* ══════════════════════════════════════════════════
+   EXPORT PNG
+   ══════════════════════════════════════════════════ */
+async function exportAllSlides() {
+  const btn = document.getElementById('btnSalvar');
+  const btnExp = document.getElementById('btnExportAll');
+  btn.disabled = true; btnExp.disabled = true;
+  btn.textContent = 'Exportando…';
+
+  const scaler = document.getElementById('slideScaler');
+  const origT = scaler.style.transform;
+  scaler.style.transform = 'none';
+
+  try {
+    for (let i = 0; i < S.total; i++) {
+      showSlide(i);
+      await new Promise(r => setTimeout(r, 80));
+      const slideEl = document.getElementById('slide-' + i);
+      if (!slideEl) continue;
+      const canvas = await html2canvas(slideEl, {
+        scale: 1080 / 660, useCORS: true, allowTaint: true,
+        backgroundColor: '#ffffff', logging: false, width: 660, height: 825,
+      });
+      const link = document.createElement('a');
+      link.href = canvas.toDataURL('image/png');
+      link.download = `carrossel-${S.marca}-slide-${String(i+1).padStart(2,'0')}.png`;
+      link.click();
+      await new Promise(r => setTimeout(r, 200));
+    }
+  } catch (e) { alert('Erro ao exportar: ' + e.message); }
+  finally {
+    scaler.style.transform = origT;
+    btn.disabled = false; btnExp.disabled = false;
+    btn.textContent = '⬇ Exportar PNG';
+    showSlide(S.cur);
+  }
+}
+
+/* ══════════════════════════════════════════════════
+   CONTROLES DO PAINEL
+   ══════════════════════════════════════════════════ */
+function setFont(n, el) {
+  const ff = n === 'lufga' ? "'Lufga','Inter',system-ui,sans-serif" : "'Chalkiez','Comic Sans MS',cursive";
+  document.querySelectorAll('[data-font]').forEach(b => b.classList.toggle('active', b.dataset.font === n));
+  document.querySelectorAll('.tweet-text').forEach(e => e.style.fontFamily = ff);
+  document.querySelectorAll('[data-weight]').forEach(b => { b.disabled = n === 'chalkiez' && parseInt(b.dataset.weight) !== 400; });
+  if (n === 'chalkiez') setFontWeight(400);
+}
+function setFontSize(s, el) {
+  document.querySelectorAll('[data-size]').forEach(b => b.classList.toggle('active', parseInt(b.dataset.size) === s));
+  document.querySelectorAll('.tweet-text').forEach(e => e.style.fontSize = s + 'px');
+}
+function setFontWeight(w, el) {
+  document.querySelectorAll('[data-weight]').forEach(b => b.classList.toggle('active', parseInt(b.dataset.weight) === parseInt(w)));
+  document.querySelectorAll('.tweet-text').forEach(e => e.style.fontWeight = w);
+}
+function setTheme(t, el) {
+  document.querySelectorAll('[data-theme]').forEach(b => b.classList.toggle('active', b.dataset.theme === t));
+  const bg = t === 'claro' ? '#fff' : '#111';
+  const tc = t === 'claro' ? '#0f1419' : '#f0f0f0';
+  const hc = t === 'claro' ? '#536471' : '#8899a6';
+  const bc = t === 'claro' ? 'rgba(0,0,0,.18)' : 'rgba(255,255,255,.3)';
+  document.querySelectorAll('.gen-slide').forEach(s => s.style.background = bg);
+  document.querySelectorAll('.tweet-text,.slide-cta-text').forEach(e => e.style.color = tc);
+  document.querySelectorAll('.tweet-name').forEach(e => e.style.color = tc);
+  document.querySelectorAll('.tweet-handle').forEach(e => e.style.color = hc);
+  document.querySelectorAll('.slide-num-badge').forEach(e => e.style.color = bc);
+}
+
+/* ══════════════════════════════════════════════════
+   HELPERS
+   ══════════════════════════════════════════════════ */
+function esc(s) {
+  return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+/* ══════════════════════════════════════════════════
+   BOOT
+   ══════════════════════════════════════════════════ */
+loadVoiceUI();
+recalcProgressTop();
+setupE1();
+</script>
+</body>
+</html>
