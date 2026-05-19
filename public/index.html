@@ -25,26 +25,7 @@
       font-weight: 700;
       font-style: normal;
     }
-  
-/* Empresa pills */
-.emp-filter{display:flex;gap:5px;margin-right:6px;}
-.emp-f-btn{padding:4px 12px;border:2px solid #000;border-radius:20px;font-family:inherit;font-size:11px;font-weight:800;cursor:pointer;background:#fff;color:#000;transition:all .15s;}
-.emp-f-btn.active{background:#1A1A1A;color:#fff;border-color:#1A1A1A;}
-.emp-f-btn[data-emp="wlb"].active{background:#D97559;border-color:#D97559;color:#fff;}
-.emp-f-btn[].active{background:#3CB88A;border-color:#3CB88A;color:#fff;}
-
-
-
-
-.emp-coming h2{font-size:22px;font-weight:900;color:#1A1A1A;margin:0;}
-.emp-coming p{font-size:14px;line-height:1.6;max-width:320px;margin:0;}
-.wlb-roteiro-card{background:#fff;border:2px solid #000;border-radius:10px;padding:14px 18px;margin-bottom:10px;}
-.wlb-painel-hero{background:#D97559;color:#fff;border-radius:14px;padding:24px 28px;margin-bottom:20px;display:flex;align-items:center;gap:24px;}
-.wlb-painel-hero .num{font-size:64px;font-weight:900;line-height:1;}
-.wlb-painel-hero .lbl{font-size:12px;font-weight:800;letter-spacing:1px;opacity:.8;text-transform:uppercase;margin-bottom:6px;}
-/* YouTube WLB nav */
-.nav-yt-wlb{display:none;}
-</style>
+  </style>
 
   <style>
     /* ─── CSS VARIABLES ─── */
@@ -1803,7 +1784,6 @@
     <a class="t-nav" href="/carrossel.html" style="text-decoration:none;">Instagram</a>
     <div class="t-nav" data-page="metrics">Métricas</div>
     <div class="t-nav" data-page="analyzer">Analisador</div>
-    <div class="t-nav nav-yt-wlb" data-page="youtube-wlb">YouTube</div>
     <div class="sb-card sb-banco">
       <div class="sb-card-label">BANCO DE IDEIAS</div>
       <div class="sb-card-num" id="homeBancoCount">218</div>
@@ -1841,12 +1821,6 @@
     <span class="t-flag" title="We Love Homes">🏠</span>
     <!-- Spacer -->
     <div class="t-sp"></div>
-    <!-- Empresa filter -->
-    <div class="emp-filter">
-      <button class="emp-f-btn active" data-emp="wlc" onclick="switchEmpresa('wlc')">WLC</button>
-      <button class="emp-f-btn" data-emp="wlb" onclick="switchEmpresa('wlb')">WLB</button>
-      <button class="emp-f-btn" onclick="switchEmpresa('wlh')">WLH</button>
-    </div>
     <!-- Botão + Ideia -->
     <button class="t-add-btn" onclick="showPage('ideas')">+ Ideia</button>
     <!-- Avatar -->
@@ -2739,12 +2713,7 @@
     </div>
   </div>
 
-  
-  <!-- YouTube WLB page -->
-  <div class="page" id="youtube-wlb" style="display:none;">
-    
-  </div>
-</div><!-- /main-area -->
+  </div><!-- /main-area -->
   </div><!-- /app-wrap -->
 
   <script>
@@ -8624,66 +8593,5 @@
       });
     })();
   </script>
-<script>
-var EMPRESA = 'wlc';
-var _wlbLoaded = false;
-
-function switchEmpresa(emp) {
-  EMPRESA = emp;
-  document.querySelectorAll('.emp-f-btn').forEach(function(b){
-    b.classList.toggle('active', b.dataset.emp === emp);
-  });
-  // Sidebar version
-  var ver = document.querySelector('.sidebar-version');
-  if (ver) ver.textContent = emp==='wlc'?'V5 · WLC': emp==='wlb'?'V1 · WLB':'V1 · WLH';
-  // YouTube nav
-  document.querySelectorAll('.nav-yt-wlb').forEach(function(el){
-    el.style.display = emp==='wlb' ? '' : 'none';
-  });
-  // WLB data
-  if (emp==='wlb' && !_wlbLoaded){ _wlbLoaded=true; loadWLBData(); }
-}
-
-// YouTube WLB nav click
-  document.querySelectorAll('[data-page="youtube-wlb"]').forEach(function(btn){
-    btn.addEventListener('click', function(){
-      document.querySelectorAll('.t-nav').forEach(function(b){ b.classList.remove('active'); });
-      this.classList.add('active');
-      document.querySelectorAll('.page').forEach(function(p){ p.classList.remove('active'); });
-      var ytPage = document.getElementById('youtube-wlb');
-      if (ytPage) { ytPage.classList.add('active'); ytPage.style.display=''; }
-    });
-  });
-});
-
-function loadWLBData(){
-  fetch('/wlb/data/roteiros_semana.json')
-    .then(function(r){ return r.json(); })
-    .then(function(data){
-      var rs = data.roteiros || [];
-      var cEl = document.getElementById('wlb-count');
-      if (cEl) cEl.textContent = rs.length;
-      if (rs[0]) {
-        var t=document.getElementById('wlb-next-t'), h=document.getElementById('wlb-next-h');
-        if(t) t.textContent = rs[0].titulo;
-        if(h) h.textContent = rs[0].hook_preview;
-      }
-      var html = '';
-      rs.forEach(function(r){
-        var sc=r.status==='publicado'?'#3CB88A':r.status==='gravando'?'#E8A000':'#888';
-        var obs=r.obsidian_path?'obsidian://open?vault=PKA&file='+encodeURIComponent(r.obsidian_path):'';
-        var tit=obs?'<a href="'+obs+'" style="color:#1A1A1A;text-decoration:none;font-weight:900;">'+r.titulo+' ⭡</a>':'<strong>'+r.titulo+'</strong>';
-        html+='<div class="wlb-roteiro-card"><div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;">'+tit+'<span style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;color:'+sc+'">'+r.status+'</span></div>'
-          +'<div style="font-size:12px;color:#888;font-style:italic;margin-top:4px;line-height:1.4;">'+r.hook_preview+'</div>'
-          +(r.palavra_chave_manychat?'<div style="margin-top:8px;"><span style="background:#D97559;color:#fff;font-size:10px;font-weight:800;padding:2px 8px;border-radius:12px;">'+r.palavra_chave_manychat+'</span></div>':'')
-          +'</div>';
-      });
-      var fallback = html || '<p style="color:#888">Nenhum roteiro na fila.</p>';
-      ['wlb-roteiros-list','wlb-yt-list'].forEach(function(id){
-        var el=document.getElementById(id); if(el) el.innerHTML=fallback;
-      });
-    }).catch(function(){});
-}
-</script>
 </body>
 </html>
