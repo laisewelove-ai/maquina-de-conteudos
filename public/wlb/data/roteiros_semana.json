@@ -1,0 +1,18 @@
+{
+  "last_updated": "2026-05-19",
+  "roteiros": [
+    {
+      "id": "roteiro_001",
+      "titulo": "Como fazer o Claude lembrar tudo do seu negócio",
+      "hook_preview": "Você já abriu o Claude e ele te respondeu como se fosse a primeira vez?",
+      "aprovado_em": "2026-05-19",
+      "status": "pendente",
+      "gate": "gate4_aprovado",
+      "duracao_estimada": "11–13 min",
+      "palavras_estimadas": 1800,
+      "tipo": "tutorial",
+      "palavra_chave_manychat": "MEMÓRIA",
+      "obsidian_path": "BKM/We Love Business/recursos/YouTube/Roteiros/Roteiro - Como fazer o Claude lembrar tudo do seu negocio.md"
+    }
+  ]
+}

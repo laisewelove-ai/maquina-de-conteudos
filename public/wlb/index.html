@@ -1,0 +1,1293 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Máquina de Conteúdos — WLB</title>
+  <link href="https://fonts.cdnfonts.com/css/lufga" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #F2EDE3;
+      --black: #1A1A1A;
+      --gray: #888;
+      --orange: #D97559;
+      --dark: #1E1B2E;
+      --lilac: #C7A5F3;
+      --border: 2px solid #000;
+      --radius: 10px;
+    }
+
+    body {
+      font-family: 'Lufga', sans-serif;
+      background: var(--bg);
+      color: var(--black);
+      height: 100vh;
+      overflow: hidden;
+      display: flex;
+      flex-direction: row;
+    }
+
+    /* ── SIDEBAR ── */
+    .sidebar {
+      width: 180px;
+      min-width: 180px;
+      background: var(--bg);
+      border-right: 1px solid #DDD6C9;
+      display: flex;
+      flex-direction: column;
+      padding: 16px 12px;
+      gap: 6px;
+      overflow-y: auto;
+    }
+
+    .sidebar-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 4px;
+    }
+
+    .sidebar-logo-grid {
+      width: 32px;
+      height: 32px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      border-radius: 6px;
+      overflow: hidden;
+      border: 2px solid #000;
+      flex-shrink: 0;
+    }
+
+    .sidebar-logo-grid span:nth-child(1) { background: #D97559; }
+    .sidebar-logo-grid span:nth-child(2) { background: #1E1B2E; }
+    .sidebar-logo-grid span:nth-child(3) { background: #C7A5F3; }
+    .sidebar-logo-grid span:nth-child(4) { background: #33304A; }
+
+    .sidebar-text { display: flex; flex-direction: column; }
+    .sidebar-wordmark {
+      font-family: 'Lufga', sans-serif;
+      font-weight: 900;
+      font-size: 14px;
+      color: var(--black);
+      line-height: 1.1;
+    }
+    .sidebar-version {
+      font-size: 10px;
+      color: var(--gray);
+    }
+
+    .sidebar-divider {
+      height: 1px;
+      background: #DDD6C9;
+      margin: 4px 0;
+    }
+
+    .t-nav {
+      width: 100%;
+      color: var(--gray);
+      font-size: 13px;
+      font-weight: 600;
+      padding: 8px 10px;
+      border-radius: 8px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      transition: all .15s;
+      font-family: 'Lufga', sans-serif;
+      border: none;
+      background: transparent;
+      text-align: left;
+    }
+
+    .t-nav .nav-icon { font-size: 14px; line-height: 1; }
+    .t-nav .nav-dot {
+      color: var(--gray);
+      font-size: 16px;
+      font-weight: 900;
+      margin-right: -2px;
+      flex-shrink: 0;
+    }
+
+    .t-nav:hover { background: rgba(0,0,0,0.04); color: var(--black); }
+
+    .t-nav.active {
+      background: var(--orange);
+      color: #fff;
+      font-weight: 700;
+    }
+
+    .t-nav.active .nav-dot { display: none; }
+    .t-nav.active .nav-icon { filter: brightness(10); }
+
+    /* ── MAIN AREA ── */
+    .main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    /* ── TOPBAR ── */
+    .topbar {
+      height: 52px;
+      background: var(--bg);
+      border-bottom: 2px solid #000;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      padding: 0 16px;
+      gap: 10px;
+      flex-shrink: 0;
+    }
+
+    .topbar-logo-grid {
+      width: 32px;
+      height: 32px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      border-radius: 6px;
+      overflow: hidden;
+      border: 2px solid #000;
+      flex-shrink: 0;
+    }
+
+    .topbar-logo-grid span:nth-child(1) { background: #D97559; }
+    .topbar-logo-grid span:nth-child(2) { background: #1E1B2E; }
+    .topbar-logo-grid span:nth-child(3) { background: #C7A5F3; }
+    .topbar-logo-grid span:nth-child(4) { background: #33304A; }
+
+    .topbar-info { display: flex; flex-direction: column; }
+    .topbar-wordmark {
+      font-family: 'Lufga', sans-serif;
+      font-weight: 900;
+      font-size: 18px;
+      color: var(--black);
+      line-height: 1;
+    }
+    .topbar-version {
+      font-size: 11px;
+      color: var(--gray);
+    }
+
+    .topbar-spacer { flex: 1; }
+
+    .empresa-pills {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+    }
+
+    .empresa-pill {
+      padding: 4px 12px;
+      border-radius: 20px;
+      border: 2px solid #000;
+      font-family: 'Lufga', sans-serif;
+      font-weight: 800;
+      font-size: 12px;
+      text-decoration: none;
+      color: #000;
+      transition: all .15s;
+    }
+
+    .empresa-pill.active {
+      background: var(--orange);
+      color: #fff;
+      border-color: var(--orange);
+    }
+
+    .empresa-pill:hover:not(.active) {
+      background: rgba(0,0,0,0.06);
+    }
+
+    /* ── CONTENT AREA ── */
+    .content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 24px;
+    }
+
+    /* ── PAGES ── */
+    .page { display: none; }
+    .page.active { display: block; }
+
+    /* ── PAGE TITLES ── */
+    .page-title {
+      font-size: 22px;
+      font-weight: 900;
+      color: var(--black);
+      margin-bottom: 20px;
+    }
+
+    /* ── STAT CARDS ── */
+    .stat-cards {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 28px;
+      flex-wrap: wrap;
+    }
+
+    .stat-card {
+      flex: 1;
+      min-width: 180px;
+      max-width: 260px;
+      border-radius: var(--radius);
+      padding: 20px 22px;
+      border: 2px solid #000;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .stat-card.orange { background: var(--orange); color: #fff; }
+    .stat-card.dark   { background: var(--dark);   color: #fff; }
+
+    .stat-label {
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      opacity: 0.85;
+    }
+
+    .stat-number {
+      font-size: 48px;
+      font-weight: 900;
+      line-height: 1;
+    }
+
+    .stat-sub {
+      font-size: 11px;
+      opacity: 0.7;
+    }
+
+    /* ── PLACEHOLDER BLOCK ── */
+    .placeholder-block {
+      border: 2px dashed #DDD6C9;
+      border-radius: var(--radius);
+      padding: 32px;
+      text-align: center;
+      color: var(--gray);
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    /* ── SECTION HEADER ── */
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+      margin-top: 24px;
+    }
+
+    .section-header:first-child { margin-top: 0; }
+
+    .section-title {
+      font-size: 14px;
+      font-weight: 800;
+      color: var(--black);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .btn-add {
+      padding: 5px 14px;
+      border-radius: 20px;
+      border: 2px solid #000;
+      background: transparent;
+      font-family: 'Lufga', sans-serif;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: default;
+      opacity: 0.35;
+    }
+
+    /* ── ROTEIRO CARD ── */
+    .roteiro-card {
+      border: 2px solid #000;
+      border-radius: var(--radius);
+      padding: 16px 18px;
+      margin-bottom: 12px;
+      background: #fff;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .roteiro-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .roteiro-titulo {
+      font-size: 15px;
+      font-weight: 800;
+      color: var(--black);
+      text-decoration: none;
+      flex: 1;
+    }
+
+    .roteiro-titulo:hover { text-decoration: underline; color: var(--orange); }
+
+    .roteiro-status-btn {
+      padding: 4px 12px;
+      border-radius: 20px;
+      border: 2px solid #000;
+      font-family: 'Lufga', sans-serif;
+      font-size: 11px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: all .15s;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .roteiro-status-btn.pendente { background: var(--orange); color: #fff; border-color: var(--orange); }
+    .roteiro-status-btn.gravado  { background: var(--dark);   color: #fff; border-color: var(--dark); }
+
+    .roteiro-meta {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .roteiro-meta span {
+      font-size: 11px;
+      color: var(--gray);
+      font-weight: 500;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 20px;
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .badge-manychat { background: #C7A5F3; color: var(--dark); }
+    .badge-gate     { background: var(--bg); border: 1px solid #DDD6C9; color: var(--gray); }
+    .badge-tutorial { background: #E8F5E9; color: #2E7D32; border: 1px solid #A5D6A7; }
+    .badge-news     { background: #FFF8E1; color: #F57F17; border: 1px solid #FFE082; }
+    .badge-showcase { background: #EDE7F6; color: #4527A0; border: 1px solid #CE93D8; }
+    .badge-workflow { background: #E3F2FD; color: #1565C0; border: 1px solid #90CAF9; }
+    .badge-comparison { background: #FCE4EC; color: #880E4F; border: 1px solid #F48FB1; }
+
+    .roteiro-hook {
+      font-size: 13px;
+      color: #555;
+      font-style: italic;
+      border-left: 3px solid var(--orange);
+      padding-left: 10px;
+    }
+
+    /* ── YOUTUBE TABS ── */
+    .yt-tabs {
+      display: flex;
+      gap: 4px;
+      margin-bottom: 20px;
+      border-bottom: 2px solid #000;
+      padding-bottom: 0;
+    }
+
+    .yt-tab {
+      padding: 8px 18px 10px;
+      font-family: 'Lufga', sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      border: none;
+      background: transparent;
+      color: var(--gray);
+      border-radius: 8px 8px 0 0;
+      margin-bottom: -2px;
+      transition: all .15s;
+      border: 2px solid transparent;
+      border-bottom: none;
+    }
+
+    .yt-tab:hover { color: var(--black); background: rgba(0,0,0,0.04); }
+
+    .yt-tab.active {
+      color: var(--black);
+      font-weight: 900;
+      background: var(--bg);
+      border-color: #000;
+      border-bottom-color: var(--bg);
+    }
+
+    .yt-panel { display: none; }
+    .yt-panel.active { display: block; }
+
+    /* ── CANAL DO JACK ── */
+    .jack-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .jack-card {
+      border: 2px solid #000;
+      border-radius: var(--radius);
+      padding: 16px 18px;
+      background: #fff;
+    }
+
+    .jack-card-title {
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--gray);
+      margin-bottom: 10px;
+    }
+
+    .jack-stat-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 6px 0;
+      border-bottom: 1px solid #F0EDE8;
+      font-size: 13px;
+    }
+
+    .jack-stat-row:last-child { border-bottom: none; }
+    .jack-stat-key { color: var(--gray); font-weight: 500; }
+    .jack-stat-val { font-weight: 800; color: var(--black); }
+
+    .jack-video-list { display: flex; flex-direction: column; gap: 10px; }
+
+    .jack-video-item {
+      border: 1px solid #DDD6C9;
+      border-radius: 8px;
+      padding: 12px 14px;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+    }
+
+    .jack-video-thumb {
+      width: 56px;
+      height: 32px;
+      background: #0A0A0F;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      font-size: 16px;
+    }
+
+    .jack-video-info { flex: 1; }
+
+    .jack-video-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--black);
+      text-decoration: none;
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .jack-video-title:hover { color: var(--orange); }
+
+    .jack-video-meta {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .jack-video-meta span {
+      font-size: 11px;
+      color: var(--gray);
+    }
+
+    .views-badge {
+      font-size: 11px;
+      font-weight: 800;
+      color: var(--dark);
+      background: var(--lilac);
+      padding: 1px 7px;
+      border-radius: 10px;
+    }
+
+    /* ── CLAUDE NEWS ── */
+    .news-list { display: flex; flex-direction: column; gap: 8px; max-height: 600px; overflow-y: auto; }
+
+    .news-item {
+      border: 1px solid #DDD6C9;
+      border-radius: 8px;
+      padding: 12px 14px;
+      background: #fff;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+    }
+
+    .news-source-badge {
+      font-size: 9px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding: 2px 7px;
+      border-radius: 8px;
+      white-space: nowrap;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .news-source-badge.anthropic-blog { background: #FF6B35; color: #fff; }
+    .news-source-badge.research        { background: #4A90E2; color: #fff; }
+    .news-source-badge.changelog       { background: #2ECC71; color: #fff; }
+    .news-source-badge.default         { background: #DDD6C9; color: var(--gray); }
+
+    .news-info { flex: 1; }
+
+    .news-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--black);
+      text-decoration: none;
+      display: block;
+      margin-bottom: 2px;
+    }
+
+    .news-title:hover { color: var(--orange); text-decoration: underline; }
+
+    .news-date { font-size: 11px; color: var(--gray); }
+
+    .last-updated {
+      font-size: 11px;
+      color: var(--gray);
+      margin-bottom: 14px;
+      font-weight: 500;
+    }
+
+    /* ── SEMANA GRID ── */
+    .semana-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .semana-day {
+      border: 2px solid #DDD6C9;
+      border-radius: 8px;
+      padding: 12px 8px;
+      min-height: 100px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .semana-day-label {
+      font-size: 11px;
+      font-weight: 800;
+      color: var(--gray);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    /* ── IDEIAS ── */
+    .ideias-input-row {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .ideias-input {
+      flex: 1;
+      padding: 10px 14px;
+      border: 2px solid #000;
+      border-radius: 8px;
+      font-family: 'Lufga', sans-serif;
+      font-size: 14px;
+      background: #fff;
+      outline: none;
+    }
+
+    .ideias-input:focus { border-color: var(--orange); }
+
+    .btn-primary {
+      padding: 10px 18px;
+      border-radius: 8px;
+      border: 2px solid #000;
+      background: var(--dark);
+      color: #fff;
+      font-family: 'Lufga', sans-serif;
+      font-size: 13px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: background .15s;
+      white-space: nowrap;
+    }
+
+    .btn-primary:hover { background: var(--orange); border-color: var(--orange); }
+
+    /* ── ERROR STATE ── */
+    .error-state {
+      color: #D63B2F;
+      font-size: 12px;
+      padding: 8px 12px;
+      background: #FFF5F5;
+      border-radius: 6px;
+      border: 1px solid #FFCDD2;
+    }
+
+    /* ── EMPTY STATE ── */
+    .empty-state {
+      text-align: center;
+      padding: 32px;
+      color: var(--gray);
+      font-size: 14px;
+      border: 2px dashed #DDD6C9;
+      border-radius: var(--radius);
+    }
+
+    /* ── HOOK FORMULA ── */
+    .hook-formula {
+      background: var(--dark);
+      color: #fff;
+      border-radius: var(--radius);
+      padding: 14px 16px;
+      font-size: 12px;
+      font-weight: 600;
+      line-height: 1.6;
+      font-family: monospace;
+      margin-top: 12px;
+    }
+
+    .hook-formula span { color: var(--lilac); }
+
+    /* ── FORMAT TABLE ── */
+    .format-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    .format-table th {
+      text-align: left;
+      padding: 8px 12px;
+      background: var(--dark);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .format-table th:first-child { border-radius: 8px 0 0 0; }
+    .format-table th:last-child  { border-radius: 0 8px 0 0; }
+
+    .format-table td {
+      padding: 8px 12px;
+      border-bottom: 1px solid #F0EDE8;
+      color: var(--black);
+    }
+
+    .format-table tr:last-child td { border-bottom: none; }
+    .format-table tr:hover td { background: rgba(0,0,0,0.02); }
+
+    .format-table .bar-cell {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .format-bar {
+      height: 6px;
+      border-radius: 3px;
+      background: var(--orange);
+    }
+
+    /* ── SCROLLBAR ── */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #DDD6C9; border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: #C5BDB4; }
+  </style>
+</head>
+<body>
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-logo-grid">
+        <span></span><span></span><span></span><span></span>
+      </div>
+      <div class="sidebar-text">
+        <div class="sidebar-wordmark">Máquina</div>
+        <div class="sidebar-version">V1 · WLB</div>
+      </div>
+    </div>
+
+    <div class="sidebar-divider"></div>
+
+    <button class="t-nav active" data-page="painel">
+      <span class="nav-dot">·</span>
+      <span class="nav-icon">📊</span>
+      Painel
+    </button>
+    <button class="t-nav" data-page="instagram">
+      <span class="nav-dot">·</span>
+      <span class="nav-icon">📸</span>
+      Instagram
+    </button>
+    <button class="t-nav" data-page="youtube">
+      <span class="nav-dot">·</span>
+      <span class="nav-icon">🎬</span>
+      YouTube
+    </button>
+    <button class="t-nav" data-page="ideias">
+      <span class="nav-dot">·</span>
+      <span class="nav-icon">💡</span>
+      Ideias
+    </button>
+    <button class="t-nav" data-page="semana">
+      <span class="nav-dot">·</span>
+      <span class="nav-icon">📅</span>
+      Semana
+    </button>
+    <button class="t-nav" data-page="calendario">
+      <span class="nav-dot">·</span>
+      <span class="nav-icon">🗓️</span>
+      Calendário
+    </button>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="main">
+
+    <!-- TOPBAR -->
+    <header class="topbar">
+      <div class="topbar-logo-grid">
+        <span></span><span></span><span></span><span></span>
+      </div>
+      <div class="topbar-info">
+        <div class="topbar-wordmark">Máquina</div>
+        <div class="topbar-version">V1 · WLB</div>
+      </div>
+      <div class="topbar-spacer"></div>
+      <div class="empresa-pills">
+        <a class="empresa-pill active" href="/wlb/">WLB</a>
+        <a class="empresa-pill" href="/">WLC</a>
+        <a class="empresa-pill" href="/wlh/">WLH</a>
+      </div>
+    </header>
+
+    <!-- CONTENT -->
+    <div class="content">
+
+      <!-- PAGE: PAINEL -->
+      <div class="page active" id="page-painel">
+        <div class="page-title">Painel WLB</div>
+
+        <div class="stat-cards">
+          <div class="stat-card orange">
+            <div class="stat-label">Roteiros Pendentes</div>
+            <div class="stat-number" id="stat-roteiros">—</div>
+            <div class="stat-sub">esta semana</div>
+          </div>
+          <div class="stat-card dark">
+            <div class="stat-label">Claude News</div>
+            <div class="stat-number" id="stat-news">—</div>
+            <div class="stat-sub">itens disponíveis</div>
+          </div>
+        </div>
+
+        <div class="placeholder-block">
+          📈 Métricas do canal — em breve
+        </div>
+      </div>
+
+      <!-- PAGE: INSTAGRAM -->
+      <div class="page" id="page-instagram">
+        <div class="page-title">Instagram</div>
+
+        <div class="section-header" style="margin-top:0">
+          <span class="section-title">Carrosséis</span>
+          <button class="btn-add" disabled>+ Adicionar</button>
+        </div>
+        <div class="empty-state">Nenhum carrossel esta semana</div>
+
+        <div class="section-header">
+          <span class="section-title">Stories</span>
+          <button class="btn-add" disabled>+ Adicionar</button>
+        </div>
+        <div class="placeholder-block">Stories — em breve</div>
+
+        <div class="section-header">
+          <span class="section-title">Reels</span>
+          <button class="btn-add" disabled>+ Adicionar</button>
+        </div>
+        <div class="placeholder-block">Reels — em breve</div>
+      </div>
+
+      <!-- PAGE: YOUTUBE -->
+      <div class="page" id="page-youtube">
+        <div class="page-title">YouTube</div>
+
+        <div class="yt-tabs">
+          <button class="yt-tab active" data-tab="roteiros">Roteiros</button>
+          <button class="yt-tab" data-tab="jack">Canal do Jack</button>
+          <button class="yt-tab" data-tab="news">Claude News</button>
+        </div>
+
+        <!-- SUB-ABA: ROTEIROS -->
+        <div class="yt-panel active" id="yt-roteiros">
+          <div id="roteiros-list">
+            <div class="placeholder-block">Carregando roteiros...</div>
+          </div>
+        </div>
+
+        <!-- SUB-ABA: CANAL DO JACK -->
+        <div class="yt-panel" id="yt-jack">
+          <div id="jack-content">
+            <div class="placeholder-block">Carregando dados do Jack...</div>
+          </div>
+        </div>
+
+        <!-- SUB-ABA: CLAUDE NEWS -->
+        <div class="yt-panel" id="yt-news">
+          <div id="news-content">
+            <div class="placeholder-block">Carregando Claude News...</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PAGE: IDEIAS -->
+      <div class="page" id="page-ideias">
+        <div class="page-title">Banco de Ideias</div>
+
+        <div class="ideias-input-row">
+          <input type="text" class="ideias-input" id="ideia-input" placeholder="Nova ideia de vídeo...">
+          <button class="btn-primary" id="btn-add-ideia">+ Adicionar</button>
+        </div>
+
+        <div id="ideias-list" class="empty-state">
+          Banco de ideias vazio. Adicione sua primeira ideia.
+        </div>
+      </div>
+
+      <!-- PAGE: SEMANA -->
+      <div class="page" id="page-semana">
+        <div class="page-title" id="semana-titulo">Semana</div>
+
+        <div class="semana-grid">
+          <div class="semana-day">
+            <div class="semana-day-label">Seg</div>
+          </div>
+          <div class="semana-day">
+            <div class="semana-day-label">Ter</div>
+          </div>
+          <div class="semana-day">
+            <div class="semana-day-label">Qua</div>
+          </div>
+          <div class="semana-day">
+            <div class="semana-day-label">Qui</div>
+          </div>
+          <div class="semana-day">
+            <div class="semana-day-label">Sex</div>
+          </div>
+          <div class="semana-day">
+            <div class="semana-day-label">Sáb</div>
+          </div>
+          <div class="semana-day">
+            <div class="semana-day-label">Dom</div>
+          </div>
+        </div>
+
+        <div class="placeholder-block">
+          Planeje sua semana de conteúdo aqui
+        </div>
+      </div>
+
+      <!-- PAGE: CALENDÁRIO -->
+      <div class="page" id="page-calendario">
+        <div class="page-title">Calendário Editorial</div>
+        <div class="placeholder-block">Em breve</div>
+      </div>
+
+    </div><!-- /content -->
+  </div><!-- /main -->
+
+  <script>
+    // ── NAVEGAÇÃO SIDEBAR ──────────────────────────────────────────────
+    const navBtns = document.querySelectorAll('.t-nav');
+    const pages   = document.querySelectorAll('.page');
+
+    navBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const target = btn.dataset.page;
+        navBtns.forEach(b => b.classList.remove('active'));
+        pages.forEach(p => p.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById('page-' + target).classList.add('active');
+      });
+    });
+
+    // ── NAVEGAÇÃO TABS YOUTUBE ─────────────────────────────────────────
+    const ytTabs   = document.querySelectorAll('.yt-tab');
+    const ytPanels = document.querySelectorAll('.yt-panel');
+
+    ytTabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        const target = tab.dataset.tab;
+        ytTabs.forEach(t => t.classList.remove('active'));
+        ytPanels.forEach(p => p.classList.remove('active'));
+        tab.classList.add('active');
+        document.getElementById('yt-' + target).classList.add('active');
+      });
+    });
+
+    // ── HELPERS ────────────────────────────────────────────────────────
+    function fmtDate(str) {
+      if (!str) return '';
+      const d = new Date(str);
+      if (isNaN(d)) return str;
+      return d.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+    }
+
+    function fmtViews(n) {
+      if (n >= 1000000) return (n / 1000000).toFixed(1).replace('.', ',') + 'M';
+      if (n >= 1000)    return (n / 1000).toFixed(0) + 'k';
+      return n.toString();
+    }
+
+    function strategyBadgeClass(type) {
+      const map = {
+        tutorial:   'badge-tutorial',
+        showcase:   'badge-showcase',
+        news:       'badge-news',
+        workflow:   'badge-workflow',
+        comparison: 'badge-comparison',
+      };
+      return map[type] || 'badge-gate';
+    }
+
+    // ── localStorage STATUS ────────────────────────────────────────────
+    const STATUS_KEY = 'wlb_roteiros_status';
+
+    function getStatuses() {
+      try { return JSON.parse(localStorage.getItem(STATUS_KEY) || '{}'); }
+      catch { return {}; }
+    }
+
+    function saveStatus(id, status) {
+      const s = getStatuses();
+      s[id] = status;
+      localStorage.setItem(STATUS_KEY, JSON.stringify(s));
+    }
+
+    // ── RENDER ROTEIROS ────────────────────────────────────────────────
+    function renderRoteiros(data) {
+      const container = document.getElementById('roteiros-list');
+      const roteiros  = data.roteiros || [];
+      const statuses  = getStatuses();
+
+      if (roteiros.length === 0) {
+        container.innerHTML = '<div class="empty-state">Nenhum roteiro esta semana.</div>';
+        return;
+      }
+
+      container.innerHTML = roteiros.map(r => {
+        const currentStatus = statuses[r.id] || r.status || 'pendente';
+        const obsidianHref  = r.obsidian_path
+          ? `obsidian://open?vault=PKA&file=${encodeURIComponent(r.obsidian_path)}`
+          : null;
+
+        const titleEl = obsidianHref
+          ? `<a class="roteiro-titulo" href="${obsidianHref}">${r.titulo}</a>`
+          : `<span class="roteiro-titulo" style="cursor:default">${r.titulo}</span>`;
+
+        return `
+          <div class="roteiro-card" id="card-${r.id}">
+            <div class="roteiro-top">
+              ${titleEl}
+              <button
+                class="roteiro-status-btn ${currentStatus}"
+                data-id="${r.id}"
+                data-status="${currentStatus}"
+              >${currentStatus === 'gravado' ? '✓ Gravado' : '● Pendente'}</button>
+            </div>
+            <div class="roteiro-meta">
+              <span>Aprovado em ${fmtDate(r.aprovado_em)}</span>
+              ${r.duracao_estimada ? `<span>⏱ ${r.duracao_estimada}</span>` : ''}
+              ${r.tipo ? `<span class="badge ${strategyBadgeClass(r.tipo)}">${r.tipo}</span>` : ''}
+              ${r.palavra_chave_manychat ? `<span class="badge badge-manychat">MC: ${r.palavra_chave_manychat}</span>` : ''}
+              ${r.gate ? `<span class="badge badge-gate">${r.gate.replace(/_/g,' ')}</span>` : ''}
+            </div>
+            ${r.hook_preview ? `<div class="roteiro-hook">"${r.hook_preview}"</div>` : ''}
+          </div>`;
+      }).join('');
+
+      // Toggle status
+      container.querySelectorAll('.roteiro-status-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const id  = btn.dataset.id;
+          const cur = btn.dataset.status;
+          const next = cur === 'pendente' ? 'gravado' : 'pendente';
+          saveStatus(id, next);
+          btn.dataset.status = next;
+          btn.className = `roteiro-status-btn ${next}`;
+          btn.textContent = next === 'gravado' ? '✓ Gravado' : '● Pendente';
+          updateStatCard();
+        });
+      });
+    }
+
+    // ── RENDER JACK ────────────────────────────────────────────────────
+    function renderJack(data) {
+      const p   = data.patterns || {};
+      const fps = data.format_performance || [];
+      const top = (data.top_videos || []).slice(0, 5);
+      const maxViews = Math.max(...fps.map(f => f.avg_views), 1);
+
+      document.getElementById('jack-content').innerHTML = `
+        <div class="last-updated">Última atualização: ${fmtDate(data.last_updated)} · Fonte: ${data.scrape_source || ''}</div>
+
+        <div class="jack-grid">
+          <div class="jack-card">
+            <div class="jack-card-title">Padrões do Canal</div>
+            <div class="jack-stat-row">
+              <span class="jack-stat-key">Palavras por minuto</span>
+              <span class="jack-stat-val">${p.avg_wpm || '—'} wpm</span>
+            </div>
+            <div class="jack-stat-row">
+              <span class="jack-stat-key">Duração média</span>
+              <span class="jack-stat-val">${p.avg_duration_min || '—'} min</span>
+            </div>
+            <div class="jack-stat-row">
+              <span class="jack-stat-key">Top formato (volume)</span>
+              <span class="jack-stat-val">${p.top_format_by_volume || '—'}</span>
+            </div>
+            <div class="jack-stat-row">
+              <span class="jack-stat-key">Top formato (views)</span>
+              <span class="jack-stat-val">${p.top_format_by_avg_views || '—'}</span>
+            </div>
+            <div class="jack-stat-row">
+              <span class="jack-stat-key">Hook médio</span>
+              <span class="jack-stat-val">${p.hook_time_avg_seconds || '—'}s</span>
+            </div>
+            <div class="hook-formula">
+              <div>Hook formula:</div>
+              <div><span>${(p.hook_formula || '').replace(/\+/g, '</span> + <span>')}</span></div>
+            </div>
+          </div>
+
+          <div class="jack-card">
+            <div class="jack-card-title">Performance por Formato</div>
+            <table class="format-table">
+              <thead>
+                <tr>
+                  <th>Formato</th>
+                  <th>Qtd</th>
+                  <th>Avg views</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${fps.map(f => `
+                  <tr>
+                    <td><span class="badge ${strategyBadgeClass(f.format.split('/')[0])}">${f.format}</span></td>
+                    <td>${f.count}</td>
+                    <td>
+                      <div class="bar-cell">
+                        <div class="format-bar" style="width:${Math.round(f.avg_views/maxViews*80)}px"></div>
+                        ${fmtViews(f.avg_views)}
+                      </div>
+                    </td>
+                  </tr>`).join('')}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="section-header" style="margin-top:0">
+          <span class="section-title">Top 5 Vídeos</span>
+        </div>
+        <div class="jack-video-list">
+          ${top.map(v => `
+            <div class="jack-video-item">
+              <div class="jack-video-thumb">▶</div>
+              <div class="jack-video-info">
+                <a class="jack-video-title" href="https://youtu.be/${v.id}" target="_blank" rel="noopener">${v.title}</a>
+                <div class="jack-video-meta">
+                  <span class="views-badge">${fmtViews(v.views)} views</span>
+                  <span class="badge ${strategyBadgeClass(v.strategy_type)}">${v.strategy_type}</span>
+                  <span>${v.upload_date || ''}</span>
+                  <span>⏱ ${v.duration_min || '—'} min</span>
+                </div>
+              </div>
+            </div>`).join('')}
+        </div>`;
+    }
+
+    // ── RENDER CLAUDE NEWS ─────────────────────────────────────────────
+    function renderNews(data) {
+      const container = document.getElementById('news-content');
+      const items     = (data.items || []).slice(0, 20);
+
+      if (items.length === 0) {
+        container.innerHTML = `
+          <div class="last-updated">Última atualização: ${fmtDate(data.last_updated)}</div>
+          <div class="empty-state">Nenhum item de Claude News ainda.</div>`;
+        return;
+      }
+
+      function sourceBadgeClass(source) {
+        if (!source) return 'default';
+        const s = source.toLowerCase();
+        if (s.includes('anthropic blog') || s.includes('blog')) return 'anthropic-blog';
+        if (s.includes('research'))  return 'research';
+        if (s.includes('changelog')) return 'changelog';
+        return 'default';
+      }
+
+      container.innerHTML = `
+        <div class="last-updated">Última atualização: ${fmtDate(data.last_updated)} · ${items.length} itens</div>
+        <div class="news-list">
+          ${items.map(item => `
+            <div class="news-item">
+              <span class="news-source-badge ${sourceBadgeClass(item.source)}">${item.source || 'Geral'}</span>
+              <div class="news-info">
+                ${item.link
+                  ? `<a class="news-title" href="${item.link}" target="_blank" rel="noopener">${item.titulo || item.title || 'Sem título'}</a>`
+                  : `<span class="news-title" style="cursor:default">${item.titulo || item.title || 'Sem título'}</span>`}
+                <div class="news-date">${fmtDate(item.data || item.date)}</div>
+              </div>
+            </div>`).join('')}
+        </div>`;
+    }
+
+    // ── PAINEL STAT: roteiros pendentes ────────────────────────────────
+    let _roteiroData = null;
+
+    function updateStatCard() {
+      if (!_roteiroData) return;
+      const statuses  = getStatuses();
+      const pendentes = (_roteiroData.roteiros || []).filter(r => {
+        return (statuses[r.id] || r.status) === 'pendente';
+      }).length;
+      document.getElementById('stat-roteiros').textContent = pendentes;
+    }
+
+    // ── SEMANA TÍTULO ──────────────────────────────────────────────────
+    function setSemanaTitle() {
+      const hoje = new Date();
+      const dow  = hoje.getDay(); // 0=Dom
+      const diffToMon = (dow === 0 ? -6 : 1 - dow);
+      const seg  = new Date(hoje);
+      seg.setDate(hoje.getDate() + diffToMon);
+      const dom  = new Date(seg);
+      dom.setDate(seg.getDate() + 6);
+      const fmt  = d => d.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' });
+      document.getElementById('semana-titulo').textContent =
+        `Semana de ${fmt(seg)} a ${fmt(dom)}`;
+    }
+
+    // ── IDEIAS ─────────────────────────────────────────────────────────
+    const IDEIAS_KEY = 'wlb_ideias';
+
+    function getIdeias() {
+      try { return JSON.parse(localStorage.getItem(IDEIAS_KEY) || '[]'); }
+      catch { return []; }
+    }
+
+    function renderIdeiasList() {
+      const list   = document.getElementById('ideias-list');
+      const ideias = getIdeias();
+      if (ideias.length === 0) {
+        list.className = 'empty-state';
+        list.innerHTML = 'Banco de ideias vazio. Adicione sua primeira ideia.';
+        return;
+      }
+      list.className = '';
+      list.innerHTML = ideias.map((ideia, idx) => `
+        <div class="roteiro-card" style="flex-direction:row;align-items:center;gap:12px">
+          <span style="flex:1;font-weight:600;font-size:14px">${ideia.texto}</span>
+          <span style="font-size:11px;color:var(--gray)">${fmtDate(ideia.data)}</span>
+          <button
+            onclick="removeIdeia(${idx})"
+            style="border:none;background:none;cursor:pointer;font-size:16px;color:var(--gray);padding:0 4px"
+            title="Remover">✕</button>
+        </div>`).join('');
+    }
+
+    window.removeIdeia = function(idx) {
+      const ideias = getIdeias();
+      ideias.splice(idx, 1);
+      localStorage.setItem(IDEIAS_KEY, JSON.stringify(ideias));
+      renderIdeiasList();
+    };
+
+    document.getElementById('btn-add-ideia').addEventListener('click', () => {
+      const input = document.getElementById('ideia-input');
+      const texto = input.value.trim();
+      if (!texto) return;
+      const ideias = getIdeias();
+      ideias.unshift({ texto, data: new Date().toISOString() });
+      localStorage.setItem(IDEIAS_KEY, JSON.stringify(ideias));
+      input.value = '';
+      renderIdeiasList();
+    });
+
+    document.getElementById('ideia-input').addEventListener('keydown', e => {
+      if (e.key === 'Enter') document.getElementById('btn-add-ideia').click();
+    });
+
+    // ── FETCH + INIT ───────────────────────────────────────────────────
+    document.addEventListener('DOMContentLoaded', () => {
+      setSemanaTitle();
+      renderIdeiasList();
+
+      // Roteiros
+      fetch('data/roteiros_semana.json')
+        .then(r => r.json())
+        .then(data => {
+          _roteiroData = data;
+          renderRoteiros(data);
+          updateStatCard();
+        })
+        .catch(() => {
+          document.getElementById('roteiros-list').innerHTML =
+            '<div class="error-state">Erro ao carregar roteiros_semana.json</div>';
+          document.getElementById('stat-roteiros').textContent = '!';
+        });
+
+      // Claude News
+      fetch('data/claude_news.json')
+        .then(r => r.json())
+        .then(data => {
+          renderNews(data);
+          document.getElementById('stat-news').textContent = (data.items || []).length;
+        })
+        .catch(() => {
+          document.getElementById('news-content').innerHTML =
+            '<div class="error-state">Erro ao carregar claude_news.json</div>';
+          document.getElementById('stat-news').textContent = '!';
+        });
+
+      // Jack intel
+      fetch('data/jack_intel.json')
+        .then(r => r.json())
+        .then(data => renderJack(data))
+        .catch(() => {
+          document.getElementById('jack-content').innerHTML =
+            '<div class="error-state">Erro ao carregar jack_intel.json</div>';
+        });
+    });
+  </script>
+</body>
+</html>

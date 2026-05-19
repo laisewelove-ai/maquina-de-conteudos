@@ -1,0 +1,276 @@
+{
+  "channel": "@Itssssss_Jack",
+  "channel_url": "https://www.youtube.com/@Itssssss_Jack",
+  "last_updated": "2026-05-19",
+  "scrape_source": "audit_360_abril_2026",
+  "audit_file": "PKA/Inbox do Time/We Love Business/Auditoria Canal @Itssssss_Jack — Liv-WLB→Yas-WLB cc Jerry — [25.04.2026].md",
+  "channel_stats": {
+    "total_videos_audited": 115,
+    "period": "fev/2023 → abr/2026",
+    "avg_videos_per_month": 4.3,
+    "cadence_2026": "~2x/semana",
+    "preferred_upload_days": ["Saturday", "Thursday"]
+  },
+  "patterns": {
+    "avg_wpm": 247,
+    "avg_duration_min": 26,
+    "top_format_by_volume": "tutorial",
+    "top_format_by_avg_views": "showcase",
+    "hook_formula": "trigger(0-8s) + tripla_outcome(8-18s) + credencial(18-25s) + bridge(25-35s)",
+    "hook_time_avg_seconds": 31,
+    "credencial_phrase": "my name is Jack Roberts. I built and sold my last tech startup with 60,000 customers",
+    "bridge_phrase": "grab that coffee, and let's dive straight in",
+    "signature_phrases": [
+      "come back over",
+      "freaking cool",
+      "blah blah blah",
+      "by the way",
+      "let's dive straight in",
+      "left hand side",
+      "come down here"
+    ],
+    "script_structure": "drop→demo→ladder→gotcha→wrap",
+    "framework_naming": "proprietary acronyms (PAGES, SITE, YIELD)",
+    "cta_style": "single CTA, implicit, Skool community link in description",
+    "thumbnail_formula": {
+      "background": "#000000 ou dark gradient",
+      "face": "Jack left or right, 40-50% frame, cap white/green, closed smile",
+      "tool_logo": "iOS-style icon with glow/shadow, 30-35% height",
+      "text": "2-3 words BOLD white + 1 highlight word in yellow-block (#FFE15E) or blue-block (#4A8FE8)",
+      "glance_test": "legible at 168x94px"
+    },
+    "palette": {
+      "background": "#0A0A0F",
+      "accent_warm": "#D97559",
+      "blue_highlight": "#3B5BD6",
+      "yellow_highlight": "#F5DC4A",
+      "text": "#FFFFFF"
+    }
+  },
+  "format_performance": [
+    { "format": "showcase/insane", "count": 9, "avg_views": 133517, "avg_duration_min": 24.6 },
+    { "format": "news/just_dropped", "count": 17, "avg_views": 66120, "avg_duration_min": 22.0 },
+    { "format": "tutorial/how_to", "count": 42, "avg_views": 48526, "avg_duration_min": 36.6 },
+    { "format": "workflow/automation", "count": 19, "avg_views": 31971, "avg_duration_min": 42.8 },
+    { "format": "comparison", "count": 1, "avg_views": 3586, "avg_duration_min": 23.5 }
+  ],
+  "top_videos": [
+    {
+      "id": "TZUTe7s11-I",
+      "title": "Claude Code + Nano Banana 2 = $10k Websites",
+      "views": 502000,
+      "upload_date": "2026-03",
+      "duration_min": 22.8,
+      "strategy_type": "showcase",
+      "tool_featured": "Claude Code + Nano Banana 2",
+      "framework_name": null,
+      "hook_excerpt": "trigger: Nano Banana 2 + Claude Code combo | promise: build $10k websites | no Jack face in thumbnail",
+      "thumbnail_style": "minimalista — sem rosto, só 2 logos + texto"
+    },
+    {
+      "id": "vZauEwMxWq4",
+      "title": "ChatGPT Prompt HACK",
+      "views": 446000,
+      "upload_date": "2023-02",
+      "duration_min": 10.2,
+      "strategy_type": "tutorial",
+      "tool_featured": "ChatGPT",
+      "framework_name": "5 hacks empilhados",
+      "hook_excerpt": "data points hook: '$300B words, $23B valuation' — autoridade técnica imediata",
+      "thumbnail_style": "conceitual — chat bubble fake + gráfico financeiro"
+    },
+    {
+      "id": "QgisBAqkJ4M",
+      "title": "Gemini 3 SITE Framework ($8,000 Websites)",
+      "views": 233000,
+      "upload_date": "2026-02",
+      "duration_min": 33.7,
+      "strategy_type": "tutorial",
+      "tool_featured": "Gemini 3",
+      "framework_name": "SITE",
+      "hook_excerpt": "Gemini 3 is the most powerful AI model on the planet right now — and in this video I'll show you exactly how to use the SITE framework...",
+      "thumbnail_style": "fórmula completa — Jack centro + screenshot site + 4 ícones comparativos OLD/NEW"
+    },
+    {
+      "id": "UR09nuSxGio",
+      "title": "How to Vibecode AntiGravity Websites (P.A.G.E.S Framework)",
+      "views": 166000,
+      "upload_date": "2026-01",
+      "duration_min": 32.5,
+      "strategy_type": "tutorial",
+      "tool_featured": "AntiGravity",
+      "framework_name": "P.A.G.E.S",
+      "hook_excerpt": "AntiGravity is the most powerful website builder on the planet...",
+      "thumbnail_style": "fórmula completa — Jack + screenshot website + logo AntiGravity"
+    },
+    {
+      "id": "EZdSVpgtjG0",
+      "title": "5 INSANE Claude Cowork Use Cases",
+      "views": 210000,
+      "upload_date": "2026-03",
+      "duration_min": 26.1,
+      "strategy_type": "showcase",
+      "tool_featured": "Claude Code (Cowork)",
+      "framework_name": null,
+      "hook_excerpt": "Claude Cowork just dropped and it's going to change how every single person uses Claude...",
+      "thumbnail_style": "2 ícones pequenos + dashboard + Jack pequeno — visualmente saturado"
+    },
+    {
+      "id": "efGXZselN64",
+      "title": "Claude Code 2.0 Is Here (The NEW Skill You NEED)",
+      "views": 65000,
+      "upload_date": "2026-04",
+      "duration_min": 18.3,
+      "strategy_type": "news",
+      "tool_featured": "Claude Code 2.0",
+      "framework_name": null,
+      "hook_excerpt": "Claude Code 2.0 is here — is it going to change anything? In this video I'll show you exactly what's new...",
+      "thumbnail_style": "fórmula perfeita — Jack esquerda apontando + 'CLAUDE 2.0 is INSANE' + laptop em chamas"
+    },
+    {
+      "id": "TZUTe7s11-I_nano2",
+      "title": "Nano Banana 2 Is Here (The INSANE AI Update)",
+      "views": 134000,
+      "upload_date": "2026-04",
+      "duration_min": 22.8,
+      "strategy_type": "news",
+      "tool_featured": "Nano Banana 2",
+      "framework_name": null,
+      "hook_excerpt": "Nano Banana 2 just dropped and it's absolutely insane...",
+      "thumbnail_style": "fórmula — Jack + Banana ícone + texto highlight"
+    },
+    {
+      "id": "PkOlfB3RY5Q",
+      "title": "NotebookLM Just Got INSANE (The NEW Update)",
+      "views": 42000,
+      "upload_date": "2026-03",
+      "duration_min": 30.0,
+      "strategy_type": "news",
+      "tool_featured": "NotebookLM",
+      "framework_name": null,
+      "hook_excerpt": "NotebookLM just got an insane update — and in this video I'll show you exactly how to use it...",
+      "thumbnail_style": "fórmula — Jack + 'NotebookLM is INSANE' + screenshot + AntiGravity ícone"
+    },
+    {
+      "id": "haBy-Rhkl4g",
+      "title": "Stitch AI Is Here (Everything You Need to Know)",
+      "views": 89000,
+      "upload_date": "2026-04",
+      "duration_min": 22.3,
+      "strategy_type": "news",
+      "tool_featured": "Stitch",
+      "framework_name": null,
+      "hook_excerpt": "Stitch AI just dropped from Google — and I've been using it for the past few days...",
+      "thumbnail_style": "fórmula — Jack + Stitch logo rosa + texto"
+    },
+    {
+      "id": "2vWVGIQF5S0",
+      "title": "Claude Design Just Dropped (And It's F***ing Crazy)",
+      "views": 178000,
+      "upload_date": "2026-04",
+      "duration_min": 23.9,
+      "strategy_type": "news",
+      "tool_featured": "Claude Design",
+      "framework_name": null,
+      "hook_excerpt": "Claude Design just dropped — and it changes everything about how we build websites with AI...",
+      "thumbnail_style": "outlier agressivo — F*CKING CRAZY grande + ícone Claude isolado (sem rosto Jack)"
+    },
+    {
+      "id": "WR-kVYU-lBU",
+      "title": "Top 5 Claude Code Skills (That Make You Unstoppable)",
+      "views": 98000,
+      "upload_date": "2026-02",
+      "duration_min": 22.1,
+      "strategy_type": "showcase",
+      "tool_featured": "Claude Code",
+      "framework_name": "Top 5 Skills",
+      "hook_excerpt": "Most people use Claude Code to write basic code — but there are 5 skills that separate the top 1%...",
+      "thumbnail_style": "fórmula perfeita — Jack + 'CLAUDE 10X Skills' em blue pill + ícone Claude"
+    },
+    {
+      "id": "R2onqpgDwvc",
+      "title": "AI-Powered Social Media System (100% Automated)",
+      "views": 200000,
+      "upload_date": "2024-08",
+      "duration_min": 19.9,
+      "strategy_type": "workflow",
+      "tool_featured": "n8n + Make + ChatGPT",
+      "framework_name": null,
+      "hook_excerpt": "in this video I'm going to show you how to create a 100% AI automated social media system...",
+      "thumbnail_style": "estilo antigo pré-fórmula — 5 logos sociais + Jack + '100% AUTOMATED' yellow"
+    },
+    {
+      "id": "cFThM_D3nl8",
+      "title": "AntiGravity + Claude Code = The Future",
+      "views": 182000,
+      "upload_date": "2026-01",
+      "duration_min": 20.4,
+      "strategy_type": "showcase",
+      "tool_featured": "AntiGravity + Claude Code",
+      "framework_name": null,
+      "hook_excerpt": "AntiGravity and Claude Code together are absolutely insane...",
+      "thumbnail_style": "abaixo da fórmula — ícones pequenos na mão + Jack desfocado"
+    },
+    {
+      "id": "HRDYY-qSDuU",
+      "title": "NotebookLM 10X With AntiGravity",
+      "views": 67000,
+      "upload_date": "2026-02",
+      "duration_min": 30.3,
+      "strategy_type": "tutorial",
+      "tool_featured": "NotebookLM + AntiGravity",
+      "framework_name": null,
+      "hook_excerpt": "NotebookLM is absolutely insane — but most people only use 10% of what it can do...",
+      "thumbnail_style": "fórmula — Jack + 'NotebookLM is INSANE' em yellow + screenshot + AntiGravity ícone"
+    },
+    {
+      "id": "34VoezbEvLw",
+      "title": "Claude Can Now EDIT Your Code (The New Feature)",
+      "views": 74000,
+      "upload_date": "2026-04",
+      "duration_min": 15.4,
+      "strategy_type": "news",
+      "tool_featured": "Claude Code (edit mode)",
+      "framework_name": null,
+      "hook_excerpt": "Claude just dropped a new feature that changes how we edit code completely...",
+      "thumbnail_style": "fórmula — Jack direita + 'Claude EDIT' extra-bold + ícone Claude pequeno"
+    }
+  ],
+  "title_patterns": {
+    "avg_chars": 49.9,
+    "sweet_spot_chars": "45-55",
+    "has_number_pct": 64.3,
+    "has_dollar_pct": 24.3,
+    "has_all_caps_word_pct": 45.2,
+    "has_brackets_pct": 60.9,
+    "starts_with_how_pct": 22.6,
+    "power_words": ["build", "new", "unstoppable", "insane", "superpower", "everything", "destroys", "better than", "steal", "unlock"],
+    "tools_in_titles": {
+      "Claude": 32,
+      "AntiGravity": 28,
+      "Gemini_NanoBanana": 13,
+      "NotebookLM": 6,
+      "ChatGPT": 1
+    }
+  },
+  "competitive_intelligence": {
+    "pivot_moment": "meados 2025 — saiu de AI agency/get clients → tutoriais de tools específicas",
+    "pivot_result": "20/115 vídeos cruzaram 100k views — todos pós-pivot",
+    "content_cycle": "lança vídeo sobre nova tool em ≤72h após drop Anthropic/Google",
+    "weaknesses": [
+      "247 wpm — muito rápido, perde audiência iniciante",
+      "Promessas inflacionadas ($10k, $300k) — erosão de credibilidade",
+      "Comunidade superficial — comentários de ironia, não de devoção",
+      "4 CTAs paralelos — fragmenta atenção",
+      "Tom 'tecno-bro' intransferível para pt-BR"
+    ],
+    "wlb_opportunities": [
+      "Único canal sério de Claude em pt-BR",
+      "Velocidade ≤180wpm — mais pedagógico, mais acessível",
+      "Exemplos de negócio real (conteúdo, turismo) vs técnicos (websites)",
+      "Relação calorosa com audiência BR — construir comunidade com devoção",
+      "CTA único (Skool We Love Claude) vs fragmentação do Jack",
+      "Posicionamento: tempo/autonomia (não renda) — mais honesto"
+    ]
+  }
+}

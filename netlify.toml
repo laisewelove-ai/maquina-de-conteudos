@@ -6,6 +6,16 @@
   node_bundler = "esbuild"
 
 [[redirects]]
+  from = "/wlc"
+  to = "/"
+  status = 302
+
+[[redirects]]
+  from = "/wlc/"
+  to = "/"
+  status = 302
+
+[[redirects]]
   from = "/api/notion/*"
   to = "/.netlify/functions/notion-proxy/:splat"
   status = 200

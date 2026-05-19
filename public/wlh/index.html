@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Máquina de Conteúdos · WLH</title>
+<link href="https://fonts.cdnfonts.com/css/lufga" rel="stylesheet">
+<style>
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  :root{--bg:#F2EDE3;--black:#1A1A1A;--gray:#888;--green:#3CB88A;--border:2px solid #000;--radius:10px}
+  body{background:var(--bg);font-family:'Lufga','Arial',sans-serif;display:flex;height:100vh;overflow:hidden}
+  .sidebar{width:180px;min-width:180px;background:var(--bg);border-right:1px solid #DDD6C9;display:flex;flex-direction:column;padding:16px 12px;gap:6px;overflow-y:auto}
+  .sidebar-logo-wrap{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+  .sidebar-logo-grid{width:32px;height:32px;display:grid;grid-template-columns:1fr 1fr;border-radius:6px;overflow:hidden;border:2px solid #000;flex-shrink:0}
+  .sidebar-logo-grid span:nth-child(1){background:#3CB88A}
+  .sidebar-logo-grid span:nth-child(2){background:#1A3A2A}
+  .sidebar-logo-grid span:nth-child(3){background:#7BC4A8}
+  .sidebar-logo-grid span:nth-child(4){background:#2D5A44}
+  .sidebar-wordmark{font-weight:900;font-size:18px;color:var(--black);line-height:1}
+  .sidebar-version{font-size:11px;color:var(--gray);margin-bottom:12px;padding-left:2px}
+  .main-area{flex:1;display:flex;flex-direction:column;overflow:hidden}
+  .topbar{height:52px;background:var(--bg);border-bottom:2px solid #000;display:flex;align-items:center;padding:0 16px;gap:10px;flex-shrink:0}
+  .empresa-pill{padding:4px 12px;border-radius:20px;border:2px solid #000;font-weight:800;font-size:12px;text-decoration:none;color:#000;transition:all .15s;font-family:'Lufga',sans-serif}
+  .empresa-pill.active{background:#3CB88A;color:#fff;border-color:#3CB88A}
+  .empresa-pill:hover:not(.active){background:rgba(0,0,0,0.06)}
+  .content{flex:1;overflow-y:auto;padding:32px;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:16px;text-align:center}
+  .em-breve-badge{background:#3CB88A;color:#fff;font-size:11px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;padding:4px 12px;border-radius:20px}
+  .em-breve-title{font-size:32px;font-weight:900;color:var(--black)}
+  .em-breve-sub{font-size:15px;color:var(--gray);max-width:360px;line-height:1.6}
+</style>
+</head>
+<body>
+
+<div class="sidebar">
+  <div class="sidebar-logo-wrap">
+    <div class="sidebar-logo-grid">
+      <span></span><span></span><span></span><span></span>
+    </div>
+    <div>
+      <div class="sidebar-wordmark">Máquina</div>
+    </div>
+  </div>
+  <div class="sidebar-version">V1 · WLH</div>
+</div>
+
+<div class="main-area">
+  <div class="topbar">
+    <div style="flex:1"></div>
+    <a class="empresa-pill" href="/wlb/">WLB</a>
+    <a class="empresa-pill" href="/">WLC</a>
+    <a class="empresa-pill active" href="/wlh/">WLH</a>
+  </div>
+  <div class="content">
+    <div class="em-breve-badge">Em breve</div>
+    <div class="em-breve-title">Máquina WLH</div>
+    <div class="em-breve-sub">A Máquina de Conteúdos para a We Love Homes está sendo construída. Em breve disponível aqui.</div>
+  </div>
+</div>
+
+</body>
+</html>
