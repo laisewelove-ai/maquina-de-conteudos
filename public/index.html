@@ -8707,11 +8707,11 @@ function switchEmpresa(emp) {
     var cp = window.currentPage || 'home';
     var empId = (emp === 'wlb' ? 'wlb' : 'wlh') + '-' + cp;
     var empPage = document.getElementById(empId);
-    if (empPage) empPage.style.display = '';
+    if (empPage) empPage.style.display = 'block';
     else {
       // fallback to home
       var fb = document.getElementById((emp==='wlb'?'wlb':'wlh') + '-home');
-      if (fb) fb.style.display = '';
+      if (fb) fb.style.display = 'block';
     }
     if (emp === 'wlb' && !_wlbLoaded) { _wlbLoaded = true; loadWLBData(); }
   }
@@ -8791,7 +8791,7 @@ document.addEventListener('DOMContentLoaded', function(){
         document.querySelectorAll('.wlb-page,.wlh-page').forEach(function(p){ p.style.display='none'; });
         var empId = (EMPRESA==='wlb'?'wlb':'wlh') + '-' + page;
         var empPage = document.getElementById(empId);
-        if (empPage) empPage.style.display = '';
+        if (empPage) empPage.style.display = 'block';
         return;
       }
       // WLC: original behavior
