@@ -31,7 +31,7 @@
 .emp-f-btn{padding:4px 12px;border:2px solid #000;border-radius:20px;font-family:inherit;font-size:11px;font-weight:800;cursor:pointer;background:#fff;color:#000;transition:all .15s;}
 .emp-f-btn.active{background:#1A1A1A;color:#fff;border-color:#1A1A1A;}
 .emp-f-btn[data-emp="wlb"].active{background:#D97559;border-color:#D97559;color:#fff;}
-.emp-f-btn[data-emp="wlh"].active{background:#3CB88A;border-color:#3CB88A;color:#fff;}
+.emp-f-btn[].active{background:#3CB88A;border-color:#3CB88A;color:#fff;}
 /* Overlays — cobrem o conteúdo WLC dentro de cada .page */
 .page{position:relative;}
 .emp-overlay{position:absolute;inset:0;z-index:20;display:none;overflow-y:auto;padding:32px;background:var(--bg,#F5F0E8);}
@@ -1845,7 +1845,7 @@
     <div class="emp-filter">
       <button class="emp-f-btn active" data-emp="wlc" onclick="switchEmpresa('wlc')">WLC</button>
       <button class="emp-f-btn" data-emp="wlb" onclick="switchEmpresa('wlb')">WLB</button>
-      <button class="emp-f-btn" data-emp="wlh" onclick="switchEmpresa('wlh')">WLH</button>
+      <button class="emp-f-btn" onclick="switchEmpresa('wlh')">WLH</button>
     </div>
     <!-- Botão + Ideia -->
     <button class="t-add-btn" onclick="showPage('ideas')">+ Ideia</button>
@@ -1865,7 +1865,7 @@
       <div id="wlb-next-h" style="font-size:12px;opacity:.75;margin-top:4px;font-style:italic;"></div>
     </div>
   </div>
-  <div id="wlb-roteiros-list"></div></div><h2>Painel WLH</h2><p>We Love Homes — em breve.</p></div></div>
+  <div id="wlb-roteiros-list"></div></div></div></div>
       <div class="home-body">
 
         <!-- ── ZONA 1: META ── -->
@@ -1972,7 +1972,7 @@
     </div>
 
     <!-- Ideas Bank Page -->
-    <div class="page" id="ideas"><!-- WLB overlay --><div class="emp-overlay" data-emp="wlb" data-page="ideas"><div class="emp-coming"><div style="font-size:48px;">💡</div><h2>Ideias WLB</h2><p>Integração We Love Business em desenvolvimento.</p></div></div><h2>Ideias WLH</h2><p>We Love Homes — em breve.</p></div></div>
+    <div class="page" id="ideas"><!-- WLB overlay --><div class="emp-overlay" data-emp="wlb" data-page="ideas"><div class="emp-coming"><div style="font-size:48px;">💡</div><h2>Ideias WLB</h2><p>Integração We Love Business em desenvolvimento.</p></div></div><h2>Ideias WLH</h2></div></div>
       <!-- Top bar: title + Add button -->
       <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:8px;">
         <div>
@@ -2303,7 +2303,7 @@
   </div>
 
     <!-- Week Planning Page -->
-    <div class="page" id="week"><!-- WLB overlay --><div class="emp-overlay" data-emp="wlb" data-page="week"><div class="emp-coming"><div style="font-size:48px;">📋</div><h2>Semana WLB</h2><p>Integração We Love Business em desenvolvimento.</p></div></div><h2>Semana WLH</h2><p>We Love Homes — em breve.</p></div></div>
+    <div class="page" id="week"><!-- WLB overlay --><div class="emp-overlay" data-emp="wlb" data-page="week"><div class="emp-coming"><div style="font-size:48px;">📋</div><h2>Semana WLB</h2><p>Integração We Love Business em desenvolvimento.</p></div></div><h2>Semana WLH</h2></div></div>
       <div class="page-header">
         <div class="page-header-left">
           <div class="greeting">📅 Planejar Semana</div>
@@ -2455,7 +2455,7 @@
     </div>
 
     <!-- Metrics Page -->
-    <div class="page" id="metrics"><!-- WLB overlay --><div class="emp-overlay" data-emp="wlb" data-page="metrics"><div class="emp-coming"><div style="font-size:48px;">📈</div><h2>Métricas WLB</h2><p>Integração We Love Business em desenvolvimento.</p></div></div><h2>Métricas WLH</h2><p>We Love Homes — em breve.</p></div></div>
+    <div class="page" id="metrics"><!-- WLB overlay --><div class="emp-overlay" data-emp="wlb" data-page="metrics"><div class="emp-coming"><div style="font-size:48px;">📈</div><h2>Métricas WLB</h2><p>Integração We Love Business em desenvolvimento.</p></div></div><h2>Métricas WLH</h2></div></div>
       <div class="page-header">
         <div class="greeting">📊 Métricas</div>
       </div>
@@ -2465,7 +2465,7 @@
     </div>
 
     <!-- Analyzer Page -->
-    <div class="page" id="analyzer"><!-- WLB overlay --><div class="emp-overlay" data-emp="wlb" data-page="analyzer"><div class="emp-coming"><div style="font-size:48px;">🔍</div><h2>Analisador WLB</h2><p>Integração We Love Business em desenvolvimento.</p></div></div><h2>Analisador WLH</h2><p>We Love Homes — em breve.</p></div></div>
+    <div class="page" id="analyzer"><!-- WLB overlay --><div class="emp-overlay" data-emp="wlb" data-page="analyzer"><div class="emp-coming"><div style="font-size:48px;">🔍</div><h2>Analisador WLB</h2><p>Integração We Love Business em desenvolvimento.</p></div></div><h2>Analisador WLH</h2></div></div>
       <div style="margin-bottom: 8px; font-size: 12px; font-weight: 700; color: #D63B2F; text-transform: uppercase; letter-spacing: 1px;">🔗 ANALISADOR</div>
       <h1 style="font-size: 36px; font-weight: 800; color: #1A1A2E; margin-bottom: 12px;">Analisador de Links</h1>
       <p style="color: #6B6B8A; font-size: 15px; margin-bottom: 32px;">Cole um link de conteúdo e receba uma análise completa + 3 adaptações para We Love Chile</p>
@@ -2602,7 +2602,7 @@
   </div>
 
   <!-- ═══ CALENDÁRIO EDITORIAL PAGE ═══ -->
-  <div class="page" id="calendario"><!-- WLB overlay --><div class="emp-overlay" data-emp="wlb" data-page="calendario"><div class="emp-coming"><div style="font-size:48px;">📅</div><h2>Calendário WLB</h2><p>Integração We Love Business em desenvolvimento.</p></div></div><h2>Calendário WLH</h2><p>We Love Homes — em breve.</p></div></div>
+  <div class="page" id="calendario"><!-- WLB overlay --><div class="emp-overlay" data-emp="wlb" data-page="calendario"><div class="emp-coming"><div style="font-size:48px;">📅</div><h2>Calendário WLB</h2><p>Integração We Love Business em desenvolvimento.</p></div></div><h2>Calendário WLH</h2></div></div>
     <div class="cal-page">
       <div class="cal-top">
         <div class="cal-title-wrap">
