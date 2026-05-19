@@ -26,14 +26,26 @@
       font-style: normal;
     }
   
-/* Empresa Switcher */
-.emp-sw{display:flex;gap:4px;margin-bottom:14px;padding:4px;background:rgba(0,0,0,0.06);border-radius:8px;}
-.emp-btn{flex:1;padding:5px 2px;border:none;border-radius:6px;font-family:inherit;font-size:11px;font-weight:800;cursor:pointer;transition:all .18s;background:transparent;color:rgba(0,0,0,0.4);letter-spacing:.5px;}
-.emp-btn.active{background:#fff;color:#1A1A1A;box-shadow:0 1px 4px rgba(0,0,0,.12);}
-.emp-btn[data-emp="wlb"].active{background:#D97559;color:#fff;}
-.emp-btn[data-emp="wlh"].active{background:#3CB88A;color:#fff;}
-#wlb-main-area,#wlh-main-area{flex:1;display:none;flex-direction:column;overflow:hidden;}
-.nav-wlb{display:none;}
+/* ── Empresa Filter Pills ── */
+.emp-filter{display:flex;gap:5px;margin-right:6px;}
+.emp-f-btn{padding:4px 12px;border:2px solid #000;border-radius:20px;font-family:inherit;font-size:11px;font-weight:800;cursor:pointer;background:#fff;color:#000;transition:all .15s;letter-spacing:.3px;}
+.emp-f-btn.active{background:#1A1A1A;color:#fff;border-color:#1A1A1A;}
+.emp-f-btn[data-emp="wlb"].active{background:#D97559;border-color:#D97559;color:#fff;}
+.emp-f-btn[data-emp="wlh"].active{background:#3CB88A;border-color:#3CB88A;color:#fff;}
+/* ── Empresa content pages ── */
+.wlb-page,.wlh-page{display:none;padding:32px;overflow-y:auto;flex:1;}
+.emp-coming{display:flex;flex-direction:column;align-items:center;justify-content:center;height:60vh;gap:16px;text-align:center;color:#888;}
+.emp-coming h2{font-size:22px;font-weight:900;color:#1A1A1A;margin:0;}
+.emp-coming p{font-size:14px;line-height:1.6;max-width:320px;margin:0;}
+.wlb-roteiro-card{background:#fff;border:2px solid #000;border-radius:10px;padding:14px 18px;margin-bottom:10px;}
+.wlb-roteiro-card .rt{font-weight:900;font-size:15px;color:#1A1A1A;text-decoration:none;}
+.wlb-roteiro-card .rh{font-size:12px;color:#888;font-style:italic;margin-top:4px;line-height:1.4;}
+.wlb-roteiro-card .rs{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;}
+.wlb-painel-hero{background:#D97559;color:#fff;border-radius:14px;padding:24px 28px;margin-bottom:20px;display:flex;align-items:center;gap:24px;}
+.wlb-painel-hero .num{font-size:64px;font-weight:900;line-height:1;}
+.wlb-painel-hero .label{font-size:12px;font-weight:800;letter-spacing:1px;opacity:.8;text-transform:uppercase;}
+/* YouTube WLB nav item */
+.nav-yt-wlb{display:none;}
 </style>
 
   <style>
@@ -1786,12 +1798,6 @@
         <div class="sidebar-version">V5 · WLC</div>
       </div>
     </div>
-    <div class="emp-sw">
-      <button class="emp-btn active" data-emp="wlc" onclick="switchEmpresa('wlc')">WLC</button>
-      <button class="emp-btn" data-emp="wlb" onclick="switchEmpresa('wlb')">WLB</button>
-      <button class="emp-btn" data-emp="wlh" onclick="switchEmpresa('wlh')">WLH</button>
-    </div>
-    <div class="nav-wlc">
     <div class="t-nav active" data-page="home">Painel</div>
     <div class="t-nav" data-page="calendario">📅 Calendário</div>
     <div class="t-nav" data-page="ideas">Ideias</div>
@@ -1799,15 +1805,7 @@
     <a class="t-nav" href="/carrossel.html" style="text-decoration:none;">Instagram</a>
     <div class="t-nav" data-page="metrics">Métricas</div>
     <div class="t-nav" data-page="analyzer">Analisador</div>
-    </div><!-- /nav-wlc -->
-    <div class="nav-wlb">
-      <div class="t-nav t-nav-wlb" style="font-weight:900;" data-page-wlb="painel">Painel</div>
-      <div class="t-nav t-nav-wlb" data-page-wlb="calendario">📅 Calendário</div>
-      <div class="t-nav t-nav-wlb" data-page-wlb="ideias">Ideias</div>
-      <div class="t-nav t-nav-wlb" data-page-wlb="semana">Semana</div>
-      <div class="t-nav t-nav-wlb" data-page-wlb="instagram">Instagram</div>
-      <div class="t-nav t-nav-wlb" data-page-wlb="youtube">YouTube</div>
-    </div><!-- /nav-wlb -->
+    <div class="t-nav nav-yt-wlb" data-page="youtube-wlb">YouTube</div>
     <div class="sb-card sb-banco">
       <div class="sb-card-label">BANCO DE IDEIAS</div>
       <div class="sb-card-num" id="homeBancoCount">218</div>
@@ -1845,6 +1843,12 @@
     <span class="t-flag" title="We Love Homes">🏠</span>
     <!-- Spacer -->
     <div class="t-sp"></div>
+    <!-- Empresa filter -->
+    <div class="emp-filter">
+      <button class="emp-f-btn active" data-emp="wlc" onclick="switchEmpresa('wlc')">WLC</button>
+      <button class="emp-f-btn" data-emp="wlb" onclick="switchEmpresa('wlb')">WLB</button>
+      <button class="emp-f-btn" data-emp="wlh" onclick="switchEmpresa('wlh')">WLH</button>
+    </div>
     <!-- Botão + Ideia -->
     <button class="t-add-btn" onclick="showPage('ideas')">+ Ideia</button>
     <!-- Avatar -->
@@ -2737,7 +2741,55 @@
     </div>
   </div>
 
-  </div><!-- /main-area -->
+  
+  <!-- ══════════ WLB PAGES ══════════ -->
+  <div class="wlb-page" id="wlb-home">
+    <h2 style="font-size:22px;font-weight:900;margin-bottom:20px;">Painel · We Love Business</h2>
+    <div class="wlb-painel-hero">
+      <div>
+        <div class="label">ROTEIROS NA FILA</div>
+        <div class="num" id="wlb-count">—</div>
+      </div>
+      <div style="flex:1">
+        <div style="font-size:13px;opacity:.85;margin-bottom:4px;">Próximo roteiro</div>
+        <div id="wlb-next-titulo" style="font-size:18px;font-weight:900;">—</div>
+        <div id="wlb-next-hook" style="font-size:12px;opacity:.75;margin-top:4px;font-style:italic;"></div>
+      </div>
+    </div>
+    <div id="wlb-roteiros-container"></div>
+  </div>
+
+  <div class="wlb-page" id="wlb-ideas">
+    <div class="emp-coming"><div style="font-size:48px;">💡</div><h2>Banco de Ideias WLB</h2><p>Integração com Notion WLB em desenvolvimento. Em breve suas ideias WLB aparecem aqui.</p></div>
+  </div>
+  <div class="wlb-page" id="wlb-week">
+    <div class="emp-coming"><div style="font-size:48px;">📋</div><h2>Semana WLB</h2><p>Planejamento semanal de conteúdo WLB — em breve.</p></div>
+  </div>
+  <div class="wlb-page" id="wlb-calendario">
+    <div class="emp-coming"><div style="font-size:48px;">📅</div><h2>Calendário Editorial WLB</h2><p>Calendário de conteúdo We Love Business — em breve.</p></div>
+  </div>
+  <div class="wlb-page" id="wlb-metrics">
+    <div class="emp-coming"><div style="font-size:48px;">📊</div><h2>Métricas WLB</h2><p>Analytics do canal @welovebusiness — em breve.</p></div>
+  </div>
+  <div class="wlb-page" id="wlb-analyzer">
+    <div class="emp-coming"><div style="font-size:48px;">🔍</div><h2>Analisador WLB</h2><p>Análise de conteúdo WLB — em breve.</p></div>
+  </div>
+  <div class="wlb-page" id="wlb-youtube-wlb">
+    <h2 style="font-size:22px;font-weight:900;margin-bottom:20px;">YouTube · Roteiros WLB</h2>
+    <div id="wlb-yt-container"></div>
+  </div>
+
+  <!-- ══════════ WLH PAGES ══════════ -->
+  <div class="wlh-page" id="wlh-home">
+    <div class="emp-coming"><div style="font-size:48px;">🏠</div><h2>We Love Homes</h2><p>A Máquina de Conteúdos para WLH está sendo construída.</p></div>
+  </div>
+  <div class="wlh-page" id="wlh-ideas"><div class="emp-coming"><div style="font-size:48px;">🏠</div><h2>Ideias WLH</h2><p>Em breve.</p></div></div>
+  <div class="wlh-page" id="wlh-week"><div class="emp-coming"><div style="font-size:48px;">🏠</div><h2>Semana WLH</h2><p>Em breve.</p></div></div>
+  <div class="wlh-page" id="wlh-calendario"><div class="emp-coming"><div style="font-size:48px;">🏠</div><h2>Calendário WLH</h2><p>Em breve.</p></div></div>
+  <div class="wlh-page" id="wlh-metrics"><div class="emp-coming"><div style="font-size:48px;">🏠</div><h2>Métricas WLH</h2><p>Em breve.</p></div></div>
+  <div class="wlh-page" id="wlh-analyzer"><div class="emp-coming"><div style="font-size:48px;">🏠</div><h2>Analisador WLH</h2><p>Em breve.</p></div></div>
+  <div class="wlh-page" id="wlh-youtube-wlb"><div class="emp-coming"><div style="font-size:48px;">🏠</div><h2>YouTube WLH</h2><p>Em breve.</p></div></div>
+</div><!-- /main-area -->
   </div><!-- /app-wrap -->
 
   <script>
@@ -8617,103 +8669,136 @@
       });
     })();
   </script>
-
-  <!-- WLB MAIN AREA -->
-  <div id="wlb-main-area">
-    <div style="height:52px;background:#F5F0E8;border-bottom:2px solid #000;display:flex;align-items:center;padding:0 20px;gap:12px;flex-shrink:0;">
-      <div style="font-weight:900;font-size:14px;color:#D97559;letter-spacing:.5px;">WE LOVE BUSINESS</div>
-      <div style="flex:1"></div>
-    </div>
-    <div style="flex:1;overflow-y:auto;padding:28px 32px;">
-      <div id="wlb-page-painel" class="wlb-page">
-        <h2 style="font-size:22px;font-weight:900;margin-bottom:20px;">Painel WLB</h2>
-        <div style="background:#D97559;color:#fff;border-radius:12px;padding:24px;margin-bottom:20px;">
-          <div style="font-size:11px;font-weight:800;letter-spacing:1px;opacity:.8;margin-bottom:8px;">ROTEIROS NA FILA</div>
-          <div id="wlb-roteiros-count" style="font-size:48px;font-weight:900;line-height:1;">—</div>
-        </div>
-        <div id="wlb-roteiros-list" style="display:flex;flex-direction:column;gap:10px;"></div>
-      </div>
-      <div id="wlb-page-youtube" class="wlb-page" style="display:none;">
-        <h2 style="font-size:22px;font-weight:900;margin-bottom:20px;">YouTube — Roteiros</h2>
-        <div id="wlb-yt-list" style="display:flex;flex-direction:column;gap:12px;"></div>
-      </div>
-      <div id="wlb-page-instagram" class="wlb-page" style="display:none;">
-        <h2 style="font-size:22px;font-weight:900;margin-bottom:20px;">Instagram WLB</h2>
-        <p style="color:#888;font-size:15px;">Carrosséis, Reels e Stories WLB — em breve integrado aqui.</p>
-      </div>
-      <div id="wlb-page-ideias" class="wlb-page" style="display:none;">
-        <h2 style="font-size:22px;font-weight:900;margin-bottom:20px;">Ideias WLB</h2>
-        <p style="color:#888;font-size:15px;">Banco de ideias We Love Business — em breve.</p>
-      </div>
-      <div id="wlb-page-semana" class="wlb-page" style="display:none;">
-        <h2 style="font-size:22px;font-weight:900;margin-bottom:20px;">Semana WLB</h2>
-        <p style="color:#888;font-size:15px;">Planejamento semanal We Love Business — em breve.</p>
-      </div>
-      <div id="wlb-page-calendario" class="wlb-page" style="display:none;">
-        <h2 style="font-size:22px;font-weight:900;margin-bottom:20px;">Calendário WLB</h2>
-        <p style="color:#888;font-size:15px;">Calendário editorial WLB — em breve.</p>
-      </div>
-    </div>
-  </div>
-
-  <!-- WLH MAIN AREA -->
-  <div id="wlh-main-area">
-    <div style="flex:1;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:16px;text-align:center;padding:40px;">
-      <div style="font-size:48px;">🏠</div>
-      <div style="font-size:28px;font-weight:900;color:#1A1A1A;">We Love Homes</div>
-      <div style="font-size:14px;color:#888;max-width:280px;line-height:1.6;">A Máquina de Conteúdos para We Love Homes está sendo construída.</div>
-    </div>
-  </div>
 <script>
-var _wlbLoaded=false;
-function switchEmpresa(emp){
-  document.querySelectorAll('.emp-btn').forEach(function(b){b.classList.toggle('active',b.dataset.emp===emp);});
-  var ver=document.querySelector('.sidebar-version');
-  if(ver) ver.textContent=emp==='wlc'?'V5 · WLC':emp==='wlb'?'V1 · WLB':'V1 · WLH';
-  document.querySelector('.nav-wlc').style.display=emp==='wlc'?'':'none';
-  document.querySelector('.nav-wlb').style.display=emp==='wlb'?'':'none';
-  document.querySelector('.main-area').style.display=emp==='wlc'?'':'none';
-  document.getElementById('wlb-main-area').style.display=emp==='wlb'?'flex':'none';
-  document.getElementById('wlh-main-area').style.display=emp==='wlh'?'flex':'none';
-  if(emp==='wlb'&&!_wlbLoaded){_wlbLoaded=true;loadWLBData();}
+/* ═══ Empresa context ═══ */
+var EMPRESA = 'wlc';
+var _wlbLoaded = false;
+
+function switchEmpresa(emp) {
+  EMPRESA = emp;
+  // Pills
+  document.querySelectorAll('.emp-f-btn').forEach(function(b){
+    b.classList.toggle('active', b.dataset.emp === emp);
+  });
+  // Sidebar version
+  var ver = document.querySelector('.sidebar-version');
+  if (ver) ver.textContent = emp==='wlc' ? 'V5 · WLC' : emp==='wlb' ? 'V1 · WLB' : 'V1 · WLH';
+  // Show/hide WLB YouTube nav item
+  document.querySelectorAll('.nav-yt-wlb').forEach(function(el){
+    el.style.display = emp === 'wlb' ? '' : 'none';
+  });
+  // Hide all empresa pages
+  document.querySelectorAll('.wlb-page,.wlh-page').forEach(function(p){ p.style.display='none'; });
+  if (emp === 'wlc') {
+    // Restore WLC pages - show only currentPage
+    document.querySelectorAll('.page').forEach(function(p){ p.style.display=''; });
+    // Re-trigger current page init
+    if (typeof switchPage === 'function') {
+      // Just restore the active state
+      document.querySelectorAll('.page').forEach(function(p){ p.classList.remove('active'); });
+      var cp = window.currentPage || 'home';
+      var pg = document.getElementById(cp);
+      if (pg) pg.classList.add('active');
+    }
+  } else {
+    // Hide all WLC pages
+    document.querySelectorAll('.page').forEach(function(p){ p.style.display='none'; });
+    // Show matching empresa page for currentPage
+    var cp = window.currentPage || 'home';
+    var empId = (emp === 'wlb' ? 'wlb' : 'wlh') + '-' + cp;
+    var empPage = document.getElementById(empId);
+    if (empPage) empPage.style.display = '';
+    else {
+      // fallback to home
+      var fb = document.getElementById((emp==='wlb'?'wlb':'wlh') + '-home');
+      if (fb) fb.style.display = '';
+    }
+    if (emp === 'wlb' && !_wlbLoaded) { _wlbLoaded = true; loadWLBData(); }
+  }
 }
-document.addEventListener('DOMContentLoaded',function(){
-  document.querySelectorAll('.t-nav-wlb').forEach(function(btn){
-    btn.addEventListener('click',function(){
-      document.querySelectorAll('.t-nav-wlb').forEach(function(b){b.style.fontWeight='400';});
-      this.style.fontWeight='900';
-      var pg=this.dataset.pageWlb;
-      document.querySelectorAll('.wlb-page').forEach(function(p){p.style.display='none';});
-      var t=document.getElementById('wlb-page-'+pg);
-      if(t) t.style.display='';
+
+/* ═══ WLB nav switching ═══ */
+document.addEventListener('DOMContentLoaded', function(){
+  document.querySelectorAll('[data-page="youtube-wlb"]').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      if (EMPRESA !== 'wlb') return;
+      document.querySelectorAll('.t-nav').forEach(function(b){ b.classList.remove('active'); });
+      this.classList.add('active');
+      window.currentPage = 'youtube-wlb';
+      document.querySelectorAll('.wlb-page,.wlh-page').forEach(function(p){ p.style.display='none'; });
+      var t = document.getElementById('wlb-youtube-wlb');
+      if (t) t.style.display = '';
     });
   });
 });
-function loadWLBData(){
-  fetch('/wlb/data/roteiros_semana.json').then(function(r){return r.json();}).then(function(data){
-    var rs=data.roteiros||[];
-    var cEl=document.getElementById('wlb-roteiros-count');
-    var lEl=document.getElementById('wlb-roteiros-list');
-    var yEl=document.getElementById('wlb-yt-list');
-    if(cEl) cEl.textContent=rs.length;
-    var html='';
-    rs.forEach(function(r){
-      var sc=r.status==='publicado'?'#3CB88A':r.status==='gravando'?'#E8A000':'#888';
-      var obs=r.obsidian_path?'obsidian://open?vault=PKA&file='+encodeURIComponent(r.obsidian_path):'';
-      var tit=obs?'<a href="'+obs+'" style="color:#1A1A1A;text-decoration:none;font-weight:900;">'+r.titulo+' ⭡</a>':'<strong>'+r.titulo+'</strong>';
-      html+='<div style="background:#fff;border:2px solid #000;border-radius:10px;padding:14px 16px;">'
-        +'<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:4px;">'
-        +tit
-        +'<span style="font-size:10px;font-weight:800;color:'+sc+';text-transform:uppercase;letter-spacing:.5px;white-space:nowrap;">'+r.status+'</span>'
-        +'</div>'
-        +'<div style="font-size:12px;color:#888;font-style:italic;line-height:1.4;">'+r.hook_preview+'</div>'
-        +(r.palavra_chave_manychat?'<div style="margin-top:8px;"><span style="background:#D97559;color:#fff;font-size:10px;font-weight:800;padding:2px 8px;border-radius:12px;">'+r.palavra_chave_manychat+'</span></div>':'')
-        +'</div>';
-    });
-    if(lEl) lEl.innerHTML=html||'<p style="color:#888">Nenhum roteiro na fila.</p>';
-    if(yEl) yEl.innerHTML=html||'<p style="color:#888">Nenhum roteiro na fila.</p>';
-  }).catch(function(){});
+
+/* ═══ WLB data loader ═══ */
+function loadWLBData() {
+  fetch('/wlb/data/roteiros_semana.json')
+    .then(function(r){ return r.json(); })
+    .then(function(data){
+      var rs = data.roteiros || [];
+      // Count
+      var cEl = document.getElementById('wlb-count');
+      if (cEl) cEl.textContent = rs.length;
+      // Next
+      var first = rs[0];
+      if (first) {
+        var tEl = document.getElementById('wlb-next-titulo');
+        var hEl = document.getElementById('wlb-next-hook');
+        if (tEl) tEl.textContent = first.titulo;
+        if (hEl) hEl.textContent = first.hook_preview;
+      }
+      // Cards
+      var html = '';
+      rs.forEach(function(r){
+        var sc = r.status==='publicado' ? '#3CB88A' : r.status==='gravando' ? '#E8A000' : '#888';
+        var obs = r.obsidian_path ? 'obsidian://open?vault=PKA&file=' + encodeURIComponent(r.obsidian_path) : '';
+        var titHtml = obs
+          ? '<a class="rt" href="'+obs+'">'+r.titulo+' ⭡</a>'
+          : '<span class="rt">'+r.titulo+'</span>';
+        html += '<div class="wlb-roteiro-card">'
+          + '<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;">'
+          + titHtml
+          + '<span class="rs" style="color:'+sc+'">'+r.status+'</span>'
+          + '</div>'
+          + '<div class="rh">'+r.hook_preview+'</div>'
+          + (r.palavra_chave_manychat ? '<div style="margin-top:8px;"><span style="background:#D97559;color:#fff;font-size:10px;font-weight:800;padding:2px 8px;border-radius:12px;">'+r.palavra_chave_manychat+'</span></div>' : '')
+          + '</div>';
+      });
+      var html2 = html || '<p style="color:#888">Nenhum roteiro na fila.</p>';
+      var ctr = document.getElementById('wlb-roteiros-container');
+      var ytc = document.getElementById('wlb-yt-container');
+      if (ctr) ctr.innerHTML = html2;
+      if (ytc) ytc.innerHTML = html2;
+    })
+    .catch(function(){});
 }
+
+/* ═══ Patch switchPage to respect EMPRESA ═══ */
+document.addEventListener('DOMContentLoaded', function(){
+  var _orig = window.switchPage;
+  if (typeof _orig === 'function') {
+    window.switchPage = function(page) {
+      window.currentPage = page;
+      // Always update nav highlight
+      document.querySelectorAll('.t-nav').forEach(function(item){ item.classList.remove('active'); });
+      var navEl = document.querySelector('.t-nav[data-page="'+page+'"]');
+      if (navEl) navEl.classList.add('active');
+
+      if (EMPRESA !== 'wlc') {
+        // Show empresa version of this page
+        document.querySelectorAll('.wlb-page,.wlh-page').forEach(function(p){ p.style.display='none'; });
+        var empId = (EMPRESA==='wlb'?'wlb':'wlh') + '-' + page;
+        var empPage = document.getElementById(empId);
+        if (empPage) empPage.style.display = '';
+        return;
+      }
+      // WLC: original behavior
+      _orig(page);
+    };
+  }
+});
 </script>
 </body>
 </html>
